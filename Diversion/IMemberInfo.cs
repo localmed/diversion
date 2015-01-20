@@ -8,6 +8,10 @@ namespace Diversion
         string Name { get; }
         Type Type { get; }
         IEnumerable<IParameterInfo> Parameters { get; }
+        bool IsNonVirtual { get; }
         bool IsVirtual { get; }
+        bool IsOverride { get; }
+        bool IsAbstract { get; }
+        bool IsSealed { get; }
     }
 }

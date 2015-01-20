@@ -31,7 +31,31 @@ namespace Diversion
             private set;
         }
 
+        public bool IsNonVirtual
+        {
+            get;
+            private set;
+        }
+
         public bool IsVirtual
+        {
+            get;
+            private set;
+        }
+
+        public bool IsOverride
+        {
+            get;
+            private set;
+        }
+
+        public bool IsAbstract
+        {
+            get;
+            private set;
+        }
+
+        public bool IsSealed
         {
             get;
             private set;

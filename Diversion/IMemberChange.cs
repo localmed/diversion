@@ -1,4 +1,6 @@
 namespace Diversion
 {
-    public interface IMemberChange : IChange<IMemberInfo> { }
+    public interface IMemberChange : IChange<IMemberInfo>
+    {
+    }
 }

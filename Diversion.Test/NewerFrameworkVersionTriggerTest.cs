@@ -9,7 +9,7 @@ namespace Diversion.Test
     public class NewerFrameworkVersionTriggerTest
     {
         [TestMethod]
-        public void IfRecentlyBuiltAssemblyIsBuiltAgainstALaterFrameworkThenTrigger()
+        public void ShouldTriggerIfRecentlyBuiltAssemblyIsBuiltAgainstALaterFramework()
         {
             var change = Mock.Of<IAssemblyChange>(obj =>
                 obj.New == Mock.Of<IAssemblyInfo>(ai => ai.FrameworkVersion == new Version(4, 5)) &&
@@ -18,7 +18,7 @@ namespace Diversion.Test
         }
 
         [TestMethod]
-        public void IfRecentlyBuiltAssemblyIsBuiltAgainstAnEarlierFrameworkThenDoNotTrigger()
+        public void ShouldNotTriggerIfRecentlyBuiltAssemblyIsBuiltAgainstAnEarlierFramework()
         {
             var change = Mock.Of<IAssemblyChange>(obj =>
                 obj.New == Mock.Of<IAssemblyInfo>(ai => ai.FrameworkVersion == new Version(4, 0)) &&
@@ -27,7 +27,7 @@ namespace Diversion.Test
         }
 
         [TestMethod]
-        public void IfRecentlyBuiltAssemblyIsBuiltAgainstTheSameFrameworkThenDoNotTrigger()
+        public void ShouldNotTriggerIfRecentlyBuiltAssemblyIsBuiltAgainstTheSameFramework()
         {
             var change = Mock.Of<IAssemblyChange>(obj =>
                 obj.New == Mock.Of<IAssemblyInfo>(ai => ai.FrameworkVersion == new Version(4, 0)) &&

@@ -15,6 +15,8 @@ namespace Diversion
 
         public string Name { get; private set; }
 
+        public bool IsInterface { get; private set; }
+
         public IEnumerable<Type> Interfaces { get; private set; }
 
         public IEnumerable<IMemberInfo> Members { get; private set; }

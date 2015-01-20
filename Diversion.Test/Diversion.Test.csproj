@@ -65,8 +65,18 @@
       <DependentUpon>DetermineNextVersionNumber.feature</DependentUpon>
     </Compile>
     <Compile Include="DetermineNextVersionNumberSteps.cs" />
+    <Compile Include="VirtualMemberNoLongerVirtualTriggerTest.cs" />
+    <Compile Include="NewMemberTriggerTest.cs" />
+    <Compile Include="NewMemberOnInterfaceTriggerTest.cs" />
+    <Compile Include="NewlyVirtualMemberTriggerTest.cs" />
+    <Compile Include="NewInterfaceImplementationOnInterfaceTriggerTest.cs" />
+    <Compile Include="NewInterfaceImplementationTriggerTest.cs" />
+    <Compile Include="NewAbstractMemberTriggerTest.cs" />
     <Compile Include="NewerFrameworkVersionTriggerTest.cs" />
+    <Compile Include="MemberRemovalTriggerTest.cs" />
+    <Compile Include="NewTypeTriggerTest.cs" />
     <Compile Include="TypeRemovalTriggerTest.cs" />
+    <Compile Include="InterfaceImplementationRemovalTriggerTest.cs" />
     <Compile Include="VersionExtensionsTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

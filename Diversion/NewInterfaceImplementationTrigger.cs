@@ -1,10 +1,15 @@
-﻿namespace Diversion
+﻿using System.Linq;
+
+namespace Diversion
 {
+    /// <summary>
+    /// A version trigger that triggers when an interface implementation is added to a type.
+    /// </summary>
     public class NewInterfaceImplementationTrigger : IVersionTrigger
     {
         public bool IsTriggered(IAssemblyChange change)
         {
-            return false;
+            return change.TypeChanges.Changes.Any(tc => tc.InterfaceChanges.Added.Any());
         }
     }
 }

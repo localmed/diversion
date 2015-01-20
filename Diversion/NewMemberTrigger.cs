@@ -2,6 +2,9 @@
 
 namespace Diversion
 {
+    /// <summary>
+    /// A version trigger that triggers when a member is added to a type.
+    /// </summary>
     public class NewMemberTrigger : IVersionTrigger
     {
         public bool IsTriggered(IAssemblyChange change)
