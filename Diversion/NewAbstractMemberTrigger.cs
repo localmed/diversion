@@ -9,7 +9,7 @@ namespace Diversion
     {
         public bool IsTriggered(IAssemblyChange change)
         {
-            return change.TypeChanges.Changes.Any(tc => tc.MemberChanges.Added.Any(mi => mi.IsAbstract));
+            return change.TypeChanges.Changes.Any(tc => tc.MemberChanges.Added.OfType<IVirtualizable>().Any(mi => mi.IsAbstract));
         }
     }
 }

@@ -36,12 +36,8 @@ namespace Diversion
 
         private ITypeInfo ToTypeInfo(Type type)
         {
-            return new NvTypeInfo(type.FullName, type.GetInterfaces(), type.GetMembers(BindingFlags.Public).AsParallel().Select(ToMemberInfo));
-        }
-
-        private IMemberInfo ToMemberInfo(MemberInfo member)
-        {
-            return new NvMemberInfo(member.Name, member.MemberType);
+            return new NvTypeInfo(type);
+            //return new NvTypeInfo(type.FullName, type.GetInterfaces(), type.GetMembers(BindingFlags.Public).AsParallel().Select(ToMemberInfo));
         }
     }
 }

@@ -14,7 +14,7 @@ namespace Diversion.Test
                 obj.TypeChanges == Mock.Of<IChanges<ITypeInfo, ITypeChange>>(tcs => 
                     tcs.Changes == new [] {
                         Mock.Of<ITypeChange>(tc => 
-                            tc.MemberChanges == Mock.Of<IChanges<IMemberInfo, IMemberChange>>(mc => 
+                            tc.MemberChanges == Mock.Of<IChanges<IMemberInfo>>(mc => 
                                 mc.Added == new[] {Mock.Of<IMemberInfo>()}))
                     }));
             new NewMemberTrigger().IsTriggered(change).ShouldBeTrue();
@@ -27,7 +27,7 @@ namespace Diversion.Test
                 obj.TypeChanges == Mock.Of<IChanges<ITypeInfo, ITypeChange>>(tcs =>
                     tcs.Changes == new[] {
                         Mock.Of<ITypeChange>(tc =>
-                            tc.MemberChanges == Mock.Of<IChanges<IMemberInfo, IMemberChange>>(mc =>
+                            tc.MemberChanges == Mock.Of<IChanges<IMemberInfo>>(mc =>
                                 mc.Added == new IMemberInfo[0]))
                     }));
             new NewMemberTrigger().IsTriggered(change).ShouldBeFalse();

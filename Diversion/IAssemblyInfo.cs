@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Diversion
 {
-    public interface IAssemblyInfo
+    public interface IAssemblyInfo: IAttributable
     {
         string Name { get; }
         Version Version { get; }

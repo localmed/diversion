@@ -45,6 +45,8 @@ namespace Diversion
         {
             get { return _types.Value; }
         }
+
+        public IEnumerable<IAttributeInfo> Attributes { get; private set; }
     }
 
 }

@@ -13,8 +13,8 @@ namespace Diversion.Test
             var change = Mock.Of<IAssemblyChange>(
                 obj => obj.TypeChanges == Mock.Of<IChanges<ITypeInfo, ITypeChange>>(
                     tcs => tcs.Changes == new [] {Mock.Of<ITypeChange>(
-                        tc => tc.MemberChanges == Mock.Of<IChanges<IMemberInfo, IMemberChange>>(
-                            mc => mc.Added == new[] {Mock.Of<IMemberInfo>(mi => mi.IsAbstract == true)}))}));
+                        tc => tc.MemberChanges == Mock.Of<IChanges<IMemberInfo>>(
+                            mc => mc.Added == new[] {Mock.Of<IPropertyInfo>(mi => mi.IsAbstract == true)}))}));
             new NewAbstractMemberTrigger().IsTriggered(change).ShouldBeTrue();
         }
 
@@ -24,8 +24,8 @@ namespace Diversion.Test
             var change = Mock.Of<IAssemblyChange>(
                 obj => obj.TypeChanges == Mock.Of<IChanges<ITypeInfo, ITypeChange>>(
                     tcs => tcs.Changes == new[] {Mock.Of<ITypeChange>(
-                        tc => tc.MemberChanges == Mock.Of<IChanges<IMemberInfo, IMemberChange>>(
-                            mc => mc.Added == new[] {Mock.Of<IMemberInfo>()}))}));
+                        tc => tc.MemberChanges == Mock.Of<IChanges<IMemberInfo>>(
+                            mc => mc.Added == new[] {Mock.Of<IPropertyInfo>()}))}));
             new NewAbstractMemberTrigger().IsTriggered(change).ShouldBeFalse();
         }
     }

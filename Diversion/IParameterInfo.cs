@@ -2,9 +2,9 @@ using System;
 
 namespace Diversion
 {
-    public interface IParameterInfo
+    public interface IParameterInfo : IAttributable
     {
-        Type Type { get; }
+        ITypeInfo Type { get; }
         string Name { get; }
     }
 }

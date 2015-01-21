@@ -6,16 +6,14 @@ namespace Diversion
 {
     internal class NvMemberInfo : IMemberInfo
     {
-        public NvMemberInfo(string name, MemberTypes memberType)
+        private readonly MemberInfo _memberInfo;
+
+        public NvMemberInfo(MemberInfo memberInfo)
         {
-            Name = name;
-            MemberType = memberType;
-            Parameters = new IParameterInfo[0];
+            _memberInfo = memberInfo;
         }
 
-        public MemberTypes MemberType
-        {
-            get; private set; }
+        public IEnumerable<IAttributeInfo> Attributes { get; private set; } 
 
         public string Name { get; private set; }
 
@@ -31,19 +29,7 @@ namespace Diversion
             private set;
         }
 
-        public bool IsNonVirtual
-        {
-            get;
-            private set;
-        }
-
         public bool IsVirtual
-        {
-            get;
-            private set;
-        }
-
-        public bool IsOverride
         {
             get;
             private set;
@@ -55,10 +41,8 @@ namespace Diversion
             private set;
         }
 
-        public bool IsSealed
-        {
-            get;
-            private set;
-        }
+        public bool IsPublic { get; private set; }
+
+        public bool IsStatic { get; private set; }
     }
 }

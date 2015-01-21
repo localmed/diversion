@@ -9,7 +9,8 @@ namespace Diversion
     {
         public bool IsTriggered(IAssemblyChange change)
         {
-            return change.TypeChanges.Changes.Any(tc => tc.MemberChanges.Changes.Any(mc => mc.New.IsNonVirtual && mc.Old.IsVirtual));
+            return change.TypeChanges.Changes.Any(tc => tc.MemberChanges.Changes.OfType<IChange<IVirtualizable>>().Any(mc => !mc.New.IsVirtual && mc.Old.IsVirtual));
         }
     }
+
 }
