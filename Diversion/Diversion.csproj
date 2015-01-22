@@ -40,13 +40,22 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="GenericTypeRequirement.cs" />
     <Compile Include="IAssemblyChange.cs" />
+    <Compile Include="IAttributable.cs" />
+    <Compile Include="IAttributeInfo.cs" />
     <Compile Include="IChange.cs" />
     <Compile Include="IChanges.cs" />
-    <Compile Include="IMemberChange.cs" />
+    <Compile Include="IConstructorInfo.cs" />
+    <Compile Include="IEventInfo.cs" />
+    <Compile Include="IFieldInfo.cs" />
+    <Compile Include="IGenericParameter.cs" />
+    <Compile Include="IMethodInfo.cs" />
     <Compile Include="InterfaceImplementationRemovalTrigger.cs" />
+    <Compile Include="IPropertyInfo.cs" />
     <Compile Include="ITypeChange.cs" />
     <Compile Include="IVersionTrigger.cs" />
+    <Compile Include="IVirtualizable.cs" />
     <Compile Include="MemberRemovalTrigger.cs" />
     <Compile Include="NewAbstractMemberTrigger.cs" />
     <Compile Include="NewerFrameworkVersionTrigger.cs" />

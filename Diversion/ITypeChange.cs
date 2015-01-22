@@ -4,10 +4,6 @@ namespace Diversion
     {
         IChanges<IMemberInfo> MemberChanges { get; }
         ICollectionChanges<ITypeInfo> InterfaceChanges { get; }
-        IChanges<IAttributeInfo> AttributeChanges { get; } 
-    }
-
-    public interface IAttributeInfo
-    {
+        ICollectionChanges<IAttributeInfo> AttributeChanges { get; }
     }
 }
