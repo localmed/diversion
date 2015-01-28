@@ -1,4 +1,5 @@
 ﻿using System;
+using Diversion.Reflection;
 using Moq;
 using Should;
 using TechTalk.SpecFlow;

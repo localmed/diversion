@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Runtime.Versioning;
 using System.Security.Cryptography;
 using System.Text.RegularExpressions;
+using Diversion.Reflection;
 
 namespace Diversion
 {
@@ -31,13 +32,7 @@ namespace Diversion
             Version frameworkVersion = assembly.CustomAttributes.Where(attr => attr.AttributeType == typeof(TargetFrameworkAttribute))
                 .Select(attr => new Version(Regex.Match((string)attr.ConstructorArguments[0].Value, @"\.NETFramework,Version=v(.*)").Result("$1"))).FirstOrDefault() ?? new Version(assembly.ImageRuntimeVersion);
 
-            return new NvAssemblyInfo(assembly.FullName, version, frameworkVersion, md5, assembly.GetExportedTypes().AsParallel().Select(ToTypeInfo));
-        }
-
-        private ITypeInfo ToTypeInfo(Type type)
-        {
-            return new NvTypeInfo(type);
-            //return new NvTypeInfo(type.FullName, type.GetInterfaces(), type.GetMembers(BindingFlags.Public).AsParallel().Select(ToMemberInfo));
+            return new NvAssemblyInfo(assembly.FullName, version, frameworkVersion, md5, assembly.GetExportedTypes().AsParallel().Select(type => new NvTypeInfo(type)));
         }
     }
 }

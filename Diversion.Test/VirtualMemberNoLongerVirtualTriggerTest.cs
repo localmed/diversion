@@ -1,4 +1,6 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Diversion.Reflection;
+using Diversion.Triggers;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using Should;
 
@@ -17,8 +19,8 @@ namespace Diversion.Test
                             tc => tc.MemberChanges == Mock.Of<IChanges<IMemberInfo>>(
                                 mcs => mcs.Changes == new[] {
                                     Mock.Of<IChange<IMethodInfo>>(
-                                        mc => mc.New == Mock.Of<IMethodInfo>(mi => mi.IsVirtual == true) &&
-                                            mc.Old == Mock.Of<IMethodInfo>(mi =>  mi.IsVirtual == false))
+                                        mc => mc.New == Mock.Of<IMethodInfo>(mi => mi.IsVirtual) &&
+                                            mc.Old == Mock.Of<IMethodInfo>(mi => !mi.IsVirtual))
                                 }))
                     }));
             new VirtualMemberNoLongerVirtualTrigger().IsTriggered(change).ShouldBeFalse();
@@ -34,11 +36,11 @@ namespace Diversion.Test
                             tc => tc.MemberChanges == Mock.Of<IChanges<IMemberInfo>>(
                                 mcs => mcs.Changes == new[] {
                                     Mock.Of<IChange<IMethodInfo>>(
-                                        mc => mc.Old == Mock.Of<IMethodInfo>(mi => mi.IsVirtual == true) &&
-                                            mc.New == Mock.Of<IMethodInfo>(mi => mi.IsVirtual == true)),
+                                        mc => mc.Old == Mock.Of<IMethodInfo>(mi => mi.IsVirtual) &&
+                                            mc.New == Mock.Of<IMethodInfo>(mi => mi.IsVirtual)),
                                     Mock.Of<IChange<IMethodInfo>>(
-                                        mc => mc.Old == Mock.Of<IMethodInfo>(mi => mi.IsVirtual == false) &&
-                                            mc.New == Mock.Of<IMethodInfo>(mi => mi.IsVirtual == false))
+                                        mc => mc.Old == Mock.Of<IMethodInfo>(mi => !mi.IsVirtual) &&
+                                            mc.New == Mock.Of<IMethodInfo>(mi => !mi.IsVirtual))
                                 }))
                     }));
             new VirtualMemberNoLongerVirtualTrigger().IsTriggered(change).ShouldBeFalse();
@@ -54,8 +56,8 @@ namespace Diversion.Test
                             tc => tc.MemberChanges == Mock.Of<IChanges<IMemberInfo>>(
                                 mcs => mcs.Changes == new[] {
                                     Mock.Of<IChange<IMethodInfo>>(
-                                        mc => mc.Old == Mock.Of<IMethodInfo>(mi => mi.IsVirtual == true) &&
-                                            mc.New == Mock.Of<IMethodInfo>(mi => mi.IsVirtual == false)),
+                                        mc => mc.Old == Mock.Of<IMethodInfo>(mi => mi.IsVirtual) &&
+                                            mc.New == Mock.Of<IMethodInfo>(mi => !mi.IsVirtual)),
                                 }))
                     }));
             new VirtualMemberNoLongerVirtualTrigger().IsTriggered(change).ShouldBeTrue();
