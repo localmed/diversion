@@ -8,7 +8,9 @@ namespace Diversion.Reflection
         bool IsInterface { get; }
         string Namespace { get; }
         ITypeInfo Base { get; }
-        IEnumerable<ITypeInfo> Interfaces { get; }
-        IEnumerable<IMemberInfo> Members { get; }
+        IReadOnlyList<ITypeInfo> Interfaces { get; }
+        IReadOnlyList<IMemberInfo> Members { get; }
+        bool IsGenericType { get; }
+        IReadOnlyList<ITypeInfo> GenericArguments { get; }
     }
 }

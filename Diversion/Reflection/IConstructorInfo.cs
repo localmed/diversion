@@ -4,6 +4,6 @@ namespace Diversion.Reflection
 {
     public interface IConstructorInfo : IMemberInfo
     {
-        IEnumerable<IParameterInfo> Parameters { get; }
+        IReadOnlyList<IParameterInfo> Parameters { get; }
     }
 }

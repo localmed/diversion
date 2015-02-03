@@ -1,6 +1,6 @@
 ﻿using System;
-using System.Diagnostics.Contracts;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using Diversion.Triggers;
 
 namespace Diversion

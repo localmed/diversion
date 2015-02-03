@@ -4,13 +4,13 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using Should;
 
-namespace Diversion.Test
+namespace Diversion.Test.Triggers
 {
     [TestClass]
-    public class NewlyVirtualMemberTriggerTest
+    public class VirtualMemberNoLongerVirtualTriggerTest
     {
         [TestMethod]
-        public void ShouldTriggerIfAnyMembersHaveChangedFromNonVirtualToVirtual()
+        public void ShouldNotTriggerIfAnyMembersHaveChangedFromNonVirtualToVirtual()
         {
             var change = Mock.Of<IAssemblyChange>(
                 obj => obj.TypeChanges == Mock.Of<IChanges<ITypeInfo, ITypeChange>>(
@@ -19,11 +19,11 @@ namespace Diversion.Test
                             tc => tc.MemberChanges == Mock.Of<IChanges<IMemberInfo>>(
                                 mcs => mcs.Changes == new[] {
                                     Mock.Of<IChange<IMethodInfo>>(
-                                        mc => mc.New == Mock.Of<IMethodInfo>(mi => mi.IsVirtual == true) &&
-                                            mc.Old == Mock.Of<IMethodInfo>(mi =>  mi.IsVirtual == false))
+                                        mc => mc.New == Mock.Of<IMethodInfo>(mi => mi.IsVirtual) &&
+                                            mc.Old == Mock.Of<IMethodInfo>(mi => !mi.IsVirtual))
                                 }))
                     }));
-            new NewlyVirtualMemberTrigger().IsTriggered(change).ShouldBeTrue();
+            new VirtualMemberNoLongerVirtualTrigger().IsTriggered(change).ShouldBeFalse();
         }
 
         [TestMethod]
@@ -36,18 +36,18 @@ namespace Diversion.Test
                             tc => tc.MemberChanges == Mock.Of<IChanges<IMemberInfo>>(
                                 mcs => mcs.Changes == new[] {
                                     Mock.Of<IChange<IMethodInfo>>(
-                                        mc => mc.Old == Mock.Of<IMethodInfo>(mi => mi.IsVirtual == true) &&
-                                            mc.New == Mock.Of<IMethodInfo>(mi => mi.IsVirtual == true)),
+                                        mc => mc.Old == Mock.Of<IMethodInfo>(mi => mi.IsVirtual) &&
+                                            mc.New == Mock.Of<IMethodInfo>(mi => mi.IsVirtual)),
                                     Mock.Of<IChange<IMethodInfo>>(
-                                        mc => mc.Old == Mock.Of<IMethodInfo>(mi => mi.IsVirtual == false) &&
-                                            mc.New == Mock.Of<IMethodInfo>(mi => mi.IsVirtual == false))
+                                        mc => mc.Old == Mock.Of<IMethodInfo>(mi => !mi.IsVirtual) &&
+                                            mc.New == Mock.Of<IMethodInfo>(mi => !mi.IsVirtual))
                                 }))
                     }));
-            new NewlyVirtualMemberTrigger().IsTriggered(change).ShouldBeFalse();
+            new VirtualMemberNoLongerVirtualTrigger().IsTriggered(change).ShouldBeFalse();
         }
 
         [TestMethod]
-        public void ShouldNotTriggerIfVirtualMembersChangedToNonVirtual()
+        public void ShouldTriggerIfVirtualMembersChangedToNonVirtual()
         {
             var change = Mock.Of<IAssemblyChange>(
                 obj => obj.TypeChanges == Mock.Of<IChanges<ITypeInfo, ITypeChange>>(
@@ -56,11 +56,11 @@ namespace Diversion.Test
                             tc => tc.MemberChanges == Mock.Of<IChanges<IMemberInfo>>(
                                 mcs => mcs.Changes == new[] {
                                     Mock.Of<IChange<IMethodInfo>>(
-                                        mc => mc.Old == Mock.Of<IMethodInfo>(mi => mi.IsVirtual == true) &&
-                                            mc.New == Mock.Of<IMethodInfo>(mi => mi.IsVirtual == false)),
+                                        mc => mc.Old == Mock.Of<IMethodInfo>(mi => mi.IsVirtual) &&
+                                            mc.New == Mock.Of<IMethodInfo>(mi => !mi.IsVirtual)),
                                 }))
                     }));
-            new NewlyVirtualMemberTrigger().IsTriggered(change).ShouldBeFalse();
+            new VirtualMemberNoLongerVirtualTrigger().IsTriggered(change).ShouldBeTrue();
         }
     }
 }

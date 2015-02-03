@@ -9,6 +9,6 @@ namespace Diversion.Reflection
         Version Version { get; }
         Version FrameworkVersion { get; }
         byte[] MD5 { get; }
-        IEnumerable<ITypeInfo> Types { get; }
+        IReadOnlyList<ITypeInfo> Types { get; }
     }
 }

@@ -9,15 +9,15 @@ namespace Diversion.Reflection
     internal class NvMethodInfo : NvMemberInfo, IMethodInfo
     {
         private readonly MethodInfo _method;
-        private readonly Lazy<IReadOnlyCollection<IParameterInfo>> _parameters;
-        private readonly Lazy<IReadOnlyCollection<IGenericParameterInfo>> _genericParameters;
+        private readonly Lazy<IReadOnlyList<IParameterInfo>> _parameters;
+        private readonly Lazy<IReadOnlyList<IGenericParameterInfo>> _genericParameters;
         private readonly Lazy<IParameterInfo> _returnType;
 
         public NvMethodInfo(MethodInfo method) : base(method)
         {
             _method = method;
-            _parameters = new Lazy<IReadOnlyCollection<IParameterInfo>>(() => new ReadOnlyCollection<IParameterInfo>(_method.GetParameters().Select(p => (IParameterInfo)null).ToArray()), true);
-            _genericParameters = new Lazy<IReadOnlyCollection<IGenericParameterInfo>>(() => new ReadOnlyCollection<IGenericParameterInfo>(_method.GetGenericArguments().Select(a => (IGenericParameterInfo)null).ToArray()), true);
+            _parameters = new Lazy<IReadOnlyList<IParameterInfo>>(_method.GetParameters().Select(p => (IParameterInfo)null).ToArray, true);
+            _genericParameters = new Lazy<IReadOnlyList<IGenericParameterInfo>>(_method.GetGenericArguments().Select(a => (IGenericParameterInfo)FromMemberInfo(a)).ToArray, true);
             _returnType = new Lazy<IParameterInfo>(() => (IParameterInfo)_method.ReturnParameter, true);
         }
 
@@ -41,12 +41,12 @@ namespace Diversion.Reflection
             get { return _method.IsAbstract; }
         }
 
-        public IEnumerable<IParameterInfo> Parameters
+        public IReadOnlyList<IParameterInfo> Parameters
         {
             get { return _parameters.Value; }
         }
 
-        public IEnumerable<IGenericParameterInfo> GenericParameters
+        public IReadOnlyList<IGenericParameterInfo> GenericParameters
         {
             get { return _genericParameters.Value; }
         }
@@ -54,6 +54,16 @@ namespace Diversion.Reflection
         public IParameterInfo ReturnType
         {
             get { return _returnType.Value; }
+        }
+
+        public bool IsGenericMethod
+        {
+            get { return _method.IsGenericMethod; }
+        }
+
+        public override string Identity
+        {
+            get { return string.Format("{0}({1})", base.Identity, string.Join(",",Parameters.Select(p => p.Type))); }
         }
     }
 }

@@ -7,7 +7,7 @@ namespace Diversion
 {
     internal class NvAssemblyInfo : IAssemblyInfo
     {
-        private readonly Lazy<IEnumerable<ITypeInfo>> _types;
+        private readonly Lazy<IReadOnlyList<ITypeInfo>> _types;
 
         public NvAssemblyInfo(string name, Version version, Version frameworkVersion, byte[] md5, IEnumerable<ITypeInfo> types)
         {
@@ -15,7 +15,7 @@ namespace Diversion
             Version = version;
             FrameworkVersion = frameworkVersion;
             MD5 = md5;
-            _types = new Lazy<IEnumerable<ITypeInfo>>(types.ToArray);
+            _types = new Lazy<IReadOnlyList<ITypeInfo>>(types.ToArray);
         }
 
         public string Name
@@ -42,12 +42,12 @@ namespace Diversion
             private set;
         }
 
-        public IEnumerable<ITypeInfo> Types
+        public IReadOnlyList<ITypeInfo> Types
         {
             get { return _types.Value; }
         }
 
-        public IEnumerable<IAttributeInfo> Attributes { get; private set; }
+        public IReadOnlyList<IAttributeInfo> Attributes { get; private set; }
     }
 
 }

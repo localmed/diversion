@@ -5,7 +5,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using Should;
 
-namespace Diversion.Test
+namespace Diversion.Test.Triggers
 {
     [TestClass]
     public class NewerFrameworkVersionTriggerTest

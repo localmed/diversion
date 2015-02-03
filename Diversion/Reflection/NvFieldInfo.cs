@@ -24,7 +24,7 @@ namespace Diversion.Reflection
 
         public ITypeInfo Type
         {
-            get { return new NvTypeInfo(_member.FieldType); }
+            get { return (ITypeInfo)FromMemberInfo(_member.FieldType); }
         }
 
         public bool IsReadOnly

@@ -65,18 +65,18 @@
       <DependentUpon>DetermineNextVersionNumber.feature</DependentUpon>
     </Compile>
     <Compile Include="DetermineNextVersionNumberSteps.cs" />
-    <Compile Include="VirtualMemberNoLongerVirtualTriggerTest.cs" />
-    <Compile Include="NewMemberTriggerTest.cs" />
-    <Compile Include="NewMemberOnInterfaceTriggerTest.cs" />
-    <Compile Include="NewlyVirtualMemberTriggerTest.cs" />
-    <Compile Include="NewInterfaceImplementationOnInterfaceTriggerTest.cs" />
-    <Compile Include="NewInterfaceImplementationTriggerTest.cs" />
-    <Compile Include="NewAbstractMemberTriggerTest.cs" />
-    <Compile Include="NewerFrameworkVersionTriggerTest.cs" />
-    <Compile Include="MemberRemovalTriggerTest.cs" />
-    <Compile Include="NewTypeTriggerTest.cs" />
-    <Compile Include="TypeRemovalTriggerTest.cs" />
-    <Compile Include="InterfaceImplementationRemovalTriggerTest.cs" />
+    <Compile Include="Triggers\VirtualMemberNoLongerVirtualTriggerTest.cs" />
+    <Compile Include="Triggers\NewMemberTriggerTest.cs" />
+    <Compile Include="Triggers\NewMemberOnInterfaceTriggerTest.cs" />
+    <Compile Include="Triggers\NewlyVirtualMemberTriggerTest.cs" />
+    <Compile Include="Triggers\NewInterfaceImplementationOnInterfaceTriggerTest.cs" />
+    <Compile Include="Triggers\NewInterfaceImplementationTriggerTest.cs" />
+    <Compile Include="Triggers\NewAbstractMemberTriggerTest.cs" />
+    <Compile Include="Triggers\NewerFrameworkVersionTriggerTest.cs" />
+    <Compile Include="Triggers\MemberRemovalTriggerTest.cs" />
+    <Compile Include="Triggers\NewTypeTriggerTest.cs" />
+    <Compile Include="Triggers\TypeRemovalTriggerTest.cs" />
+    <Compile Include="Triggers\InterfaceImplementationRemovalTriggerTest.cs" />
     <Compile Include="VersionExtensionsTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

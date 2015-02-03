@@ -1,11 +1,10 @@
-﻿using System;
-using Diversion.Reflection;
+﻿using Diversion.Reflection;
 using Diversion.Triggers;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using Should;
 
-namespace Diversion.Test
+namespace Diversion.Test.Triggers
 {
     [TestClass]
     public class MemberRemovalTriggerTest

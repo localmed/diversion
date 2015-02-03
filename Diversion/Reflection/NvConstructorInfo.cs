@@ -8,13 +8,13 @@ namespace Diversion.Reflection
     internal class NvConstructorInfo : NvMemberInfo, IConstructorInfo
     {
         private readonly ConstructorInfo _member;
-        private readonly Lazy<IEnumerable<IParameterInfo>> _parameters;
+        private readonly Lazy<IReadOnlyList<IParameterInfo>> _parameters;
 
         public NvConstructorInfo(ConstructorInfo member)
             : base(member)
         {
             _member = member;
-            _parameters = new Lazy<IEnumerable<IParameterInfo>>(() => _member.GetParameters().Select(p => (IParameterInfo)null).ToArray(), true);
+            _parameters = new Lazy<IReadOnlyList<IParameterInfo>>(() => _member.GetParameters().Select(p => (IParameterInfo)null).ToArray(), true);
         }
 
         public override bool IsPublic
@@ -27,7 +27,7 @@ namespace Diversion.Reflection
             get { return _member.IsStatic; }
         }
 
-        public IEnumerable<IParameterInfo> Parameters
+        public IReadOnlyList<IParameterInfo> Parameters
         {
             get { return _parameters.Value; }
         }

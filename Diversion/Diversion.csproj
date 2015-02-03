@@ -27,7 +27,7 @@
     <CodeContractsRuntimeThrowOnFailure>True</CodeContractsRuntimeThrowOnFailure>
     <CodeContractsRuntimeCallSiteRequires>False</CodeContractsRuntimeCallSiteRequires>
     <CodeContractsRuntimeSkipQuantifiers>False</CodeContractsRuntimeSkipQuantifiers>
-    <CodeContractsRunCodeAnalysis>True</CodeContractsRunCodeAnalysis>
+    <CodeContractsRunCodeAnalysis>False</CodeContractsRunCodeAnalysis>
     <CodeContractsNonNullObligations>True</CodeContractsNonNullObligations>
     <CodeContractsBoundsObligations>True</CodeContractsBoundsObligations>
     <CodeContractsArithmeticObligations>True</CodeContractsArithmeticObligations>
@@ -77,19 +77,21 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
-    <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AssemblyChangeGenerator.cs" />
+    <Compile Include="AssemblyChange.cs" />
+    <Compile Include="ChangeImpl.cs" />
+    <Compile Include="ChangeDiviner.cs" />
+    <Compile Include="IdentityComparer.cs" />
+    <Compile Include="IIdentifiable.cs" />
+    <Compile Include="Reflection\GenericTypeVariance.cs" />
+    <Compile Include="Reflection\IAttributeArgumentInfo.cs" />
+    <Compile Include="Reflection\MemberInfoExtensions.cs" />
     <Compile Include="Reflection\NvConstructorInfo.cs" />
     <Compile Include="Reflection\NvEventInfo.cs" />
     <Compile Include="Reflection\NvFieldInfo.cs" />
+    <Compile Include="Reflection\NvGenericParameterInfo.cs" />
     <Compile Include="Reflection\NvMethodInfo.cs" />
     <Compile Include="Reflection\GenericTypeRequirement.cs" />
     <Compile Include="IAssemblyChange.cs" />
@@ -104,6 +106,7 @@
     <Compile Include="Reflection\IFieldInfo.cs" />
     <Compile Include="Reflection\IGenericParameterInfo.cs" />
     <Compile Include="Reflection\IMethodInfo.cs" />
+    <Compile Include="Reflection\NvParameterInfo.cs" />
     <Compile Include="Reflection\NvPropertyInfo.cs" />
     <Compile Include="Triggers\InterfaceImplementationRemovalTrigger.cs" />
     <Compile Include="Reflection\IPropertyInfo.cs" />
@@ -130,6 +133,7 @@
     <Compile Include="Reflection\NvTypeInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Triggers\TypeRemovalTrigger.cs" />
+    <Compile Include="TypeChange.cs" />
     <Compile Include="VersionExtensions.cs" />
     <Compile Include="Triggers\VirtualMemberNoLongerVirtualTrigger.cs" />
   </ItemGroup>

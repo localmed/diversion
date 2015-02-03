@@ -4,7 +4,7 @@ namespace Diversion.Reflection
 {
     public interface IPropertyInfo : IMemberInfo, IVirtualizable
     {
-        IEnumerable<IParameterInfo> IndexerParameters { get; }
+        IReadOnlyList<IParameterInfo> IndexerParameters { get; }
         ITypeInfo Type { get; }
     }
 }

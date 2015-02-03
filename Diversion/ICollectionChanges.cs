@@ -4,7 +4,7 @@ namespace Diversion
 {
     public interface ICollectionChanges<out T>
     {
-        IEnumerable<T> Added { get; }
-        IEnumerable<T> Removed { get; }
+        IReadOnlyList<T> Added { get; }
+        IReadOnlyList<T> Removed { get; }
     }
 }

@@ -4,6 +4,6 @@ namespace Diversion.Reflection
 {
     public interface IAttributable
     {
-        IEnumerable<IAttributeInfo> Attributes { get; }
+        IReadOnlyList<IAttributeInfo> Attributes { get; }
     }
 }

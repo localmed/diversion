@@ -4,8 +4,9 @@ namespace Diversion.Reflection
 {
     public interface IMethodInfo : IMemberInfo, IVirtualizable
     {
-        IEnumerable<IParameterInfo> Parameters { get; }
-        IEnumerable<IGenericParameterInfo> GenericParameters { get; }
+        IReadOnlyList<IParameterInfo> Parameters { get; }
         IParameterInfo ReturnType { get; }
+        bool IsGenericMethod { get; }
+        IReadOnlyList<IGenericParameterInfo> GenericParameters { get; }
     }
 }

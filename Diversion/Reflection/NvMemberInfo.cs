@@ -2,23 +2,28 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Reflection.Emit;
-using System.Runtime.Remoting.Messaging;
 
 namespace Diversion.Reflection
 {
     internal abstract class NvMemberInfo : IMemberInfo
     {
         private readonly MemberInfo _member;
-        private readonly Lazy<IEnumerable<IAttributeInfo>> _attributes;
+        private readonly Lazy<IReadOnlyList<IAttributeInfo>> _attributes;
+        private readonly Lazy<ITypeInfo> _declaringType;
 
         protected NvMemberInfo(MemberInfo member)
         {
             _member = member;
-            _attributes = new Lazy<IEnumerable<IAttributeInfo>>(() => _member.GetCustomAttributesData().Select(a => (IAttributeInfo)null).ToArray(), true);
+            _declaringType = new Lazy<ITypeInfo>(() => (ITypeInfo)FromMemberInfo(_member.DeclaringType), true);
+            _attributes = new Lazy<IReadOnlyList<IAttributeInfo>>(() => _member.GetCustomAttributesData().Select(a => (IAttributeInfo)null).ToArray(), true);
         }
 
-        public IEnumerable<IAttributeInfo> Attributes
+        public ITypeInfo DeclaringType
+        {
+            get { return _declaringType.Value; }
+        }
+
+        public IReadOnlyList<IAttributeInfo> Attributes
         {
             get { return _attributes.Value; }
         }
@@ -43,7 +48,12 @@ namespace Diversion.Reflection
             return _member.GetHashCode();
         }
 
-        protected static IMemberInfo FromMemberInfo(MemberInfo member)
+        public virtual string Identity
+        {
+            get { return string.Join(".", DeclaringType, Name); }
+        }
+
+        public static IMemberInfo FromMemberInfo(MemberInfo member)
         {
             switch (member.MemberType)
             {
@@ -59,62 +69,14 @@ namespace Diversion.Reflection
                     return new NvPropertyInfo((PropertyInfo)member);
                 case MemberTypes.TypeInfo:
                 case MemberTypes.NestedType:
-                    return new NvTypeInfo((Type)member);
+                    return ((Type)member).IsGenericParameter ? new NvGenericParameterInfo((Type)member) : new NvTypeInfo((Type)member);
             }
             return null;
         }
-    }
 
-    internal static class MemberInfoExtensions
-    {
-        public static bool IsPublicOrProtected(this MemberInfo member)
+        public sealed override string ToString()
         {
-            switch (member.MemberType)
-            {
-                case MemberTypes.Constructor:
-                    return ((ConstructorInfo)member).IsPublicOrProtected();
-                case MemberTypes.Event:
-                    return ((EventInfo)member).IsPublicOrProtected();
-                case MemberTypes.Field:
-                    return ((FieldInfo)member).IsPublicOrProtected();
-                case MemberTypes.Method:
-                    return ((MethodInfo)member).IsPublicOrProtected();
-                case MemberTypes.Property:
-                    return ((PropertyInfo)member).IsPublicOrProtected();
-                case MemberTypes.TypeInfo:
-                case MemberTypes.NestedType:
-                    return ((Type)member).IsPublicOrProtected();
-            }
-            return false;
-        }
-
-        private static bool IsPublicOrProtected(this MethodBase member)
-        {
-            return member.IsPublic || member.IsFamilyOrAssembly || member.IsFamily;
-        }
-
-        private static bool IsPublicOrProtected(this FieldInfo member)
-        {
-            return member.IsPublic || member.IsFamilyOrAssembly || member.IsFamily;
-        }
-
-        private static bool IsPublicOrProtected(this Type member)
-        {
-            return member.IsPublic || member.IsNestedFamily || member.IsNestedPublic || member.IsNestedFamORAssem;
-        }
-
-        private static bool IsPublicOrProtected(this PropertyInfo member)
-        {
-            return (member.GetMethod != null && member.GetMethod.IsPublicOrProtected()) ||
-                   (member.SetMethod != null && member.SetMethod.IsPublicOrProtected());
-        }
-
-        private static bool IsPublicOrProtected(this EventInfo member)
-        {
-            return (member.AddMethod != null && member.AddMethod.IsPublicOrProtected()) ||
-                   (member.RemoveMethod != null && member.RemoveMethod.IsPublicOrProtected()) ||
-                   (member.RaiseMethod != null && member.RaiseMethod.IsPublicOrProtected());
+            return Identity;
         }
     }
-
 }
