@@ -3,7 +3,7 @@ using Diversion.Reflection;
 
 namespace Diversion
 {
-    internal class TypeChange : ChangeImpl<ITypeInfo>, ITypeChange
+    class TypeChange : ChangeImpl<ITypeInfo>, ITypeChange
     {
         private readonly Lazy<IChanges<IMemberInfo>> _memberChanges;
         private readonly Lazy<ICollectionChanges<ITypeInfo>> _interfaceChanges;

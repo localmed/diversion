@@ -1,15 +1,20 @@
+using System.Diagnostics.Contracts;
 using System.Reflection;
 
 namespace Diversion.Reflection
 {
-    internal class NvFieldInfo : NvMemberInfo, IFieldInfo
+    class NvFieldInfo : NvMemberInfo, IFieldInfo
     {
         private readonly FieldInfo _member;
+        private readonly ITypeInfo _type;
 
-        public NvFieldInfo(FieldInfo member)
-            : base(member)
+        public NvFieldInfo(IReflectionInfoFactory reflectionInfoFactory, FieldInfo member)
+            : base(reflectionInfoFactory, member)
         {
+            Contract.Requires(reflectionInfoFactory != null);
+            Contract.Requires(member != null);
             _member = member;
+            _type = reflectionInfoFactory.FromReflection(_member.FieldType);
         }
 
         public override bool IsPublic
@@ -24,7 +29,7 @@ namespace Diversion.Reflection
 
         public ITypeInfo Type
         {
-            get { return (ITypeInfo)FromMemberInfo(_member.FieldType); }
+            get { return _type; }
         }
 
         public bool IsReadOnly

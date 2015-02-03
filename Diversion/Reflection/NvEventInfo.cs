@@ -1,15 +1,20 @@
+using System.Diagnostics.Contracts;
 using System.Reflection;
 
 namespace Diversion.Reflection
 {
-    internal class NvEventInfo : NvMemberInfo, IEventInfo
+    class NvEventInfo : NvMemberInfo, IEventInfo
     {
         private readonly EventInfo _member;
+        private readonly ITypeInfo _eventHandlerType;
 
-        public NvEventInfo(EventInfo member)
-            : base(member)
+        public NvEventInfo(IReflectionInfoFactory reflectionInfoFactory, EventInfo member)
+            : base(reflectionInfoFactory, member)
         {
+            Contract.Requires(reflectionInfoFactory != null);
+            Contract.Requires(member != null);
             _member = member;
+            _eventHandlerType = reflectionInfoFactory.FromReflection(_member.EventHandlerType);
         }
 
         public override bool IsPublic
@@ -34,7 +39,7 @@ namespace Diversion.Reflection
 
         public ITypeInfo EventHandlerType
         {
-            get { return new NvTypeInfo(_member.EventHandlerType); }
+            get { return _eventHandlerType; }
         }
     }
 }

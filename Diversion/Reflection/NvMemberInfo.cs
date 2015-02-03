@@ -1,22 +1,27 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Reflection;
 
 namespace Diversion.Reflection
 {
-    internal abstract class NvMemberInfo : IMemberInfo
+    abstract class NvMemberInfo : IMemberInfo
     {
         private readonly MemberInfo _member;
         private readonly Lazy<IReadOnlyList<IAttributeInfo>> _attributes;
         private readonly Lazy<ITypeInfo> _declaringType;
 
-        protected NvMemberInfo(MemberInfo member)
+        protected NvMemberInfo(IReflectionInfoFactory reflectionInfoFactory, MemberInfo member)
         {
+            Contract.Requires(reflectionInfoFactory != null);
+            Contract.Requires(member != null);
             _member = member;
-            _declaringType = new Lazy<ITypeInfo>(() => (ITypeInfo)FromMemberInfo(_member.DeclaringType), true);
-            _attributes = new Lazy<IReadOnlyList<IAttributeInfo>>(() => _member.GetCustomAttributesData().Select(a => (IAttributeInfo)null).ToArray(), true);
+            _declaringType = new Lazy<ITypeInfo>(() => _member.DeclaringType == null ? null : reflectionInfoFactory.FromReflection(_member.DeclaringType), true);
+            _attributes = new Lazy<IReadOnlyList<IAttributeInfo>>(_member.GetCustomAttributesData().Select(reflectionInfoFactory.FromReflection).ToArray, true);
         }
+
+        public MemberInfo Member { get { return _member; } }
 
         public ITypeInfo DeclaringType
         {
@@ -51,27 +56,6 @@ namespace Diversion.Reflection
         public virtual string Identity
         {
             get { return string.Join(".", DeclaringType, Name); }
-        }
-
-        public static IMemberInfo FromMemberInfo(MemberInfo member)
-        {
-            switch (member.MemberType)
-            {
-                case MemberTypes.Constructor:
-                    return new NvConstructorInfo((ConstructorInfo) member);
-                case MemberTypes.Event:
-                    return new NvEventInfo((EventInfo)member);
-                case MemberTypes.Field:
-                    return new NvFieldInfo((FieldInfo)member);
-                case MemberTypes.Method:
-                    return new NvMethodInfo((MethodInfo)member);
-                case MemberTypes.Property:
-                    return new NvPropertyInfo((PropertyInfo)member);
-                case MemberTypes.TypeInfo:
-                case MemberTypes.NestedType:
-                    return ((Type)member).IsGenericParameter ? new NvGenericParameterInfo((Type)member) : new NvTypeInfo((Type)member);
-            }
-            return null;
         }
 
         public sealed override string ToString()

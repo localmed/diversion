@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Reflection;
 
@@ -9,12 +10,16 @@ namespace Diversion.Reflection
     {
         private readonly PropertyInfo _member;
         private readonly Lazy<IReadOnlyList<IParameterInfo>> _parameters;
+        private readonly ITypeInfo _type;
 
-        public NvPropertyInfo(PropertyInfo member)
-            : base(member)
+        public NvPropertyInfo(IReflectionInfoFactory reflectionInfoFactory, PropertyInfo member)
+            : base(reflectionInfoFactory, member)
         {
+            Contract.Requires(reflectionInfoFactory != null);
+            Contract.Requires(member != null);
             _member = member;
-            _parameters = new Lazy<IReadOnlyList<IParameterInfo>>(_member.GetIndexParameters().Select(p => (IParameterInfo)null).ToArray, true);
+            _parameters = new Lazy<IReadOnlyList<IParameterInfo>>(_member.GetIndexParameters().Select(reflectionInfoFactory.FromReflection).ToArray, true);
+            _type = reflectionInfoFactory.FromReflection(_member.PropertyType);
         }
 
         public override bool IsPublic
@@ -44,7 +49,7 @@ namespace Diversion.Reflection
 
         public ITypeInfo Type
         {
-            get { return new NvTypeInfo(_member.PropertyType); }
+            get { return _type; }
         }
 
         public override string Identity

@@ -3,7 +3,7 @@ using Diversion.Reflection;
 
 namespace Diversion
 {
-    internal class AssemblyChange : ChangeImpl<IAssemblyInfo>, IAssemblyChange
+    class AssemblyChange : ChangeImpl<IAssemblyInfo>, IAssemblyChange
     {
         private readonly Lazy<IChanges<ITypeInfo, ITypeChange>> _typeChanges;
 

@@ -1,6 +1,6 @@
 namespace Diversion
 {
-    internal class ChangeImpl<T> : IChange<T>
+    class ChangeImpl<T> : IChange<T>
     {
         public ChangeImpl(T old, T @new)
         {

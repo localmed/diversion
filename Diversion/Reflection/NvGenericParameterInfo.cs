@@ -1,12 +1,15 @@
 using System;
+using System.Diagnostics.Contracts;
 using System.Reflection;
 
 namespace Diversion.Reflection
 {
-    internal class NvGenericParameterInfo : NvTypeInfo, IGenericParameterInfo
+    class NvGenericParameterInfo : NvTypeInfo, IGenericParameterInfo
     {
-        public NvGenericParameterInfo(Type member) : base(member)
+        public NvGenericParameterInfo(IReflectionInfoFactory reflectionInfoFactory, Type member) : base(reflectionInfoFactory, member)
         {
+            Contract.Requires(reflectionInfoFactory != null);
+            Contract.Requires(member != null);
             RequiresDefaultConstructor =
                 member.GenericParameterAttributes.HasFlag(GenericParameterAttributes.DefaultConstructorConstraint);
             TypeRequirement =

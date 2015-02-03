@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
+using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Reflection;
 
@@ -14,17 +14,19 @@ namespace Diversion.Reflection
         private readonly Lazy<IReadOnlyList<ITypeInfo>> _genericArguments;
         private readonly Lazy<ITypeInfo> _base;
 
-        public NvTypeInfo(Type type) : base(type)
+        public NvTypeInfo(IReflectionInfoFactory reflectionInfoFactory, Type type) : base(reflectionInfoFactory, type)
         {
+            Contract.Requires(reflectionInfoFactory != null);
+            Contract.Requires(type != null);
             _type = type;
-            _base = new Lazy<ITypeInfo>(() => (ITypeInfo)FromMemberInfo(_type.BaseType), true);
+            _base = new Lazy<ITypeInfo>(() => reflectionInfoFactory.FromReflection(_type.BaseType), true);
             _interfaces = new Lazy<IReadOnlyList<ITypeInfo>>(_type.GetInterfaces()
-                .Select(FromMemberInfo).Cast<ITypeInfo>().ToArray, true);
+                .Select(reflectionInfoFactory.FromReflection).Cast<ITypeInfo>().ToArray, true);
             _members = new Lazy<IReadOnlyList<IMemberInfo>>(_type
                 .GetMembers(BindingFlags.Instance|BindingFlags.Static|BindingFlags.Public|BindingFlags.NonPublic)
-                .Where(m => m.IsPublicOrProtected()).Select(FromMemberInfo).ToArray, true);
+                .Where(m => m.IsPublicOrProtected()).Select(reflectionInfoFactory.FromReflection).ToArray, true);
             _genericArguments = new Lazy<IReadOnlyList<ITypeInfo>>(_type.GetGenericArguments()
-                .Select(a => (ITypeInfo)FromMemberInfo(a)).ToArray, true);
+                .Select(reflectionInfoFactory.FromReflection).ToArray, true);
         }
 
         public override bool IsPublic

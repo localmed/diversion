@@ -1,39 +1,46 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.Contracts;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Reflection;
 
 namespace Diversion.Reflection
 {
     class NvParameterInfo : IParameterInfo
     {
+        private readonly ParameterInfo _parameter;
+        private readonly Lazy<IReadOnlyList<IAttributeInfo>> _attributes;
+        private readonly ITypeInfo _type;
+
+        public NvParameterInfo(IReflectionInfoFactory reflectionInfoFactory, ParameterInfo parameter)
+        {
+            Contract.Requires(reflectionInfoFactory != null);
+            Contract.Requires(parameter != null);
+            _parameter = parameter;
+            _attributes = new Lazy<IReadOnlyList<IAttributeInfo>>(_parameter.GetCustomAttributesData()
+                .Select(reflectionInfoFactory.FromReflection).ToArray, true);
+            _type = reflectionInfoFactory.FromReflection(_parameter.ParameterType);
+
+        }
+
         public IReadOnlyList<IAttributeInfo> Attributes
         {
-            get { throw new NotImplementedException(); }
+            get { return _attributes.Value; }
         }
 
         public ITypeInfo Type
         {
-            get { throw new NotImplementedException(); }
+            get { return _type; }
         }
 
         public string Name
         {
-            get { throw new NotImplementedException(); }
-        }
-    }
-
-    class NvAttributeInfo : IAttributeInfo
-    {
-        public ITypeInfo Type
-        {
-            get { throw new NotImplementedException(); }
+            get { return _parameter.Name; }
         }
 
-        public IReadOnlyList<IAttributeArgumentInfo> Arguments
+        public string Identity
         {
-            get { throw new NotImplementedException(); }
+            get { return Name; }
         }
     }
 }
