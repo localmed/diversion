@@ -1,6 +1,9 @@
-﻿namespace Diversion.Reflection
+﻿using System;
+
+namespace Diversion.Reflection
 {
-    internal class NvAttributeArgumentInfo : IAttributeArgumentInfo
+    [Serializable]
+    public class NvAttributeArgumentInfo : IAttributeArgumentInfo
     {
         private readonly string _name;
         private readonly object _value;

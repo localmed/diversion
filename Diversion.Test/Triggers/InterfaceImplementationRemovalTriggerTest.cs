@@ -12,22 +12,22 @@ namespace Diversion.Test.Triggers
         [TestMethod]
         public void ShouldTriggerIfAnInterfaceImplementationIsRemovedFromAType()
         {
-            var change = Mock.Of<IAssemblyChange>(obj =>
-                obj.TypeChanges == Mock.Of<IChanges<ITypeInfo, ITypeChange>>(tcs =>
-                    tcs.Changes == new[] {Mock.Of<ITypeChange>(tc =>
-                        tc.InterfaceChanges == Mock.Of<ICollectionChanges<ITypeInfo>>(ics =>
-                            ics.Removed == new []{ Mock.Of<ITypeInfo>()}))}));
+            var change = Mock.Of<IAssemblyDiversion>(obj =>
+                obj.TypeDiversions == Mock.Of<IDiversions<ITypeInfo, ITypeDiversion>>(tcs =>
+                    tcs.Diverged == new[] {Mock.Of<ITypeDiversion>(tc =>
+                        tc.InterfaceDiversions == Mock.Of<ICollectionDiversions<ITypeReference>>(ics =>
+                            ics.Removed == new []{ Mock.Of<ITypeReference>()}))}));
             new InterfaceImplementationRemovalTrigger().IsTriggered(change).ShouldBeTrue();
         }
 
         [TestMethod]
         public void ShouldNotTriggerIfAnInterfaceImplementationIsNotRemovedFromAType()
         {
-            var change = Mock.Of<IAssemblyChange>(obj =>
-                obj.TypeChanges == Mock.Of<IChanges<ITypeInfo, ITypeChange>>(tcs =>
-                    tcs.Changes == new[] {Mock.Of<ITypeChange>(tc =>
-                        tc.InterfaceChanges == Mock.Of<ICollectionChanges<ITypeInfo>>(ics =>
-                            ics.Removed == new ITypeInfo[0]))}));
+            var change = Mock.Of<IAssemblyDiversion>(obj =>
+                obj.TypeDiversions == Mock.Of<IDiversions<ITypeInfo, ITypeDiversion>>(tcs =>
+                    tcs.Diverged == new[] {Mock.Of<ITypeDiversion>(tc =>
+                        tc.InterfaceDiversions == Mock.Of<ICollectionDiversions<ITypeReference>>(ics =>
+                            ics.Removed == new ITypeReference[0]))}));
             new InterfaceImplementationRemovalTrigger().IsTriggered(change).ShouldBeFalse();
         }
     }

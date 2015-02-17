@@ -8,9 +8,9 @@ namespace Diversion.Triggers
     /// </summary>
     public class NewlyVirtualMemberTrigger : IVersionTrigger
     {
-        public bool IsTriggered(IAssemblyChange change)
+        public bool IsTriggered(IAssemblyDiversion diversion)
         {
-            return change.TypeChanges.Changes.Any(tc => tc.MemberChanges.Changes.OfType<IChange<IVirtualizable>>().Any(mc => !mc.Old.IsVirtual && mc.New.IsVirtual));
+            return diversion.TypeDiversions.Diverged.AsParallel().Any(tc => tc.MemberDiversions.Diverged.AsParallel().OfType<IDiversion<IVirtualizable>>().Any(mc => !mc.Old.IsVirtual && mc.New.IsVirtual));
         }
     }
 }

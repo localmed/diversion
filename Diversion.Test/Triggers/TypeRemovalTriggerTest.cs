@@ -12,8 +12,8 @@ namespace Diversion.Test.Triggers
         [TestMethod]
         public void ShouldTriggerIfAnyPublicTypesHaveBeenRemoved()
         {
-            var change = Mock.Of<IAssemblyChange>(
-                obj => obj.TypeChanges == Mock.Of<IChanges<ITypeInfo, ITypeChange>>(
+            var change = Mock.Of<IAssemblyDiversion>(
+                obj => obj.TypeDiversions == Mock.Of<IDiversions<ITypeInfo, ITypeDiversion>>(
                     tc => tc.Removed == new[] {Mock.Of<ITypeInfo>()}));
             new TypeRemovalTrigger().IsTriggered(change).ShouldBeTrue();
         }
@@ -21,8 +21,8 @@ namespace Diversion.Test.Triggers
         [TestMethod]
         public void ShouldNotTriggerIfNoPublicTypesHaveBeenRemoved()
         {
-            var change = Mock.Of<IAssemblyChange>(
-                obj => obj.TypeChanges == Mock.Of<IChanges<ITypeInfo, ITypeChange>>(
+            var change = Mock.Of<IAssemblyDiversion>(
+                obj => obj.TypeDiversions == Mock.Of<IDiversions<ITypeInfo, ITypeDiversion>>(
                     tc => tc.Removed == new ITypeInfo[0]));
             new TypeRemovalTrigger().IsTriggered(change).ShouldBeFalse();
         }

@@ -4,7 +4,8 @@ using System.Reflection;
 
 namespace Diversion.Reflection
 {
-    class NvGenericParameterInfo : NvTypeInfo, IGenericParameterInfo
+    [Serializable]
+    public class NvGenericParameterInfo : NvTypeReference, IGenericParameterInfo
     {
         public NvGenericParameterInfo(IReflectionInfoFactory reflectionInfoFactory, Type member) : base(reflectionInfoFactory, member)
         {

@@ -7,10 +7,10 @@ namespace Diversion.Reflection
         bool IsAbstract { get; }
         bool IsInterface { get; }
         string Namespace { get; }
-        ITypeInfo Base { get; }
-        IReadOnlyList<ITypeInfo> Interfaces { get; }
+        ITypeReference Base { get; }
+        IReadOnlyList<ITypeReference> Interfaces { get; }
         IReadOnlyList<IMemberInfo> Members { get; }
         bool IsGenericType { get; }
-        IReadOnlyList<ITypeInfo> GenericArguments { get; }
+        IReadOnlyList<ITypeReference> GenericArguments { get; }
     }
 }

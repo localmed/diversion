@@ -12,12 +12,12 @@ namespace Diversion.Test.Triggers
         [TestMethod]
         public void ShouldTriggerIfAnyMembersHaveBeenAddedToAnyInterface()
         {
-            var change = Mock.Of<IAssemblyChange>(obj =>
-                obj.TypeChanges == Mock.Of<IChanges<ITypeInfo, ITypeChange>>(tcs =>
-                    tcs.Changes == new [] {
-                        Mock.Of<ITypeChange>(tc =>
+            var change = Mock.Of<IAssemblyDiversion>(obj =>
+                obj.TypeDiversions == Mock.Of<IDiversions<ITypeInfo, ITypeDiversion>>(tcs =>
+                    tcs.Diverged == new [] {
+                        Mock.Of<ITypeDiversion>(tc =>
                             tc.New.IsInterface == true &&
-                            tc.MemberChanges == Mock.Of<IChanges<IMemberInfo>>(mc =>
+                            tc.MemberDiversions == Mock.Of<IDiversions<IMemberInfo>>(mc =>
                                 mc.Added == new[] {Mock.Of<IMemberInfo>()}))
                     }));
             new NewMemberOnInterfaceTrigger().IsTriggered(change).ShouldBeTrue();
@@ -26,16 +26,16 @@ namespace Diversion.Test.Triggers
         [TestMethod]
         public void ShouldTriggerIfNoMembersHaveBeenAddedToAnyInterface()
         {
-            var change = Mock.Of<IAssemblyChange>(obj =>
-                obj.TypeChanges == Mock.Of<IChanges<ITypeInfo, ITypeChange>>(tcs =>
-                    tcs.Changes == new[] {
-                        Mock.Of<ITypeChange>(tc =>
+            var change = Mock.Of<IAssemblyDiversion>(obj =>
+                obj.TypeDiversions == Mock.Of<IDiversions<ITypeInfo, ITypeDiversion>>(tcs =>
+                    tcs.Diverged == new[] {
+                        Mock.Of<ITypeDiversion>(tc =>
                             tc.New.IsInterface == true &&
-                            tc.MemberChanges == Mock.Of<IChanges<IMemberInfo>>(mc =>
+                            tc.MemberDiversions == Mock.Of<IDiversions<IMemberInfo>>(mc =>
                                 mc.Added == new IMemberInfo[0])),
-                        Mock.Of<ITypeChange>(tc =>
+                        Mock.Of<ITypeDiversion>(tc =>
                             tc.New.IsInterface == false &&
-                            tc.MemberChanges == Mock.Of<IChanges<IMemberInfo>>(mc =>
+                            tc.MemberDiversions == Mock.Of<IDiversions<IMemberInfo>>(mc =>
                                 mc.Added == new[] {Mock.Of<IMemberInfo>()}))
                     }));
             new NewMemberOnInterfaceTrigger().IsTriggered(change).ShouldBeFalse();

@@ -12,10 +12,10 @@ namespace Diversion.Test.Triggers
         [TestMethod]
         public void ShouldTriggerIfAnyAbstractMembersOfAnyPublicTypesHaveBeenAdded()
         {
-            var change = Mock.Of<IAssemblyChange>(
-                obj => obj.TypeChanges == Mock.Of<IChanges<ITypeInfo, ITypeChange>>(
-                    tcs => tcs.Changes == new [] {Mock.Of<ITypeChange>(
-                        tc => tc.MemberChanges == Mock.Of<IChanges<IMemberInfo>>(
+            var change = Mock.Of<IAssemblyDiversion>(
+                obj => obj.TypeDiversions == Mock.Of<IDiversions<ITypeInfo, ITypeDiversion>>(
+                    tcs => tcs.Diverged == new [] {Mock.Of<ITypeDiversion>(
+                        tc => tc.MemberDiversions == Mock.Of<IDiversions<IMemberInfo>>(
                             mc => mc.Added == new[] {Mock.Of<IPropertyInfo>(mi => mi.IsAbstract == true)}))}));
             new NewAbstractMemberTrigger().IsTriggered(change).ShouldBeTrue();
         }
@@ -23,10 +23,10 @@ namespace Diversion.Test.Triggers
         [TestMethod]
         public void ShouldNotTriggerIfNoAbstractMembersOfAnyTypesHaveBeenAdded()
         {
-            var change = Mock.Of<IAssemblyChange>(
-                obj => obj.TypeChanges == Mock.Of<IChanges<ITypeInfo, ITypeChange>>(
-                    tcs => tcs.Changes == new[] {Mock.Of<ITypeChange>(
-                        tc => tc.MemberChanges == Mock.Of<IChanges<IMemberInfo>>(
+            var change = Mock.Of<IAssemblyDiversion>(
+                obj => obj.TypeDiversions == Mock.Of<IDiversions<ITypeInfo, ITypeDiversion>>(
+                    tcs => tcs.Diverged == new[] {Mock.Of<ITypeDiversion>(
+                        tc => tc.MemberDiversions == Mock.Of<IDiversions<IMemberInfo>>(
                             mc => mc.Added == new[] {Mock.Of<IPropertyInfo>()}))}));
             new NewAbstractMemberTrigger().IsTriggered(change).ShouldBeFalse();
         }

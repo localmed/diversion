@@ -7,12 +7,12 @@ namespace Diversion
     {
         public bool Equals(T x, T y)
         {
-            return x.GetType() == y.GetType() && x.Identity == y.Identity;
+            return ReferenceEquals(x, y) || (x != null && y != null && x.GetType() == y.GetType() && x.Identity == y.Identity);
         }
 
         public int GetHashCode(T obj)
         {
-            return (obj.GetType() + obj.Identity).GetHashCode();
+            return obj == null ? string.Empty.GetHashCode() : (obj.GetType() + obj.Identity).GetHashCode();
         }
     }
 }

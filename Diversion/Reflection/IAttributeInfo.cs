@@ -4,7 +4,7 @@ namespace Diversion.Reflection
 {
     public interface IAttributeInfo
     {
-        ITypeInfo Type { get; }
+        ITypeReference Type { get; }
         IReadOnlyList<IAttributeArgumentInfo> Arguments { get; }
     }
 }

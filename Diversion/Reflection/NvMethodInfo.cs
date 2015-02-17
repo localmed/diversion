@@ -6,61 +6,70 @@ using System.Reflection;
 
 namespace Diversion.Reflection
 {
-    class NvMethodInfo : NvMemberInfo, IMethodInfo
+    [Serializable]
+    public class NvMethodInfo : NvMemberInfo, IMethodInfo
     {
-        private readonly MethodInfo _method;
-        private readonly Lazy<IReadOnlyList<IParameterInfo>> _parameters;
-        private readonly Lazy<IReadOnlyList<IGenericParameterInfo>> _genericParameters;
-        private readonly Lazy<IParameterInfo> _returnType;
+        private readonly IReadOnlyList<IParameterInfo> _parameters;
+        private readonly IReadOnlyList<IGenericParameterInfo> _genericParameters;
+        private readonly IParameterInfo _returnType;
+        private readonly bool _isPublic;
+        private readonly bool _isStatic;
+        private readonly bool _isVirtual;
+        private readonly bool _isAbstract;
+        private readonly bool _isGenericMethod;
 
         public NvMethodInfo(IReflectionInfoFactory reflectionInfoFactory, MethodInfo method) : base(reflectionInfoFactory, method)
         {
             Contract.Requires(reflectionInfoFactory != null);
             Contract.Requires(method != null);
-            _method = method;
-            _parameters = new Lazy<IReadOnlyList<IParameterInfo>>(_method.GetParameters().Select(reflectionInfoFactory.FromReflection).ToArray, true);
-            _genericParameters = new Lazy<IReadOnlyList<IGenericParameterInfo>>(_method.GetGenericArguments().Select(reflectionInfoFactory.FromReflection).Cast<IGenericParameterInfo>().ToArray, true);
-            _returnType = new Lazy<IParameterInfo>(() => reflectionInfoFactory.FromReflection(_method.ReturnParameter), true);
+            _isPublic = method.IsPublic;
+            _isStatic = method.IsStatic;
+            _isVirtual = method.IsVirtual;
+            _isAbstract = method.IsAbstract;
+            _isGenericMethod = method.IsGenericMethod;
+            _parameters = method.GetParameters().Select(reflectionInfoFactory.FromReflection).ToArray();
+            _genericParameters = method.GetGenericArguments().Select(reflectionInfoFactory.GetReference).Cast<IGenericParameterInfo>().ToArray();
+            _returnType = reflectionInfoFactory.FromReflection(method.ReturnParameter);
         }
 
         public override bool IsPublic
         {
-            get { return _method.IsPublic; }
+            get { return _isPublic; }
         }
 
         public override bool IsStatic
         {
-            get { return _method.IsStatic; }
+            get { return _isStatic; }
         }
 
         public bool IsVirtual
         {
-            get { return _method.IsVirtual; }
+            get { return _isVirtual; }
         }
 
         public bool IsAbstract
         {
-            get { return _method.IsAbstract; }
+            get { return _isAbstract; }
         }
 
         public IReadOnlyList<IParameterInfo> Parameters
         {
-            get { return _parameters.Value; }
+            get { return _parameters; }
         }
 
         public IReadOnlyList<IGenericParameterInfo> GenericParameters
         {
-            get { return _genericParameters.Value; }
+            get { return _genericParameters; }
         }
 
         public IParameterInfo ReturnType
         {
-            get { return _returnType.Value; }
+            get { return _returnType; }
         }
 
         public bool IsGenericMethod
         {
-            get { return _method.IsGenericMethod; }
+            get { return _isGenericMethod; }
         }
 
         public override string Identity

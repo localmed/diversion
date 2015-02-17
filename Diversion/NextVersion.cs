@@ -48,31 +48,31 @@ namespace Diversion
             return new NextVersion(_majorTriggers, triggers);
         }
 
-        public Version Determine(IAssemblyChange change)
+        public Version Determine(IAssemblyDiversion diversion)
         {
             return
-                !Identical(change) ?
-                    !ShouldIncrementMajor(change) ?
-                        !ShouldIncrementMinor(change) ?
-                            change.Old.Version.IncrementBuild() :
-                        change.Old.Version.IncrementMinor() :
-                    change.Old.Version.IncrementMajor() :
-                change.Old.Version;
+                !Identical(diversion) ?
+                    !ShouldIncrementMajor(diversion) ?
+                        !ShouldIncrementMinor(diversion) ?
+                            diversion.Old.Version.IncrementBuild() :
+                        diversion.Old.Version.IncrementMinor() :
+                    diversion.Old.Version.IncrementMajor() :
+                diversion.Old.Version;
         }
 
-        private static bool Identical(IAssemblyChange change)
+        private static bool Identical(IAssemblyDiversion diversion)
         {
-            return change.Old.MD5.SequenceEqual(change.New.MD5);
+            return diversion.Old.MD5.SequenceEqual(diversion.New.MD5);
         }
 
-        private bool ShouldIncrementMajor(IAssemblyChange change)
+        private bool ShouldIncrementMajor(IAssemblyDiversion diversion)
         {
-            return _majorTriggers.Any(trigger => trigger.IsTriggered(change));
+            return _majorTriggers.Any(trigger => trigger.IsTriggered(diversion));
         }
 
-        private bool ShouldIncrementMinor(IAssemblyChange change)
+        private bool ShouldIncrementMinor(IAssemblyDiversion diversion)
         {
-            return _minorTriggers.Any(trigger => trigger.IsTriggered(change));
+            return _minorTriggers.Any(trigger => trigger.IsTriggered(diversion));
         }
     }
 }

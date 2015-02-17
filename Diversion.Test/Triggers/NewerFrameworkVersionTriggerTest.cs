@@ -13,7 +13,7 @@ namespace Diversion.Test.Triggers
         [TestMethod]
         public void ShouldTriggerIfRecentlyBuiltAssemblyIsBuiltAgainstALaterFramework()
         {
-            var change = Mock.Of<IAssemblyChange>(obj =>
+            var change = Mock.Of<IAssemblyDiversion>(obj =>
                 obj.New == Mock.Of<IAssemblyInfo>(ai => ai.FrameworkVersion == new Version(4, 5)) &&
                 obj.Old == Mock.Of<IAssemblyInfo>(ai => ai.FrameworkVersion == new Version(4, 0)));
             new NewerFrameworkVersionTrigger().IsTriggered(change).ShouldBeTrue();
@@ -22,7 +22,7 @@ namespace Diversion.Test.Triggers
         [TestMethod]
         public void ShouldNotTriggerIfRecentlyBuiltAssemblyIsBuiltAgainstAnEarlierFramework()
         {
-            var change = Mock.Of<IAssemblyChange>(obj =>
+            var change = Mock.Of<IAssemblyDiversion>(obj =>
                 obj.New == Mock.Of<IAssemblyInfo>(ai => ai.FrameworkVersion == new Version(4, 0)) &&
                 obj.Old == Mock.Of<IAssemblyInfo>(ai => ai.FrameworkVersion == new Version(4, 5)));
             new NewerFrameworkVersionTrigger().IsTriggered(change).ShouldBeFalse();
@@ -31,7 +31,7 @@ namespace Diversion.Test.Triggers
         [TestMethod]
         public void ShouldNotTriggerIfRecentlyBuiltAssemblyIsBuiltAgainstTheSameFramework()
         {
-            var change = Mock.Of<IAssemblyChange>(obj =>
+            var change = Mock.Of<IAssemblyDiversion>(obj =>
                 obj.New == Mock.Of<IAssemblyInfo>(ai => ai.FrameworkVersion == new Version(4, 0)) &&
                 obj.Old == Mock.Of<IAssemblyInfo>(ai => ai.FrameworkVersion == new Version(4, 0)));
             new NewerFrameworkVersionTrigger().IsTriggered(change).ShouldBeFalse();

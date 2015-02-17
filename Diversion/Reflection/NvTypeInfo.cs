@@ -6,78 +6,55 @@ using System.Reflection;
 
 namespace Diversion.Reflection
 {
-    internal class NvTypeInfo : NvMemberInfo, ITypeInfo
+    [Serializable]
+    public class NvTypeInfo : NvMemberInfo, ITypeInfo
     {
-        private readonly Type _type;
-        private readonly Lazy<IReadOnlyList<ITypeInfo>> _interfaces;
-        private readonly Lazy<IReadOnlyList<IMemberInfo>> _members;
-        private readonly Lazy<IReadOnlyList<ITypeInfo>> _genericArguments;
-        private readonly Lazy<ITypeInfo> _base;
+        private readonly bool _isPublic;
+        private readonly bool _isStatic;
 
         public NvTypeInfo(IReflectionInfoFactory reflectionInfoFactory, Type type) : base(reflectionInfoFactory, type)
         {
             Contract.Requires(reflectionInfoFactory != null);
             Contract.Requires(type != null);
-            _type = type;
-            _base = new Lazy<ITypeInfo>(() => reflectionInfoFactory.FromReflection(_type.BaseType), true);
-            _interfaces = new Lazy<IReadOnlyList<ITypeInfo>>(_type.GetInterfaces()
-                .Select(reflectionInfoFactory.FromReflection).Cast<ITypeInfo>().ToArray, true);
-            _members = new Lazy<IReadOnlyList<IMemberInfo>>(_type
+            Base = type.BaseType == null ? null : reflectionInfoFactory.GetReference(type.BaseType);
+            Interfaces = type.GetInterfaces().Select(reflectionInfoFactory.GetReference).ToArray();
+            Members = type
                 .GetMembers(BindingFlags.Instance|BindingFlags.Static|BindingFlags.Public|BindingFlags.NonPublic)
-                .Where(m => m.IsPublicOrProtected()).Select(reflectionInfoFactory.FromReflection).ToArray, true);
-            _genericArguments = new Lazy<IReadOnlyList<ITypeInfo>>(_type.GetGenericArguments()
-                .Select(reflectionInfoFactory.FromReflection).ToArray, true);
+                .Where(m => m.IsPublicOrProtected()).Select(reflectionInfoFactory.FromReflection).ToArray();
+            GenericArguments = type.GetGenericArguments().Select(reflectionInfoFactory.GetReference).ToArray();
+            _isPublic = type.IsPublic;
+            _isStatic = type.IsSealed && type.IsAbstract && type.IsClass;
+            IsInterface = type.IsInterface;
+            IsAbstract = type.IsAbstract;
+            Namespace = type.Namespace;
+            IsGenericType = type.IsGenericType;
         }
 
         public override bool IsPublic
         {
-            get { return _type.IsPublic; }
+            get { return _isPublic; }
         }
 
         public override bool IsStatic
         {
-            get { return _type.IsSealed && _type.IsAbstract && _type.IsClass; }
+            get { return _isStatic; }
         }
 
-        public bool IsAbstract
-        {
-            get { return _type.IsAbstract; }
-        }
+        public bool IsAbstract { get; private set; }
 
-        public bool IsInterface
-        {
-            get { return _type.IsInterface; }
-        }
+        public bool IsInterface { get; private set; }
 
-        public string Namespace
-        {
-            get { return _type.Namespace; }
-        }
+        public string Namespace { get; private set; }
 
-        public ITypeInfo Base
-        {
-            get { return _base.Value; }
-        }
+        public ITypeReference Base { get; private set; }
 
-        public IReadOnlyList<ITypeInfo> Interfaces
-        {
-            get { return _interfaces.Value; }
-        }
+        public IReadOnlyList<ITypeReference> Interfaces { get; private set; }
 
-        public IReadOnlyList<IMemberInfo> Members
-        {
-            get { return _members.Value; }
-        }
+        public IReadOnlyList<IMemberInfo> Members { get; private set; }
 
-        public bool IsGenericType
-        {
-            get { return _type.IsGenericType; }
-        }
+        public bool IsGenericType { get; private set; }
 
-        public IReadOnlyList<ITypeInfo> GenericArguments
-        {
-            get { return _genericArguments.Value; }
-        }
+        public IReadOnlyList<ITypeReference> GenericArguments { get; private set; }
 
         public override string Identity
         {

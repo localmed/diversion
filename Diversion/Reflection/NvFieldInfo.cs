@@ -1,45 +1,53 @@
+using System;
 using System.Diagnostics.Contracts;
 using System.Reflection;
 
 namespace Diversion.Reflection
 {
-    class NvFieldInfo : NvMemberInfo, IFieldInfo
+    [Serializable]
+    public class NvFieldInfo : NvMemberInfo, IFieldInfo
     {
-        private readonly FieldInfo _member;
-        private readonly ITypeInfo _type;
+        private readonly ITypeReference _type;
+        private readonly bool _isPublic;
+        private readonly bool _isStatic;
+        private readonly bool _isReadOnly;
+        private readonly bool _isConstant;
 
         public NvFieldInfo(IReflectionInfoFactory reflectionInfoFactory, FieldInfo member)
             : base(reflectionInfoFactory, member)
         {
             Contract.Requires(reflectionInfoFactory != null);
             Contract.Requires(member != null);
-            _member = member;
-            _type = reflectionInfoFactory.FromReflection(_member.FieldType);
+            _type = reflectionInfoFactory.GetReference(member.FieldType);
+            _isPublic = member.IsPublic;
+            _isStatic = member.IsStatic;
+            _isReadOnly = member.IsInitOnly;
+            _isConstant = member.IsLiteral;
         }
 
         public override bool IsPublic
         {
-            get { return _member.IsPublic; }
+            get { return _isPublic; }
         }
 
         public override bool IsStatic
         {
-            get { return _member.IsStatic; }
+            get { return _isStatic; }
         }
 
-        public ITypeInfo Type
+        public ITypeReference Type
         {
             get { return _type; }
         }
 
         public bool IsReadOnly
         {
-            get { return _member.IsInitOnly; }
+            get { return _isReadOnly; }
         }
 
         public bool IsConstant
         {
-            get { return _member.IsLiteral; }
+            get { return _isConstant; }
         }
     }
 }

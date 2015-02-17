@@ -6,37 +6,32 @@ using System.Reflection;
 
 namespace Diversion.Reflection
 {
-    abstract class NvMemberInfo : IMemberInfo
+    [Serializable]
+    public abstract class NvMemberInfo : IMemberInfo
     {
-        private readonly MemberInfo _member;
-        private readonly Lazy<IReadOnlyList<IAttributeInfo>> _attributes;
-        private readonly Lazy<ITypeInfo> _declaringType;
+        private readonly IReadOnlyList<IAttributeInfo> _attributes;
+        private readonly ITypeReference _declaringType;
 
         protected NvMemberInfo(IReflectionInfoFactory reflectionInfoFactory, MemberInfo member)
         {
             Contract.Requires(reflectionInfoFactory != null);
             Contract.Requires(member != null);
-            _member = member;
-            _declaringType = new Lazy<ITypeInfo>(() => _member.DeclaringType == null ? null : reflectionInfoFactory.FromReflection(_member.DeclaringType), true);
-            _attributes = new Lazy<IReadOnlyList<IAttributeInfo>>(_member.GetCustomAttributesData().Select(reflectionInfoFactory.FromReflection).ToArray, true);
+            _declaringType = member.DeclaringType == null ? null : reflectionInfoFactory.GetReference(member.DeclaringType);
+            _attributes = member.GetCustomAttributesData().Select(reflectionInfoFactory.FromReflection).ToArray();
+            Name = member.Name;
         }
 
-        public MemberInfo Member { get { return _member; } }
-
-        public ITypeInfo DeclaringType
+        public ITypeReference DeclaringType
         {
-            get { return _declaringType.Value; }
+            get { return _declaringType; }
         }
 
         public IReadOnlyList<IAttributeInfo> Attributes
         {
-            get { return _attributes.Value; }
+            get { return _attributes; }
         }
 
-        public string Name
-        {
-            get { return _member.Name; }
-        }
+        public string Name { get; private set; }
 
         public abstract bool IsPublic { get; }
 
@@ -45,12 +40,12 @@ namespace Diversion.Reflection
         public override bool Equals(object obj)
         {
             var other = obj as NvMemberInfo;
-            return other != null && _member == other._member;
+            return other != null && GetType() == other.GetType() && Identity == other.Identity;
         }
 
         public override int GetHashCode()
         {
-            return _member.GetHashCode();
+            return (GetType() + Identity).GetHashCode();
         }
 
         public virtual string Identity

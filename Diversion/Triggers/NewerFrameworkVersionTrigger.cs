@@ -5,9 +5,9 @@
     /// </summary>
     public class NewerFrameworkVersionTrigger : IVersionTrigger
     {
-        public bool IsTriggered(IAssemblyChange change)
+        public bool IsTriggered(IAssemblyDiversion diversion)
         {
-            return change.Old.FrameworkVersion < change.New.FrameworkVersion;
+            return diversion.Old.FrameworkVersion < diversion.New.FrameworkVersion;
         }
     }
 }

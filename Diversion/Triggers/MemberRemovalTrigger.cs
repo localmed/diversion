@@ -7,9 +7,9 @@ namespace Diversion.Triggers
     /// </summary>
     public class MemberRemovalTrigger : IVersionTrigger
     {
-        public bool IsTriggered(IAssemblyChange change)
+        public bool IsTriggered(IAssemblyDiversion diversion)
         {
-            return change.TypeChanges.Changes.Any(tc => tc.MemberChanges.Removed.Any());
+            return diversion.TypeDiversions.Diverged.AsParallel().Any(tc => tc.MemberDiversions.Removed.Any());
         }
     }
 }

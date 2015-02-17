@@ -14,13 +14,13 @@ namespace Diversion.Test
             NextVersion = new NextVersion();
         }
 
-        IAssemblyChange ReleaseToBuild { get; set; }
+        IAssemblyDiversion ReleaseToBuild { get; set; }
         NextVersion NextVersion { get; set; }
 
         [Given(@"the newly built assembly is identical to the released assembly")]
         public void GivenTheNewlyBuiltAssemblyIsIdenticalToTheReleasedAssembly()
         {
-            ReleaseToBuild = Mock.Of<IAssemblyChange>(ac =>
+            ReleaseToBuild = Mock.Of<IAssemblyDiversion>(ac =>
                 ac.New == Mock.Of<IAssemblyInfo>(obj => obj.MD5 == new byte[] { 0 }) &&
                 ac.Old == Mock.Of<IAssemblyInfo>(obj => obj.MD5 == new byte[] { 0 }));
         }
@@ -34,7 +34,7 @@ namespace Diversion.Test
         [Given(@"the newly built assembly is not identical to the released assembly")]
         public void GivenTheNewlyBuiltAssemblyIsNotIdenticalToTheReleasedAssembly()
         {
-            ReleaseToBuild = Mock.Of<IAssemblyChange>(ac =>
+            ReleaseToBuild = Mock.Of<IAssemblyDiversion>(ac =>
                 ac.New == Mock.Of<IAssemblyInfo>(obj => obj.MD5 == new byte[] { 0 }) &&
                 ac.Old == Mock.Of<IAssemblyInfo>(obj => obj.MD5 == new byte[] { 1 }));
         }
@@ -43,32 +43,32 @@ namespace Diversion.Test
         public void GivenNextVersionHasBeenInitializedWithMajorAndMinorVersionTriggersThatNeverTrigger()
         {
             NextVersion = new NextVersion()
-                .WithMajorTriggers(Mock.Of<IVersionTrigger>(obj => obj.IsTriggered(It.IsAny<IAssemblyChange>()) == false))
-                .WithMinorTriggers(Mock.Of<IVersionTrigger>(obj => obj.IsTriggered(It.IsAny<IAssemblyChange>()) == false));
+                .WithMajorTriggers(Mock.Of<IVersionTrigger>(obj => obj.IsTriggered(It.IsAny<IAssemblyDiversion>()) == false))
+                .WithMinorTriggers(Mock.Of<IVersionTrigger>(obj => obj.IsTriggered(It.IsAny<IAssemblyDiversion>()) == false));
         }
 
         [Given(@"NextVersion has been initialized with a major version trigger that always triggers and a minor version trigger that never triggers")]
         public void GivenNextVersionHasBeenInitializedWithAMajorVersionTriggerThatAlwaysTriggersAndAMinorVersionTriggerThatNeverTriggers()
         {
             NextVersion = new NextVersion()
-                .WithMajorTriggers(Mock.Of<IVersionTrigger>(obj => obj.IsTriggered(It.IsAny<IAssemblyChange>()) == true))
-                .WithMinorTriggers(Mock.Of<IVersionTrigger>(obj => obj.IsTriggered(It.IsAny<IAssemblyChange>()) == false));
+                .WithMajorTriggers(Mock.Of<IVersionTrigger>(obj => obj.IsTriggered(It.IsAny<IAssemblyDiversion>()) == true))
+                .WithMinorTriggers(Mock.Of<IVersionTrigger>(obj => obj.IsTriggered(It.IsAny<IAssemblyDiversion>()) == false));
         }
 
         [Given(@"NextVersion has been initialized with a major version trigger that never triggers and a minor version trigger that always triggers")]
         public void GivenNextVersionHasBeenInitializedWithAMajorVersionTriggerThatNeverTriggersAndAMinorVersionTriggerThatAlwaysTriggers()
         {
             NextVersion = new NextVersion()
-                .WithMajorTriggers(Mock.Of<IVersionTrigger>(obj => obj.IsTriggered(It.IsAny<IAssemblyChange>()) == false))
-                .WithMinorTriggers(Mock.Of<IVersionTrigger>(obj => obj.IsTriggered(It.IsAny<IAssemblyChange>()) == true));
+                .WithMajorTriggers(Mock.Of<IVersionTrigger>(obj => obj.IsTriggered(It.IsAny<IAssemblyDiversion>()) == false))
+                .WithMinorTriggers(Mock.Of<IVersionTrigger>(obj => obj.IsTriggered(It.IsAny<IAssemblyDiversion>()) == true));
         }
 
         [Given(@"NextVersion has been initialized with a major and minor version triggers that always trigger")]
         public void GivenNextVersionHasBeenInitializedWithAMajorAndMinorVersionTriggersThatAlwaysTrigger()
         {
             NextVersion = new NextVersion()
-                .WithMajorTriggers(Mock.Of<IVersionTrigger>(obj => obj.IsTriggered(It.IsAny<IAssemblyChange>()) == true))
-                .WithMinorTriggers(Mock.Of<IVersionTrigger>(obj => obj.IsTriggered(It.IsAny<IAssemblyChange>()) == true));
+                .WithMajorTriggers(Mock.Of<IVersionTrigger>(obj => obj.IsTriggered(It.IsAny<IAssemblyDiversion>()) == true))
+                .WithMinorTriggers(Mock.Of<IVersionTrigger>(obj => obj.IsTriggered(It.IsAny<IAssemblyDiversion>()) == true));
         }
 
         [Then(@"NextVersion should determine that the next version number should be (.*)\.(.*)\.(.*)")]

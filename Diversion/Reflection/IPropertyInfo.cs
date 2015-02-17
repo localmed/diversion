@@ -5,6 +5,6 @@ namespace Diversion.Reflection
     public interface IPropertyInfo : IMemberInfo, IVirtualizable
     {
         IReadOnlyList<IParameterInfo> IndexerParameters { get; }
-        ITypeInfo Type { get; }
+        ITypeReference Type { get; }
     }
 }

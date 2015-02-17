@@ -6,36 +6,35 @@ using System.Reflection;
 
 namespace Diversion.Reflection
 {
-    class NvParameterInfo : IParameterInfo
+    [Serializable]
+    public class NvParameterInfo : IParameterInfo
     {
-        private readonly ParameterInfo _parameter;
-        private readonly Lazy<IReadOnlyList<IAttributeInfo>> _attributes;
-        private readonly ITypeInfo _type;
+        private readonly IReadOnlyList<IAttributeInfo> _attributes;
+        private readonly ITypeReference _type;
 
         public NvParameterInfo(IReflectionInfoFactory reflectionInfoFactory, ParameterInfo parameter)
         {
             Contract.Requires(reflectionInfoFactory != null);
             Contract.Requires(parameter != null);
-            _parameter = parameter;
-            _attributes = new Lazy<IReadOnlyList<IAttributeInfo>>(_parameter.GetCustomAttributesData()
-                .Select(reflectionInfoFactory.FromReflection).ToArray, true);
-            _type = reflectionInfoFactory.FromReflection(_parameter.ParameterType);
-
+            Name = parameter.Name;
+            _attributes = parameter.GetCustomAttributesData()
+                .Select(reflectionInfoFactory.FromReflection).ToArray();
+            _type = reflectionInfoFactory.GetReference(parameter.ParameterType);
         }
 
         public IReadOnlyList<IAttributeInfo> Attributes
         {
-            get { return _attributes.Value; }
+            get { return _attributes; }
         }
 
-        public ITypeInfo Type
+        public ITypeReference Type
         {
             get { return _type; }
         }
 
         public string Name
         {
-            get { return _parameter.Name; }
+            get;private set;
         }
 
         public string Identity

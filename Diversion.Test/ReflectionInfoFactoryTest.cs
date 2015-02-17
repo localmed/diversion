@@ -1,7 +1,6 @@
-﻿using System;
-using Diversion.Reflection;
+﻿using Diversion.Reflection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Should;
+using Should.Fluent;
 
 namespace Diversion.Test
 {
@@ -13,11 +12,24 @@ namespace Diversion.Test
         {
             var factory = new NvReflectionInfoFactory();
             var type = factory.FromReflection(typeof (object));
-            type.IsPublic.ShouldBeTrue();
-            type.Name.ShouldEqual("Object");
-            type.IsAbstract.ShouldBeFalse();
-            type.Interfaces.ShouldBeEmpty();
-            type.ToString().ShouldEqual("System.Object");
+            type.IsPublic.Should().Be.True();
+            type.Name.Should().Equal("Object");
+            type.IsAbstract.Should().Be.False();
+            type.Interfaces.Should().Be.Empty();
+            type.ToString().Should().Equal("System.Object");
+            DiversionDiviner.DivineDiversions(new[] { factory.FromReflection(typeof(NextVersion)) }, new[] {
+                    factory.FromReflection(typeof (NextVersion))}).HasDiverged().Should().Be.False();
+            factory.FromReflection(typeof (NextVersion)).IsInterface.Should().Be.False();
         }
+
+        //[TestMethod]
+        //public void IntegrationTest()
+        //{
+        //    var factory = new NvReflectionInfoFactory();
+        //    var assemblyChange = DiversionDiviner.DivineDiversion(
+        //        factory.FromFile(@"C:\Users\Mike\Projects\diversion\Diversion\bin\Release\Diversion.dll"),
+        //        factory.FromFile(@"C:\Users\Mike\Projects\diversion\Diversion\bin\Debug\Diversion.dll"));
+        //    new NextVersion().Determine(assemblyChange).Should().Equal(assemblyChange.Old.Version);
+        //}
     }
 }

@@ -1,29 +1,27 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.IO;
 using System.Reflection;
 using System.Security.Cryptography;
 
 namespace Diversion.Reflection
 {
+    [Serializable]
     public class NvReflectionInfoFactory : IReflectionInfoFactory
     {
         public IAssemblyInfo FromFile(string assemblyPath)
         {
             byte[] md5 = MD5.Create().ComputeHash(File.ReadAllBytes(assemblyPath));
-            Assembly assembly = Assembly.ReflectionOnlyLoadFrom(assemblyPath);
-            foreach (var assemblyName in assembly.GetReferencedAssemblies())
+            using (var context = new AppDomainContext(new FileInfo(assemblyPath).DirectoryName))
             {
-                try
-                {
-                    Assembly.ReflectionOnlyLoad(assemblyName.FullName);
-                }
-                catch (Exception)
-                {
-                    Assembly.ReflectionOnlyLoadFrom(Path.Combine(Path.GetDirectoryName(assemblyPath),
-                        assemblyName.Name + ".dll"));
-                }
+                return (IAssemblyInfo)context.Domain.CreateInstanceFromAndUnwrap(Assembly.GetExecutingAssembly().Location,
+                    typeof (NvAssemblyInfo).FullName, false, BindingFlags.Default, null, new object[]{assemblyPath, md5}, null, null);
             }
-            return new NvAssemblyInfo(this, assembly, md5);
+        }
+
+        public ITypeReference GetReference(Type type)
+        {
+            return type.IsGenericParameter ? new NvGenericParameterInfo(this, type) : new NvTypeReference(this, type);
         }
 
         public IMemberInfo FromReflection(MemberInfo member)
@@ -31,15 +29,15 @@ namespace Diversion.Reflection
             switch (member.MemberType)
             {
                 case MemberTypes.Constructor:
-                    return new NvConstructorInfo(this, (ConstructorInfo)member);
+                    return new NvConstructorInfo(this, (ConstructorInfo) member);
                 case MemberTypes.Event:
-                    return new NvEventInfo(this, (EventInfo)member);
+                    return new NvEventInfo(this, (EventInfo) member);
                 case MemberTypes.Field:
-                    return new NvFieldInfo(this, (FieldInfo)member);
+                    return new NvFieldInfo(this, (FieldInfo) member);
                 case MemberTypes.Method:
-                    return new NvMethodInfo(this, (MethodInfo)member);
+                    return new NvMethodInfo(this, (MethodInfo) member);
                 case MemberTypes.Property:
-                    return new NvPropertyInfo(this, (PropertyInfo)member);
+                    return new NvPropertyInfo(this, (PropertyInfo) member);
                 case MemberTypes.TypeInfo:
                 case MemberTypes.NestedType:
                     return FromReflection((Type) member);
@@ -49,7 +47,7 @@ namespace Diversion.Reflection
 
         public ITypeInfo FromReflection(Type type)
         {
-            return type.IsGenericParameter ? new NvGenericParameterInfo(this, type) : new NvTypeInfo(this, type);
+            return new NvTypeInfo(this, type);
         }
 
         public IAttributeInfo FromReflection(CustomAttributeData attribute)

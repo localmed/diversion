@@ -1,6 +1,6 @@
 namespace Diversion.Reflection
 {
-    public interface IGenericParameterInfo : ITypeInfo
+    public interface IGenericParameterInfo : ITypeReference
     {
         bool RequiresDefaultConstructor { get; }
         GenericTypeRequirement TypeRequirement { get; }

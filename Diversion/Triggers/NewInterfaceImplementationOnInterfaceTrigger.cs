@@ -7,9 +7,9 @@ namespace Diversion.Triggers
     /// </summary>
     public class NewInterfaceImplementationOnInterfaceTrigger : IVersionTrigger
     {
-        public bool IsTriggered(IAssemblyChange change)
+        public bool IsTriggered(IAssemblyDiversion diversion)
         {
-            return change.TypeChanges.Changes.Any(tc => tc.New.IsInterface && tc.InterfaceChanges.Added.Any());
+            return diversion.TypeDiversions.Diverged.AsParallel().Any(tc => tc.New.IsInterface && tc.InterfaceDiversions.Added.Any());
         }
     }
 }

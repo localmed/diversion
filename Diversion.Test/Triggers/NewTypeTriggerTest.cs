@@ -12,8 +12,8 @@ namespace Diversion.Test.Triggers
         [TestMethod]
         public void ShouldTriggerIfAnyPublicTypesHaveBeenAdded()
         {
-            var change = Mock.Of<IAssemblyChange>(obj =>
-                obj.TypeChanges == Mock.Of<IChanges<ITypeInfo, ITypeChange>>(tc =>
+            var change = Mock.Of<IAssemblyDiversion>(obj =>
+                obj.TypeDiversions == Mock.Of<IDiversions<ITypeInfo, ITypeDiversion>>(tc =>
                     tc.Added == new[] {Mock.Of<ITypeInfo>()}));
             new NewTypeTrigger().IsTriggered(change).ShouldBeTrue();
         }
@@ -21,8 +21,8 @@ namespace Diversion.Test.Triggers
         [TestMethod]
         public void ShouldNotTriggerIfNoPublicTypesHaveBeenAdded()
         {
-            var change = Mock.Of<IAssemblyChange>(obj =>
-                obj.TypeChanges == Mock.Of<IChanges<ITypeInfo, ITypeChange>>(tc =>
+            var change = Mock.Of<IAssemblyDiversion>(obj =>
+                obj.TypeDiversions == Mock.Of<IDiversions<ITypeInfo, ITypeDiversion>>(tc =>
                     tc.Added == new ITypeInfo[0]));
             new NewTypeTrigger().IsTriggered(change).ShouldBeFalse();
         }

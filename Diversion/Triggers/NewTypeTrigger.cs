@@ -7,9 +7,9 @@ namespace Diversion.Triggers
     /// </summary>
     public class NewTypeTrigger : IVersionTrigger
     {
-        public bool IsTriggered(IAssemblyChange change)
+        public bool IsTriggered(IAssemblyDiversion diversion)
         {
-            return change.TypeChanges.Added.Any();
+            return diversion.TypeDiversions.Added.Any();
         }
     }
 }

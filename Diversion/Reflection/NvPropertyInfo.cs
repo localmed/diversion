@@ -6,51 +6,50 @@ using System.Reflection;
 
 namespace Diversion.Reflection
 {
-    internal class NvPropertyInfo : NvMemberInfo, IPropertyInfo
+    [Serializable]
+    public class NvPropertyInfo : NvMemberInfo, IPropertyInfo
     {
-        private readonly PropertyInfo _member;
-        private readonly Lazy<IReadOnlyList<IParameterInfo>> _parameters;
-        private readonly ITypeInfo _type;
+        private readonly bool _isPublic;
+        private readonly bool _isStatic;
+        private readonly bool _isVirtual;
+        private readonly bool _isAbstract;
 
         public NvPropertyInfo(IReflectionInfoFactory reflectionInfoFactory, PropertyInfo member)
             : base(reflectionInfoFactory, member)
         {
             Contract.Requires(reflectionInfoFactory != null);
             Contract.Requires(member != null);
-            _member = member;
-            _parameters = new Lazy<IReadOnlyList<IParameterInfo>>(_member.GetIndexParameters().Select(reflectionInfoFactory.FromReflection).ToArray, true);
-            _type = reflectionInfoFactory.FromReflection(_member.PropertyType);
+            IndexerParameters = member.GetIndexParameters().Select(reflectionInfoFactory.FromReflection).ToArray();
+            Type = reflectionInfoFactory.GetReference(member.PropertyType);
+            _isPublic = (member.GetMethod ?? member.SetMethod).IsPublic || (member.SetMethod ?? member.GetMethod).IsPublic;
+            _isStatic = (member.GetMethod ?? member.SetMethod).IsStatic;
+            _isVirtual = (member.GetMethod ?? member.SetMethod).IsVirtual;
+            _isAbstract = (member.GetMethod ?? member.SetMethod).IsAbstract;
         }
 
         public override bool IsPublic
         {
-            get { return (_member.GetMethod ?? _member.SetMethod).IsPublic || (_member.SetMethod ?? _member.GetMethod).IsPublic; }
+            get { return _isPublic; }
         }
 
         public override bool IsStatic
         {
-            get { return (_member.GetMethod ?? _member.SetMethod).IsStatic; }
+            get { return _isStatic; }
         }
 
         public bool IsVirtual
         {
-            get { return (_member.GetMethod ?? _member.SetMethod).IsVirtual; }
+            get { return _isVirtual; }
         }
 
         public bool IsAbstract
         {
-            get { return (_member.GetMethod ?? _member.SetMethod).IsAbstract; }
+            get { return _isAbstract; }
         }
 
-        public IReadOnlyList<IParameterInfo> IndexerParameters
-        {
-            get { return _parameters.Value; }
-        }
+        public IReadOnlyList<IParameterInfo> IndexerParameters { get; private set; }
 
-        public ITypeInfo Type
-        {
-            get { return _type; }
-        }
+        public ITypeReference Type { get; private set; }
 
         public override string Identity
         {
