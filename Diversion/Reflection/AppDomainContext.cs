@@ -39,7 +39,6 @@ namespace Diversion.Reflection
         public void Dispose()
         {
             Dispose(true);
-            GC.SuppressFinalize(this);
         }
     }
 }
