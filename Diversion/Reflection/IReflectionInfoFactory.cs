@@ -7,9 +7,9 @@ namespace Diversion.Reflection
     {
         IAssemblyInfo FromFile(string assemblyPath);
         ITypeReference GetReference(Type type);
-        ITypeInfo FromReflection(Type type);
-        IMemberInfo FromReflection(MemberInfo member);
-        IAttributeInfo FromReflection(CustomAttributeData attribute);
-        IParameterInfo FromReflection(ParameterInfo parameter);
+        ITypeInfo GetInfo(Type type);
+        IMemberInfo GetInfo(MemberInfo member);
+        IAttributeInfo GetInfo(CustomAttributeData attribute);
+        IParameterInfo GetInfo(ParameterInfo parameter);
     }
 }

@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Reflection;
 
@@ -20,16 +19,14 @@ namespace Diversion.Reflection
 
         public NvMethodInfo(IReflectionInfoFactory reflectionInfoFactory, MethodInfo method) : base(reflectionInfoFactory, method)
         {
-            Contract.Requires(reflectionInfoFactory != null);
-            Contract.Requires(method != null);
             _isPublic = method.IsPublic;
             _isStatic = method.IsStatic;
             _isVirtual = method.IsVirtual;
             _isAbstract = method.IsAbstract;
             _isGenericMethod = method.IsGenericMethod;
-            _parameters = method.GetParameters().Select(reflectionInfoFactory.FromReflection).ToArray();
+            _parameters = method.GetParameters().Select(reflectionInfoFactory.GetInfo).ToArray();
             _genericParameters = method.GetGenericArguments().Select(reflectionInfoFactory.GetReference).Cast<IGenericParameterInfo>().ToArray();
-            _returnType = reflectionInfoFactory.FromReflection(method.ReturnParameter);
+            _returnType = reflectionInfoFactory.GetInfo(method.ReturnParameter);
         }
 
         public override bool IsPublic

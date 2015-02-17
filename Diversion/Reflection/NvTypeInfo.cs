@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Reflection;
 
@@ -14,13 +13,11 @@ namespace Diversion.Reflection
 
         public NvTypeInfo(IReflectionInfoFactory reflectionInfoFactory, Type type) : base(reflectionInfoFactory, type)
         {
-            Contract.Requires(reflectionInfoFactory != null);
-            Contract.Requires(type != null);
             Base = type.BaseType == null ? null : reflectionInfoFactory.GetReference(type.BaseType);
             Interfaces = type.GetInterfaces().Select(reflectionInfoFactory.GetReference).ToArray();
             Members = type
                 .GetMembers(BindingFlags.Instance|BindingFlags.Static|BindingFlags.Public|BindingFlags.NonPublic)
-                .Where(m => m.IsPublicOrProtected()).Select(reflectionInfoFactory.FromReflection).ToArray();
+                .Where(m => m.IsPublicOrProtected()).Select(reflectionInfoFactory.GetInfo).ToArray();
             GenericArguments = type.GetGenericArguments().Select(reflectionInfoFactory.GetReference).ToArray();
             _isPublic = type.IsPublic;
             _isStatic = type.IsSealed && type.IsAbstract && type.IsClass;

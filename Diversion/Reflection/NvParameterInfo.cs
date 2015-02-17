@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Reflection;
 
@@ -14,11 +13,9 @@ namespace Diversion.Reflection
 
         public NvParameterInfo(IReflectionInfoFactory reflectionInfoFactory, ParameterInfo parameter)
         {
-            Contract.Requires(reflectionInfoFactory != null);
-            Contract.Requires(parameter != null);
             Name = parameter.Name;
             _attributes = parameter.GetCustomAttributesData()
-                .Select(reflectionInfoFactory.FromReflection).ToArray();
+                .Select(reflectionInfoFactory.GetInfo).ToArray();
             _type = reflectionInfoFactory.GetReference(parameter.ParameterType);
         }
 

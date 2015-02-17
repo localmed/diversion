@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.IO;
 using System.Reflection;
-using System.Security.Cryptography;
 
 namespace Diversion.Reflection
 {
@@ -11,11 +9,10 @@ namespace Diversion.Reflection
     {
         public IAssemblyInfo FromFile(string assemblyPath)
         {
-            byte[] md5 = MD5.Create().ComputeHash(File.ReadAllBytes(assemblyPath));
             using (var context = new AppDomainContext(new FileInfo(assemblyPath).DirectoryName))
             {
                 return (IAssemblyInfo)context.Domain.CreateInstanceFromAndUnwrap(Assembly.GetExecutingAssembly().Location,
-                    typeof (NvAssemblyInfo).FullName, false, BindingFlags.Default, null, new object[]{assemblyPath, md5}, null, null);
+                    typeof (NvAssemblyInfo).FullName, false, BindingFlags.Default, null, new object[]{assemblyPath}, null, null);
             }
         }
 
@@ -24,7 +21,7 @@ namespace Diversion.Reflection
             return type.IsGenericParameter ? new NvGenericParameterInfo(this, type) : new NvTypeReference(this, type);
         }
 
-        public IMemberInfo FromReflection(MemberInfo member)
+        public IMemberInfo GetInfo(MemberInfo member)
         {
             switch (member.MemberType)
             {
@@ -40,22 +37,22 @@ namespace Diversion.Reflection
                     return new NvPropertyInfo(this, (PropertyInfo) member);
                 case MemberTypes.TypeInfo:
                 case MemberTypes.NestedType:
-                    return FromReflection((Type) member);
+                    return GetInfo((Type) member);
             }
             return null;
         }
 
-        public ITypeInfo FromReflection(Type type)
+        public ITypeInfo GetInfo(Type type)
         {
             return new NvTypeInfo(this, type);
         }
 
-        public IAttributeInfo FromReflection(CustomAttributeData attribute)
+        public IAttributeInfo GetInfo(CustomAttributeData attribute)
         {
             return new NvAttributeInfo(this, attribute);
         }
 
-        public IParameterInfo FromReflection(ParameterInfo parameter)
+        public IParameterInfo GetInfo(ParameterInfo parameter)
         {
             return new NvParameterInfo(this, parameter);
         }

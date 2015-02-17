@@ -1,5 +1,3 @@
-using System.Reflection;
-
 namespace Diversion.Reflection
 {
     public interface IMemberInfo : IAttributable, IIdentifiable

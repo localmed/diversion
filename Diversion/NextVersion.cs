@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.Contracts;
 using System.Linq;
 using Diversion.Triggers;
 
@@ -34,18 +35,18 @@ namespace Diversion
 
         public NextVersion(IVersionTrigger[] majorTriggers, IVersionTrigger[] minorTriggers)
         {
-            _majorTriggers = majorTriggers;
-            _minorTriggers = minorTriggers;
+            _majorTriggers = majorTriggers ?? new IVersionTrigger[0];
+            _minorTriggers = minorTriggers ?? new IVersionTrigger[0];
         }
 
         public NextVersion WithMajorTriggers(params IVersionTrigger[] triggers)
         {
-            return new NextVersion(triggers, _minorTriggers);
+            return new NextVersion(triggers ?? new IVersionTrigger[0], _minorTriggers);
         }
 
         public NextVersion WithMinorTriggers(params IVersionTrigger[] triggers)
         {
-            return new NextVersion(_majorTriggers, triggers);
+            return new NextVersion(_majorTriggers, triggers ?? new IVersionTrigger[0]);
         }
 
         public Version Determine(IAssemblyDiversion diversion)

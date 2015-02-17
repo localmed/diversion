@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Reflection;
 
@@ -16,11 +15,9 @@ namespace Diversion.Reflection
         public NvConstructorInfo(IReflectionInfoFactory reflectionInfoFactory, ConstructorInfo member)
             : base(reflectionInfoFactory, member)
         {
-            Contract.Requires(reflectionInfoFactory != null);
-            Contract.Requires(member != null);
             _isPublic = member.IsPublic;
             _isStatic = member.IsStatic;
-            _parameters = member.GetParameters().Select(reflectionInfoFactory.FromReflection).ToArray();
+            _parameters = member.GetParameters().Select(reflectionInfoFactory.GetInfo).ToArray();
         }
 
         public override bool IsPublic

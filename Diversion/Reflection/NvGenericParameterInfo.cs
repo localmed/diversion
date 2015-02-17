@@ -1,5 +1,6 @@
 using System;
-using System.Diagnostics.Contracts;
+using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 
 namespace Diversion.Reflection
@@ -9,8 +10,6 @@ namespace Diversion.Reflection
     {
         public NvGenericParameterInfo(IReflectionInfoFactory reflectionInfoFactory, Type member) : base(reflectionInfoFactory, member)
         {
-            Contract.Requires(reflectionInfoFactory != null);
-            Contract.Requires(member != null);
             RequiresDefaultConstructor =
                 member.GenericParameterAttributes.HasFlag(GenericParameterAttributes.DefaultConstructorConstraint);
             TypeRequirement =
@@ -25,21 +24,18 @@ namespace Diversion.Reflection
                     : member.GenericParameterAttributes.HasFlag(GenericParameterAttributes.Contravariant)
                         ? GenericTypeVariance.Contravariant
                         : GenericTypeVariance.None;
+            Base = member.BaseType == null ? null : reflectionInfoFactory.GetReference(member.BaseType);
+            Interfaces = member.GetInterfaces().Select(reflectionInfoFactory.GetReference).ToArray();
         }
 
-        public bool RequiresDefaultConstructor
-        {
-            get;private set;
-        }
+        public ITypeReference Base { get; private set; }
 
-        public GenericTypeRequirement TypeRequirement
-        {
-            get;private set;
-        }
+        public IReadOnlyList<ITypeReference> Interfaces { get; private set; }
 
-        public GenericTypeVariance TypeVariance
-        {
-            get;private set;
-        }
+        public bool RequiresDefaultConstructor { get; private set; }
+
+        public GenericTypeRequirement TypeRequirement { get; private set; }
+
+        public GenericTypeVariance TypeVariance { get; private set; }
     }
 }

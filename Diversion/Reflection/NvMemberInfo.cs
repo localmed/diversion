@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Reflection;
 
@@ -14,10 +13,8 @@ namespace Diversion.Reflection
 
         protected NvMemberInfo(IReflectionInfoFactory reflectionInfoFactory, MemberInfo member)
         {
-            Contract.Requires(reflectionInfoFactory != null);
-            Contract.Requires(member != null);
             _declaringType = member.DeclaringType == null ? null : reflectionInfoFactory.GetReference(member.DeclaringType);
-            _attributes = member.GetCustomAttributesData().Select(reflectionInfoFactory.FromReflection).ToArray();
+            _attributes = member.GetCustomAttributesData().Select(reflectionInfoFactory.GetInfo).ToArray();
             Name = member.Name;
         }
 

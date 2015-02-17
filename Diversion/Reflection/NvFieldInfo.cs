@@ -1,5 +1,4 @@
 using System;
-using System.Diagnostics.Contracts;
 using System.Reflection;
 
 namespace Diversion.Reflection
@@ -16,8 +15,6 @@ namespace Diversion.Reflection
         public NvFieldInfo(IReflectionInfoFactory reflectionInfoFactory, FieldInfo member)
             : base(reflectionInfoFactory, member)
         {
-            Contract.Requires(reflectionInfoFactory != null);
-            Contract.Requires(member != null);
             _type = reflectionInfoFactory.GetReference(member.FieldType);
             _isPublic = member.IsPublic;
             _isStatic = member.IsStatic;

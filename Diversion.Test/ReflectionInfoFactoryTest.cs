@@ -11,15 +11,15 @@ namespace Diversion.Test
         public void TestObject()
         {
             var factory = new NvReflectionInfoFactory();
-            var type = factory.FromReflection(typeof (object));
+            var type = factory.GetInfo(typeof (object));
             type.IsPublic.Should().Be.True();
             type.Name.Should().Equal("Object");
             type.IsAbstract.Should().Be.False();
             type.Interfaces.Should().Be.Empty();
             type.ToString().Should().Equal("System.Object");
-            DiversionDiviner.DivineDiversions(new[] { factory.FromReflection(typeof(NextVersion)) }, new[] {
-                    factory.FromReflection(typeof (NextVersion))}).HasDiverged().Should().Be.False();
-            factory.FromReflection(typeof (NextVersion)).IsInterface.Should().Be.False();
+            DiversionDiviner.DivineDiversions(new[] { factory.GetInfo(typeof(NextVersion)) }, new[] {
+                    factory.GetInfo(typeof (NextVersion))}).HasDiverged().Should().Be.False();
+            factory.GetInfo(typeof (NextVersion)).IsInterface.Should().Be.False();
         }
 
         //[TestMethod]

@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Reflection;
 
@@ -17,9 +16,7 @@ namespace Diversion.Reflection
         public NvPropertyInfo(IReflectionInfoFactory reflectionInfoFactory, PropertyInfo member)
             : base(reflectionInfoFactory, member)
         {
-            Contract.Requires(reflectionInfoFactory != null);
-            Contract.Requires(member != null);
-            IndexerParameters = member.GetIndexParameters().Select(reflectionInfoFactory.FromReflection).ToArray();
+            IndexerParameters = member.GetIndexParameters().Select(reflectionInfoFactory.GetInfo).ToArray();
             Type = reflectionInfoFactory.GetReference(member.PropertyType);
             _isPublic = (member.GetMethod ?? member.SetMethod).IsPublic || (member.SetMethod ?? member.GetMethod).IsPublic;
             _isStatic = (member.GetMethod ?? member.SetMethod).IsStatic;

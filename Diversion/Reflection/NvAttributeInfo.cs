@@ -14,8 +14,6 @@ namespace Diversion.Reflection
 
         public NvAttributeInfo(IReflectionInfoFactory reflectionInfoFactory, CustomAttributeData attribute)
         {
-            Contract.Requires(reflectionInfoFactory != null);
-            Contract.Requires(attribute != null);
             _type = reflectionInfoFactory.GetReference(attribute.AttributeType);
             _arguments =
                 attribute.Constructor.GetParameters().Zip(attribute.ConstructorArguments,

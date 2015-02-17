@@ -1,5 +1,4 @@
 using System;
-using System.Diagnostics.Contracts;
 using System.Reflection;
 
 namespace Diversion.Reflection
@@ -16,8 +15,6 @@ namespace Diversion.Reflection
         public NvEventInfo(IReflectionInfoFactory reflectionInfoFactory, EventInfo member)
             : base(reflectionInfoFactory, member)
         {
-            Contract.Requires(reflectionInfoFactory != null);
-            Contract.Requires(member != null);
             _eventHandlerType = reflectionInfoFactory.GetReference(member.EventHandlerType);
             _isAbstract = (member.AddMethod ?? member.RemoveMethod).IsAbstract;
             _isPublic = (member.AddMethod ?? member.RemoveMethod).IsPublic || (member.RemoveMethod ?? member.AddMethod).IsPublic;
