@@ -23,5 +23,25 @@ namespace Diversion.Reflection
         {
             get { return _value; }
         }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            return obj.GetType() == GetType() && Equals((NvAttributeArgumentInfo) obj);
+        }
+
+        private bool Equals(NvAttributeArgumentInfo other)
+        {
+            return string.Equals(_name, other._name) && Equals(_value, other._value);
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                return (_name.GetHashCode() * 397) ^ (_value != null ? _value.GetHashCode() : 0);
+            }
+        }
     }
 }

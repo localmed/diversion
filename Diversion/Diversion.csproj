@@ -83,7 +83,6 @@
     <Compile Include="AssemblyDiversion.cs" />
     <Compile Include="DiversionImpl.cs" />
     <Compile Include="DiversionDiviner.cs" />
-    <Compile Include="IdentityComparer.cs" />
     <Compile Include="IIdentifiable.cs" />
     <Compile Include="Reflection\AppDomainContext.cs" />
     <Compile Include="Reflection\GenericTypeVariance.cs" />

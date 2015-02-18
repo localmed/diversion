@@ -38,5 +38,16 @@ namespace Diversion.Reflection
         {
             get { return Name; }
         }
+
+        public override bool Equals(object obj)
+        {
+            var other = obj as NvParameterInfo;
+            return other != null && GetType() == other.GetType() && Identity == other.Identity;
+        }
+
+        public override int GetHashCode()
+        {
+            return (GetType() + Identity).GetHashCode();
+        }
     }
 }

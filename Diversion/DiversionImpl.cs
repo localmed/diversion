@@ -1,4 +1,6 @@
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 
@@ -28,12 +30,11 @@ namespace Diversion
             var diversion = Expression.Parameter(typeof(IDiversion<T>));
             return Expression.Lambda<Func<IDiversion<T>, bool>>(
                 typeof (T).GetProperties()
-                    .Where(p => !p.PropertyType.IsConstructedGenericType)
                     .Select(
-                        p => (Expression)
-                            (typeof(IIdentifiable).IsAssignableFrom(p.PropertyType) ?
-                            Expression.Call(Expression.New(typeof(IdentityComparer<>).MakeGenericType(p.PropertyType)),
-                                "Equals", null,
+                        p => (Expression)(
+                            p.PropertyType.GetInterfaces().Any(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IEnumerable<>)) ?
+                            Expression.Call(typeof(Enumerable), "SequenceEqual",
+                                p.PropertyType.GetInterfaces().First(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IEnumerable<>)).GenericTypeArguments,
                                 Expression.Property(Expression.Property(diversion, "Old"), p),
                                 Expression.Property(Expression.Property(diversion, "New"), p)) :
                             Expression.Call(typeof (object), "Equals", null,

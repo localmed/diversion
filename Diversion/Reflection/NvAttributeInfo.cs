@@ -46,5 +46,25 @@ namespace Diversion.Reflection
         {
             get { return _arguments; }
         }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            return obj.GetType() == GetType() && Equals((NvAttributeInfo) obj);
+        }
+
+        private bool Equals(NvAttributeInfo other)
+        {
+            return _type.Equals(other._type) && _arguments.SequenceEqual(other._arguments);
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                return (_type.GetHashCode() * 397) ^ _arguments.Take(16).Aggregate(19, (result, item) => result * 31 + item.GetHashCode());
+            }
+        }
     }
 }

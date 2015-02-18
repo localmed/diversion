@@ -5,7 +5,7 @@ using Should;
 namespace Diversion.Test
 {
     [TestClass]
-    public class VersionExtensionsTest
+    public class VersionExtensionsFacts
     {
         [TestMethod]
         public void IncrementMajorTest()

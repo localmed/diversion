@@ -16,6 +16,7 @@
     <ReferencePath>$(ProgramFiles)\Common Files\microsoft shared\VSTT\$(VisualStudioVersion)\UITestExtensionPackages</ReferencePath>
     <IsCodedUITest>False</IsCodedUITest>
     <TestProjectType>UnitTest</TestProjectType>
+    <NuGetPackageImportStamp>bac62d0c</NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -62,12 +63,28 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="AssemblyDiversionFacts.cs" />
     <Compile Include="DetermineNextVersionNumber.feature.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>DetermineNextVersionNumber.feature</DependentUpon>
     </Compile>
     <Compile Include="DetermineNextVersionNumberSteps.cs" />
+    <Compile Include="DiversionDivinerFacts.cs" />
+    <Compile Include="DiversionFacts.cs" />
+    <Compile Include="Reflection\NvAssemblyInfoFacts.cs" />
+    <Compile Include="Reflection\NvAttributeArgumentInfoFacts.cs" />
+    <Compile Include="Reflection\NvAttributeInfoFacts.cs" />
+    <Compile Include="Reflection\NvConstructorInfoFacts.cs" />
+    <Compile Include="Reflection\NvEventInfoFacts.cs" />
+    <Compile Include="Reflection\NvFieldInfoFacts.cs" />
+    <Compile Include="Reflection\NvGenericParameterInfoFacts.cs" />
+    <Compile Include="Reflection\NvMethodInfoFacts.cs" />
+    <Compile Include="Reflection\NvParameterInfoFacts.cs" />
+    <Compile Include="Reflection\NvPropertyInfoFacts.cs" />
+    <Compile Include="Reflection\NvReflectionInfoFactoryFacts.cs" />
+    <Compile Include="Reflection\NvTypeInfoFacts.cs" />
+    <Compile Include="Reflection\NvTypeReferenceFacts.cs" />
     <Compile Include="Triggers\VirtualMemberNoLongerVirtualTriggerTest.cs" />
     <Compile Include="Triggers\NewMemberTriggerTest.cs" />
     <Compile Include="Triggers\NewMemberOnInterfaceTriggerTest.cs" />
@@ -81,7 +98,8 @@
     <Compile Include="Triggers\TypeRemovalTriggerTest.cs" />
     <Compile Include="Triggers\InterfaceImplementationRemovalTriggerTest.cs" />
     <Compile Include="ReflectionInfoFactoryTest.cs" />
-    <Compile Include="VersionExtensionsTest.cs" />
+    <Compile Include="TypeDiversionFacts.cs" />
+    <Compile Include="VersionExtensionsFacts.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -98,9 +116,7 @@
       <Name>Diversion</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Reflection\" />
-  </ItemGroup>
+  <ItemGroup />
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
       <ItemGroup>
