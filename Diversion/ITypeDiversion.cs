@@ -6,6 +6,6 @@ namespace Diversion
     {
         IDiversions<IMemberInfo> MemberDiversions { get; }
         ICollectionDiversions<ITypeReference> InterfaceDiversions { get; }
-        //ICollectionDiversions<IAttributeInfo> AttributeChanges { get; }
+        ICollectionDiversions<IAttributeInfo> AttributeDiversions { get; }
     }
 }

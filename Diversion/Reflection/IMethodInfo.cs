@@ -7,6 +7,6 @@ namespace Diversion.Reflection
         IReadOnlyList<IParameterInfo> Parameters { get; }
         IParameterInfo ReturnType { get; }
         bool IsGenericMethod { get; }
-        IReadOnlyList<IGenericParameterInfo> GenericParameters { get; }
+        IReadOnlyList<ITypeReference> GenericArguments { get; }
     }
 }

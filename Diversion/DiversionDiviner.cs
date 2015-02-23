@@ -13,33 +13,28 @@ namespace Diversion
         }
 
         public static IDiversions<T, TC> DivineDiversions<T, TC>(IEnumerable<T> old, IEnumerable<T> @new, Func<T, T, TC> change)
-            where T : IIdentifiable
             where TC : IDiversion<T>
         {
             return new DiversionsImpl<T, TC>(old, @new, change);
         }
 
         public static IDiversions<T> DivineDiversions<T>(IEnumerable<T> old, IEnumerable<T> @new)
-            where T : IIdentifiable
         {
             return new DiversionsImpl<T>(old, @new, (o, n) => new DiversionImpl<T>(o, n));
         }
 
         public static ICollectionDiversions<T> DivineCollectionDiversions<T>(IEnumerable<T> old, IEnumerable<T> @new)
-            where T : IIdentifiable
         {
             return new CollectionDiversionsImpl<T>(old, @new);
         }
 
         public static IItemDiversions<T, TC> DivineItemDiversions<T, TC>(IEnumerable<T> old, IEnumerable<T> @new, Func<T, T, TC> change)
-            where T : IIdentifiable
             where TC : IDiversion<T>
         {
             return new DiversionsImpl<T, TC>(old, @new, change);
         }
 
         private class CollectionDiversionsImpl<T> : ICollectionDiversions<T>
-            where T : IIdentifiable
         {
             public CollectionDiversionsImpl(IEnumerable<T> old, IEnumerable<T> @new)
             {
@@ -55,7 +50,6 @@ namespace Diversion
         }
 
         private class DiversionsImpl<T, TC> : IDiversions<T, TC>
-            where T : IIdentifiable
             where TC : IDiversion<T>
         {
             public DiversionsImpl(IEnumerable<T> old, IEnumerable<T> @new, Func<T, T, TC> change)
@@ -85,7 +79,6 @@ namespace Diversion
         }
 
         private class DiversionsImpl<T> : DiversionsImpl<T, IDiversion<T>>, IDiversions<T>
-            where T : IIdentifiable
         {
             public DiversionsImpl(IEnumerable<T> old, IEnumerable<T> @new, Func<T, T, IDiversion<T>> change)
                 : base(old, @new, change)

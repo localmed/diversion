@@ -21,10 +21,11 @@ namespace Diversion.Reflection
             GenericArguments = type.GetGenericArguments().Select(reflectionInfoFactory.GetReference).ToArray();
             _isPublic = type.IsPublic;
             _isStatic = type.IsSealed && type.IsAbstract && type.IsClass;
+            IsGenericType = type.IsGenericType;
             IsInterface = type.IsInterface;
             IsAbstract = type.IsAbstract;
             Namespace = type.Namespace;
-            IsGenericType = type.IsGenericType;
+            Name = type.IsGenericType && type.Name.Contains('`') ? string.Format("{0}<{1}>", type.Name.Substring(0, type.Name.IndexOf('`')), string.Join(",", type.GetGenericArguments().Select(t => t.IsGenericParameter ? string.Empty : reflectionInfoFactory.GetReference(t).Identity))) : type.Name;
         }
 
         public override bool IsPublic

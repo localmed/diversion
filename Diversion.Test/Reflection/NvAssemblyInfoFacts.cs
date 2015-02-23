@@ -3,10 +3,20 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Diversion.Reflection;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Diversion.Test.Reflection
 {
-    class NvAssemblyInfoFacts
+    [TestClass]
+    public class NvAssemblyInfoFacts
     {
+        private IReflectionInfoFactory _factory;
+
+        [TestInitialize]
+        public void Setup()
+        {
+            _factory = new NvReflectionInfoFactory();
+        }
     }
 }

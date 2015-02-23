@@ -28,7 +28,7 @@ namespace Diversion.Reflection
             get { return _attributes; }
         }
 
-        public string Name { get; private set; }
+        public string Name { get; protected set; }
 
         public abstract bool IsPublic { get; }
 

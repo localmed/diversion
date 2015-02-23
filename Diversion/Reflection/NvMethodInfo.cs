@@ -9,7 +9,7 @@ namespace Diversion.Reflection
     public class NvMethodInfo : NvMemberInfo, IMethodInfo
     {
         private readonly IReadOnlyList<IParameterInfo> _parameters;
-        private readonly IReadOnlyList<IGenericParameterInfo> _genericParameters;
+        private readonly IReadOnlyList<ITypeReference> _genericArguments;
         private readonly IParameterInfo _returnType;
         private readonly bool _isPublic;
         private readonly bool _isStatic;
@@ -25,7 +25,7 @@ namespace Diversion.Reflection
             _isAbstract = method.IsAbstract;
             _isGenericMethod = method.IsGenericMethod;
             _parameters = method.GetParameters().Select(reflectionInfoFactory.GetInfo).ToArray();
-            _genericParameters = method.GetGenericArguments().Select(reflectionInfoFactory.GetReference).Cast<IGenericParameterInfo>().ToArray();
+            _genericArguments = method.GetGenericArguments().Select(reflectionInfoFactory.GetReference).ToArray();
             _returnType = reflectionInfoFactory.GetInfo(method.ReturnParameter);
         }
 
@@ -54,9 +54,9 @@ namespace Diversion.Reflection
             get { return _parameters; }
         }
 
-        public IReadOnlyList<IGenericParameterInfo> GenericParameters
+        public IReadOnlyList<ITypeReference> GenericArguments
         {
-            get { return _genericParameters; }
+            get { return _genericArguments; }
         }
 
         public IParameterInfo ReturnType

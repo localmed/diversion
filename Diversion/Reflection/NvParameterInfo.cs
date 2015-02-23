@@ -31,7 +31,7 @@ namespace Diversion.Reflection
 
         public string Name
         {
-            get;private set;
+            get; private set;
         }
 
         public string Identity

@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 
 namespace Diversion.Reflection
 {
@@ -9,7 +10,7 @@ namespace Diversion.Reflection
         {
             DeclaringType = type.DeclaringType == null ? null : factory.GetReference(type.DeclaringType);
             Namespace = type.Namespace;
-            Name = type.Name;
+            Name = type.IsGenericType && type.Name.Contains('`') ? string.Format("{0}<{1}>", type.Name.Substring(0, type.Name.IndexOf('`')), string.Join(",", type.GetGenericArguments().Select(t => t.IsGenericParameter ? string.Empty : factory.GetReference(t).Identity))) : type.Name;
         }
 
         public string Identity
