@@ -6,7 +6,7 @@ using System.Reflection;
 namespace Diversion.Reflection
 {
     [Serializable]
-    public class NvGenericParameterInfo : NvTypeReference, IGenericParameterInfo
+    class NvGenericParameterInfo : NvTypeReference, IGenericParameterInfo
     {
         public NvGenericParameterInfo(IReflectionInfoFactory reflectionInfoFactory, Type member) : base(reflectionInfoFactory, member)
         {

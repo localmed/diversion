@@ -4,7 +4,7 @@ using System.Reflection;
 namespace Diversion.Reflection
 {
     [Serializable]
-    public class NvFieldInfo : NvMemberInfo, IFieldInfo
+    class NvFieldInfo : NvMemberInfo, IFieldInfo
     {
         private readonly ITypeReference _type;
         private readonly bool _isPublic;

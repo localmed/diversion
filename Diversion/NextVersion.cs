@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Diagnostics.Contracts;
+using System.IO;
 using System.Linq;
+using Diversion.Reflection;
 using Diversion.Triggers;
 
 namespace Diversion
@@ -50,6 +53,7 @@ namespace Diversion
 
         public Version Determine(IAssemblyDiversion diversion)
         {
+            Contract.Requires<ArgumentNullException>(diversion != null, "diversion must not be null.");
             return
                 !Identical(diversion) ?
                     !ShouldIncrementMajor(diversion) ?
@@ -58,6 +62,23 @@ namespace Diversion
                         diversion.Old.Version.IncrementMinor() :
                     diversion.Old.Version.IncrementMajor() :
                 diversion.Old.Version;
+        }
+
+        public Version Determine(IDiversionDiviner diviner, IAssemblyInfo old, IAssemblyInfo @new)
+        {
+            Contract.Requires<ArgumentNullException>(old != null, "old must not be null.");
+            Contract.Requires<ArgumentNullException>(@new != null, "@new must not be null.");
+            return Determine(new AssemblyDiversion(diviner, old, @new));
+        }
+
+        public Version Determine(IReflectionInfoFactory factory, IDiversionDiviner diviner, string oldAssemblyPath, string newAssemblyPath)
+        {
+            Contract.Requires<ArgumentNullException>(factory != null, "factory must not be null.");
+            Contract.Requires<ArgumentNullException>(oldAssemblyPath != null, "oldAssemblyPath must not be null.");
+            Contract.Requires<ArgumentNullException>(newAssemblyPath != null, "newAssemblyPath must not be null.");
+            Contract.Requires<ArgumentException>(File.Exists(oldAssemblyPath), "oldAssemblyPath must exist.");
+            Contract.Requires<ArgumentException>(File.Exists(newAssemblyPath), "newAssemblyPath must exist.");
+            return Determine(diviner, factory.FromFile(oldAssemblyPath), factory.FromFile(newAssemblyPath));
         }
 
         private static bool Identical(IAssemblyDiversion diversion)

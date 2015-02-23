@@ -4,7 +4,7 @@ using System.Linq;
 namespace Diversion.Reflection
 {
     [Serializable]
-    public class NvTypeReference : ITypeReference
+    class NvTypeReference : ITypeReference
     {
         public NvTypeReference(IReflectionInfoFactory factory, Type type)
         {

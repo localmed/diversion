@@ -4,7 +4,7 @@ using System.Reflection;
 namespace Diversion.Reflection
 {
     [Serializable]
-    public class NvEventInfo : NvMemberInfo, IEventInfo
+    class NvEventInfo : NvMemberInfo, IEventInfo
     {
         private readonly ITypeReference _eventHandlerType;
         private readonly bool _isPublic;

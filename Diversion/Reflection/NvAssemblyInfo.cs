@@ -9,7 +9,7 @@ using System.Text.RegularExpressions;
 namespace Diversion.Reflection
 {
     [Serializable]
-    public class NvAssemblyInfo : IAssemblyInfo
+    class NvAssemblyInfo : IAssemblyInfo
     {
         public NvAssemblyInfo(string assemblyPath)
         {

@@ -6,7 +6,7 @@ using System.Reflection;
 namespace Diversion.Reflection
 {
     [Serializable]
-    public class NvConstructorInfo : NvMemberInfo, IConstructorInfo
+    class NvConstructorInfo : NvMemberInfo, IConstructorInfo
     {
         private readonly IReadOnlyList<IParameterInfo> _parameters;
         private readonly bool _isPublic;

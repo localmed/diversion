@@ -3,7 +3,7 @@
 namespace Diversion.Reflection
 {
     [Serializable]
-    public class NvAttributeArgumentInfo : IAttributeArgumentInfo
+    class NvAttributeArgumentInfo : IAttributeArgumentInfo
     {
         private readonly string _name;
         private readonly object _value;

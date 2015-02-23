@@ -6,7 +6,7 @@ using System.Reflection;
 namespace Diversion.Reflection
 {
     [Serializable]
-    public class NvAttributeInfo : IAttributeInfo
+    class NvAttributeInfo : IAttributeInfo
     {
         private readonly ITypeReference _type;
         private readonly IReadOnlyList<IAttributeArgumentInfo> _arguments;

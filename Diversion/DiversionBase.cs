@@ -1,16 +1,15 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 
 namespace Diversion
 {
-    class DiversionImpl<T> : IDiversion<T>
+    public class DiversionBase<T> : IDiversion<T>
     {
         readonly static Lazy<Func<IDiversion<T>, bool>> HasDivergedImpl = new Lazy<Func<IDiversion<T>, bool>>(CompileHasDivergedImpl, true);
 
-        public DiversionImpl(T old, T @new)
+        public DiversionBase(T old, T @new)
         {
             Old = old;
             New = @new;

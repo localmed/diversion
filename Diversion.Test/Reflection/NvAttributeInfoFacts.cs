@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Diversion.Reflection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Should.Fluent;
@@ -26,6 +22,14 @@ namespace Diversion.Test.Reflection
         {
             _factory.GetInfo(typeof (Sample<>).GetCustomAttributesData()[0])
                 .Type.Should().Equal(_factory.GetReference(typeof (DisplayNameAttribute)));
+        }
+
+
+        [TestMethod]
+        public void ArgumentsOfAttributeShouldBeCorrectlySet()
+        {
+            _factory.GetInfo(typeof (Sample<>).GetCustomAttributesData()[0])
+                .Arguments.Should().Contain.One(new NvAttributeArgumentInfo("displayName", "Sample"));
         }
 
         [DisplayName("Sample")]
