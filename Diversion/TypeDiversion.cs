@@ -38,5 +38,6 @@ namespace Diversion
         {
             return _hasDiverged.Value;
         }
+
     }
 }

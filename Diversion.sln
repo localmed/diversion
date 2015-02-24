@@ -21,6 +21,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{890F69AF-3EEC-4948-876A-EBC8D57C6B1C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Diversion.CLI", "Diversion.CLI\Diversion.CLI.csproj", "{CC204C8F-32C3-41C1-B1F2-518FFAF10C93}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -35,6 +37,10 @@ Global
 		{2B271B79-A59A-4A77-9BB8-B8DC67C89574}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2B271B79-A59A-4A77-9BB8-B8DC67C89574}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2B271B79-A59A-4A77-9BB8-B8DC67C89574}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CC204C8F-32C3-41C1-B1F2-518FFAF10C93}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CC204C8F-32C3-41C1-B1F2-518FFAF10C93}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CC204C8F-32C3-41C1-B1F2-518FFAF10C93}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CC204C8F-32C3-41C1-B1F2-518FFAF10C93}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

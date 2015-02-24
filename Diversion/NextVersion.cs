@@ -81,6 +81,11 @@ namespace Diversion
             return Determine(diviner, factory.FromFile(oldAssemblyPath), factory.FromFile(newAssemblyPath));
         }
 
+        public Version Determine(string oldAssemblyPath, string newAssemblyPath)
+        {
+            return Determine(new NvReflectionInfoFactory(), new DiversionDiviner(), oldAssemblyPath, newAssemblyPath);
+        }
+
         private static bool Identical(IAssemblyDiversion diversion)
         {
             return diversion.Old.MD5.SequenceEqual(diversion.New.MD5);
@@ -95,5 +100,6 @@ namespace Diversion
         {
             return _minorTriggers.Any(trigger => trigger.IsTriggered(diversion));
         }
+
     }
 }
