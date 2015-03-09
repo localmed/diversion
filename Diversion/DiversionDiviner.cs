@@ -56,20 +56,11 @@ namespace Diversion
                 Diverged = o.Except(Removed).Zip(n.Except(Added), subdiviner).Where(c => c.HasDiverged()).ToArray();
             }
 
-            public IReadOnlyList<T> Added
-            {
-                get; private set;
-            }
+            public IReadOnlyList<T> Added { get; private set; }
 
-            public IReadOnlyList<T> Removed
-            {
-                get;private set;
-            }
+            public IReadOnlyList<T> Removed { get; private set; }
 
-            public IReadOnlyList<TC> Diverged
-            {
-                get;private set;
-            }
+            public IReadOnlyList<TC> Diverged { get; private set; }
         }
 
         private class DiversionsImpl<T> : DiversionsImpl<T, IDiversion<T>>, IDiversions<T>

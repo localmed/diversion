@@ -3,7 +3,7 @@ using Diversion.Reflection;
 
 namespace Diversion
 {
-    public class AssemblyDiversion : DiversionBase<IAssemblyInfo>, IAssemblyDiversion
+    class AssemblyDiversion : DiversionBase<IAssemblyInfo>, IAssemblyDiversion
     {
         private readonly Lazy<IDiversions<ITypeInfo, ITypeDiversion>> _typeDiversions;
         private readonly Lazy<ICollectionDiversions<IAttributeInfo>> _attributeDiversions;

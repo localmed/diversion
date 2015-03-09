@@ -8,7 +8,7 @@ namespace Diversion.Reflection
         string Name { get; }
         Version Version { get; }
         Version FrameworkVersion { get; }
-        byte[] MD5 { get; }
+        byte[] Hash { get; }
         IReadOnlyList<ITypeInfo> Types { get; }
     }
 }

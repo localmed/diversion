@@ -13,14 +13,24 @@ namespace Diversion.Reflection
     {
         public NvAssemblyInfo(string assemblyPath)
         {
-            MD5 = System.Security.Cryptography.MD5.Create().ComputeHash(File.ReadAllBytes(assemblyPath));
+            Hash = System.Security.Cryptography.MD5.Create().ComputeHash(File.ReadAllBytes(assemblyPath));
             var assembly = Assembly.LoadFrom(assemblyPath);
             var reflectionInfoFactory = new NvReflectionInfoFactory();
             Name = assembly.FullName;
             Attributes = assembly.GetCustomAttributesData().Select(reflectionInfoFactory.GetInfo).ToArray();
-            Version = Attributes.Where(attr => Equals(attr.Type, reflectionInfoFactory.GetReference(typeof(AssemblyInformationalVersionAttribute)))).Select(attr => new Version((string)attr.Arguments[0].Value)).FirstOrDefault() ?? assembly.GetName().Version;
+
+            Version = Attributes.Where(attr => Equals(attr.Type, reflectionInfoFactory.GetReference(typeof(AssemblyInformationalVersionAttribute)))).Select(
+                attr =>
+                {
+                    var match = Regex.Match((string) attr.Arguments[0].Value, @"([0-9]+\.[0-9]+\.[0-9]+).?");
+                    return match.Success ? new Version(match.Result("$1")) : null;
+                }).FirstOrDefault() ?? assembly.GetName().Version;
             FrameworkVersion = Attributes.Where(attr => Equals(attr.Type, reflectionInfoFactory.GetReference(typeof(TargetFrameworkAttribute)))).Select(
-                        attr => new Version(Regex.Match((string)attr.Arguments[0].Value, @"\.NETFramework,Version=v(.*)").Result("$1"))).FirstOrDefault() ?? new Version(assembly.ImageRuntimeVersion);
+                attr =>
+                {
+                    var match = Regex.Match((string) attr.Arguments[0].Value, @"\.NETFramework,Version=v(.*)");
+                    return match.Success ? new Version(match.Result("$1")) : null;
+                }).FirstOrDefault() ?? new Version(assembly.ImageRuntimeVersion.Substring(1));
             Types = assembly.GetExportedTypes().AsParallel().Select(reflectionInfoFactory.GetInfo).ToArray();
         }
 
@@ -30,7 +40,7 @@ namespace Diversion.Reflection
 
         public Version FrameworkVersion { get; private set; }
 
-        public byte[] MD5 { get; private set; }
+        public byte[] Hash { get; private set; }
 
         public IReadOnlyList<ITypeInfo> Types { get; private set; }
 

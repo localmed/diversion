@@ -21,8 +21,8 @@ namespace Diversion.Test
         public void GivenTheNewlyBuiltAssemblyIsIdenticalToTheReleasedAssembly()
         {
             ReleaseToBuild = Mock.Of<IAssemblyDiversion>(ac =>
-                ac.New == Mock.Of<IAssemblyInfo>(obj => obj.MD5 == new byte[] { 0 }) &&
-                ac.Old == Mock.Of<IAssemblyInfo>(obj => obj.MD5 == new byte[] { 0 }));
+                ac.New == Mock.Of<IAssemblyInfo>(obj => obj.Hash == new byte[] { 0 }) &&
+                ac.Old == Mock.Of<IAssemblyInfo>(obj => obj.Hash == new byte[] { 0 }));
         }
 
         [Given(@"the currently released assembly version number is (.*)\.(.*)\.(.*)")]
@@ -35,8 +35,8 @@ namespace Diversion.Test
         public void GivenTheNewlyBuiltAssemblyIsNotIdenticalToTheReleasedAssembly()
         {
             ReleaseToBuild = Mock.Of<IAssemblyDiversion>(ac =>
-                ac.New == Mock.Of<IAssemblyInfo>(obj => obj.MD5 == new byte[] { 0 }) &&
-                ac.Old == Mock.Of<IAssemblyInfo>(obj => obj.MD5 == new byte[] { 1 }));
+                ac.New == Mock.Of<IAssemblyInfo>(obj => obj.Hash == new byte[] { 0 }) &&
+                ac.Old == Mock.Of<IAssemblyInfo>(obj => obj.Hash == new byte[] { 1 }));
         }
 
         [Given(@"NextVersion has been initialized with major and minor version triggers that never trigger")]
