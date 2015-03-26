@@ -22,10 +22,10 @@ namespace Diversion
 
         public IAssemblyDiversion Divine(string oldAssemblyLocation, string newAssemblyLocation)
         {
-            Contract.Requires<ArgumentNullException>(oldAssemblyLocation != null, "oldAssemblyPath must not be null.");
-            Contract.Requires<ArgumentNullException>(newAssemblyLocation != null, "newAssemblyPath must not be null.");
-            Contract.Requires<ArgumentException>(File.Exists(oldAssemblyLocation), "oldAssemblyPath must exist.");
-            Contract.Requires<ArgumentException>(File.Exists(newAssemblyLocation), "newAssemblyPath must exist.");
+            //Contract.Requires<ArgumentNullException>(oldAssemblyLocation != null, "oldAssemblyPath must not be null.");
+            //Contract.Requires<ArgumentNullException>(newAssemblyLocation != null, "newAssemblyPath must not be null.");
+            //Contract.Requires<ArgumentException>(File.Exists(oldAssemblyLocation), "oldAssemblyPath must exist.");
+            //Contract.Requires<ArgumentException>(File.Exists(newAssemblyLocation), "newAssemblyPath must exist.");
             return new AssemblyDiversion(_diviner, _reflectionInfoFactory.FromFile(oldAssemblyLocation), _reflectionInfoFactory.FromFile(newAssemblyLocation));
         }
     }

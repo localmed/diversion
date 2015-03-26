@@ -8,5 +8,6 @@
     <owners>$author$</owners>
     <description>$description$</description>
     <copyright>$copyright$</copyright>
+    <tags>NuGet, SemVer, Semantic, Version, Git, Build, Diversion, CI, Release, Deployment</tags>
   </metadata>
 </package>

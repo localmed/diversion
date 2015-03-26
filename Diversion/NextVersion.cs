@@ -56,7 +56,7 @@ namespace Diversion
 
         public Version Determine(IAssemblyDiversion diversion)
         {
-            Contract.Requires<ArgumentNullException>(diversion != null, "diversion must not be null.");
+            //Contract.Requires<ArgumentNullException>(diversion != null, "diversion must not be null.");
             return
                 !Identical(diversion) ?
                     !ShouldIncrementMajor(diversion) ?
