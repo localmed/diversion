@@ -23,6 +23,9 @@ namespace Diversion.CLI
                     CmdLine.CommandLine.WriteLineColor(ConsoleColor.Red, "A valid target could not be found in the working directory.");
                     return;
                 }
+                options.ProjectDirectory = Path.GetDirectoryName(options.Target);
+                options.WorkingDirectory = Path.Combine(options.ProjectDirectory, ".diversion");
+                options.AssemblyInfoFile = Path.Combine(options.ProjectDirectory, options.AssemblyInfoFile);
                 if (!Regex.IsMatch(options.Target, ".*(.dll|.exe)$"))
                     BuildTarget(options);
                 switch (options.ReleaseSource)
@@ -87,8 +90,6 @@ namespace Diversion.CLI
         private static void BuildTarget(Options options)
         {
             Console.WriteLine("Building the target project...");
-            options.ProjectDirectory = Path.GetDirectoryName(options.Target);
-            options.SolutionDirectory = Path.GetDirectoryName(options.ProjectDirectory);
             options.Target = BuildProject(options.Target, options.BuildProperties);
         }
 
@@ -116,13 +117,6 @@ namespace Diversion.CLI
             return projectFile == null ? null : projectFile.FullName;
         }
 
-        private static string GetDiversionWorkingDirectory()
-        {
-            string working = Path.Combine(Environment.CurrentDirectory, ".diversion");
-            if (!Directory.Exists(working))
-                Directory.CreateDirectory(working);
-            return working;
-        }
 
         private static bool GetReleaseUsingGit(Options options)
         {
@@ -130,7 +124,7 @@ namespace Diversion.CLI
             try
             {
                 CloneRemoteReleaseBranch(options);
-                string projectFile = GetProjectFilePath(Path.Combine(Environment.CurrentDirectory, ".diversion", "repo", Path.Combine(options.ProjectDirectory.Split(Path.DirectorySeparatorChar).Skip(options.SolutionDirectory.Split(Path.DirectorySeparatorChar).Length).ToArray())));
+                string projectFile = GetProjectFilePath(Path.Combine(options.WorkingDirectory, "repo", Path.Combine(options.ProjectDirectory.Split(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar).Skip(GetLocalGitRepository(options.GitPath).Split(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar).Length).ToArray())));
                 options.ReleasedPath = BuildProject(projectFile, options.BuildProperties);
                 return true;
             }
@@ -142,17 +136,18 @@ namespace Diversion.CLI
 
         private static bool GetReleaseUsingNuGet(Options options)
         {
-            string working = GetDiversionWorkingDirectory();
+            if (!Directory.Exists(options.WorkingDirectory))
+                Directory.CreateDirectory(options.WorkingDirectory);
             options.NuGetPackageId = options.NuGetPackageId ?? Path.GetFileNameWithoutExtension(options.Target);
 
-            if (!IsNuGetAvailable(working))
+            if (!IsNuGetAvailable(options.WorkingDirectory))
                 return false;
 
             Console.WriteLine("Attempting to download the last deployed release from nuget...");
 
-            string packages = Path.Combine(working, "packages");
-            string references = Path.Combine(working, "references");
-            string nuget = Path.Combine(working, "nuget.exe");
+            string packages = Path.Combine(options.WorkingDirectory, "packages");
+            string references = Path.Combine(options.WorkingDirectory, "references");
+            string nuget = Path.Combine(options.WorkingDirectory, "nuget.exe");
             if (!Directory.Exists(packages))
                 Directory.CreateDirectory(packages);
             if (!Directory.Exists(references))
@@ -215,8 +210,8 @@ namespace Diversion.CLI
 
         private static void CloneRemoteReleaseBranch(Options options)
         {
-            if (Directory.Exists(Path.Combine(Environment.CurrentDirectory, ".diversion", "repo")))
-                DeleteReadOnlyDirectory(Path.Combine(Environment.CurrentDirectory, ".diversion", "repo"));
+            if (Directory.Exists(Path.Combine(options.WorkingDirectory, "repo")))
+                DeleteReadOnlyDirectory(Path.Combine(options.WorkingDirectory, "repo"));
             options.GitRepository = options.GitReleaseBranch.Contains("/") ? GetGitRepositoryFromRemote(options.GitPath, options.GitReleaseBranch.Substring(0, options.GitReleaseBranch.IndexOf("/"))) : GetLocalGitRepository(options.GitPath);
             options.GitReleaseBranch = options.GitReleaseBranch.Substring(options.GitReleaseBranch.IndexOf("/") + 1);
             ExecuteCommand(options.GitPath, string.Format("clone -b {0} --depth 1 --single-branch {1} \".diversion/repo\"", options.GitReleaseBranch, options.GitRepository));
@@ -251,7 +246,7 @@ namespace Diversion.CLI
             string output;
             string error;
             if (ExecuteCommand(git, "rev-parse --show-toplevel", out output, out error))
-                return output;
+                return output + ".git";
             throw new ApplicationException(error);
         }
     }

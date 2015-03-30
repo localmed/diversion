@@ -39,8 +39,8 @@ namespace Diversion.CLI
         [CmdLine.CommandLineParameter(Command = "NuGetPackageVersion", Name = "NuGetPackageVersion", Description = "The nuget package version of the package that contains the released assembly.")]
         public string NuGetPackageVersion { get; set; }
 
-        internal string SolutionDirectory { get; set; }
-
         internal string ProjectDirectory { get; set; }
+
+        internal string WorkingDirectory { get; set; }
     }
 }
