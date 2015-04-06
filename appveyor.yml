@@ -6,11 +6,14 @@ before_build:
 build:
   verbosity: minimal
 after_build:
+- mkdir .artifacts
 - cd Diversion
 - nuget pack -p Configuration=Release -OutputDirectory ..\.artifacts
 - cd ..\Diversion.CLI
 - nuget pack -p Configuration=Release -Tool -OutputDirectory ..\.artifacts
 - cd ..
+artifacts:
+- path: .artifacts\*.nupkg
 deploy:
 - provider: NuGet
   server: http://nuget.localmed.org/api/v2
