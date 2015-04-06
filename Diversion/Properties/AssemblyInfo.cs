@@ -25,7 +25,7 @@ using System.Runtime.InteropServices;
 
 [assembly: CLSCompliant(true)]
 
-[assembly: AssemblyInformationalVersion("0.0.3")]
-[assembly: AssemblyVersion("0.0.3")]
+[assembly: AssemblyInformationalVersion("0.10.0")]
+[assembly: AssemblyVersion("0.10.0")]
 
 [assembly: InternalsVisibleTo("Diversion.Test")]
