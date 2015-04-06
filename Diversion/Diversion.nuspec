@@ -4,7 +4,7 @@
     <id>Diversion</id>
     <version>$version$</version>
     <title>$title$</title>
-    <authors>Michael Melancon</authors>
+    <authors>$author$</authors>
     <owners>$author$</owners>
     <description>$description$</description>
     <copyright>$copyright$</copyright>
