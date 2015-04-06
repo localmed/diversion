@@ -7,9 +7,9 @@ build:
   verbosity: minimal
 after_build:
 - cd Diversion
-- nuget pack -p Configuration=Release -OutputDirectory {temp_path}
+- nuget pack -p Configuration=Release -OutputDirectory <temp_path>
 - cd ..\Diversion.CLI
-- nuget pack -p Configuration=Release -Tool -OutputDirectory {temp_path}
+- nuget pack -p Configuration=Release -Tool -OutputDirectory <temp_path>
 - cd ..
 deploy:
 - provider: NuGet
