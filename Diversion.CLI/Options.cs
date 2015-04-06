@@ -1,3 +1,5 @@
+using System;
+
 namespace Diversion.CLI
 {
     [CmdLine.CommandLineArguments(Program = "diver.exe", Title = "Diversion.CLI", Description= "A tool for assigning the correct semantic version of an assembly based on its diversion from the last deployed release.")] 
@@ -38,6 +40,11 @@ namespace Diversion.CLI
 
         [CmdLine.CommandLineParameter(Command = "NuGetPackageVersion", Name = "NuGetPackageVersion", Description = "The nuget package version of the package that contains the released assembly.")]
         public string NuGetPackageVersion { get; set; }
+
+        [CmdLine.CommandLineParameter(Command = "Verbosity", Name = "Verbosity", Description = "Amount of detail to output. Choices are Silent | Minimal | Normal | Verbose. ", Default = "Normal")]
+        public string Verbosity { get; set; }
+
+        internal Verbosity VerbosityLevel { get { return (Verbosity) Enum.Parse(typeof (Verbosity), Verbosity); } }
 
         internal string ProjectDirectory { get; set; }
 

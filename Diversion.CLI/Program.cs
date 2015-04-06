@@ -20,7 +20,7 @@ namespace Diversion.CLI
                 options.Target = options.Target ?? GetProjectFilePath(Environment.CurrentDirectory);
                 if (options.Target == null)
                 {
-                    CmdLine.CommandLine.WriteLineColor(ConsoleColor.Red, "A valid target could not be found in the working directory.");
+                    WriteLine(options, Verbosity.Silent, ConsoleColor.Red, "A valid target could not be found in the working directory.");
                     return;
                 }
                 options.ProjectDirectory = Path.GetDirectoryName(options.Target);
@@ -44,52 +44,57 @@ namespace Diversion.CLI
                 if (options.ReleasedPath != null)
                     DivineDiversion(options);
                 else
-                    CmdLine.CommandLine.WriteLineColor(ConsoleColor.Red, "Could not acquire the last deployed release.");
+                    WriteLine(options, Verbosity.Silent, ConsoleColor.Red, "Could not acquire the last deployed release.");
             }
             catch (CmdLine.CommandLineException exception)
             {
                 Console.WriteLine(exception.ArgumentHelp.Message);
-                Console.WriteLine(exception.ArgumentHelp.GetHelpText(Console.BufferWidth));
+                Console.WriteLine(exception.ArgumentHelp.GetHelpText(Console.BufferWidth).Replace('/', '-'));
             }
 
 #if DEBUG
             CmdLine.CommandLine.Pause();
 #endif
-            return;
         }
 
         private static void DivineDiversion(Options options)
         {
             try
             {
-                Console.WriteLine("Divining the semantic version of the target assembly based on its diversion from the last deployed release...");
+                WriteLine(options, Verbosity.Normal, ConsoleColor.White, "Divining the semantic version of the target assembly based on its diversion from the last deployed release...");
                 var diversion = new AssemblyDiversionDiviner().Divine(options.ReleasedPath, options.Target);
                 var version = new NextVersion().Determine(diversion);
                 if (version > diversion.New.Version)
                     if (!options.Correct)
                     {
-                        CmdLine.CommandLine.WriteLineColor(ConsoleColor.DarkRed, "v{0} [Currently v{1}]", version, diversion.New.Version);
+                        WriteLine(options, Verbosity.Minimal, ConsoleColor.DarkRed, "{0} [Currently {1}]", version, diversion.New.Version);
                     }
                     else
                     {
-                        Console.WriteLine("Updating the assembly info in the target project...");
+                        WriteLine(options, Verbosity.Normal, ConsoleColor.White, "Updating the assembly info in the target project...");
                         File.WriteAllText(options.AssemblyInfoFile, string.Format(Regex.Replace(File.ReadAllText(options.AssemblyInfoFile), "(Assembly(?:File|Informational)?Version)\\s*\\(\\s*\"([0-9.]*)\"\\s*\\)", "$1(\"{0}\")"), version));
-                        CmdLine.CommandLine.WriteLineColor(ConsoleColor.DarkCyan, "v{0} [Was v{1}]", version, diversion.New.Version);
+                        WriteLine(options, Verbosity.Minimal, ConsoleColor.DarkCyan, "{0} [Was {1}]", version, diversion.New.Version);
                     }
                 else if (version == diversion.New.Version)
-                    CmdLine.CommandLine.WriteLineColor(ConsoleColor.Green, "v{0}", version);
+                    WriteLine(options, Verbosity.Minimal, ConsoleColor.Green, "{0}", version);
                 else
-                    CmdLine.CommandLine.WriteLineColor(ConsoleColor.DarkGreen, "v{0} [Determined v{1}]", diversion.New.Version, version);
+                    WriteLine(options, Verbosity.Minimal, ConsoleColor.DarkGreen, "{0} [Determined {1}]", diversion.New.Version, version);
             }
             catch (Exception e)
             {
-                CmdLine.CommandLine.WriteLineColor(ConsoleColor.Red, e.Message);
+                WriteLine(options, Verbosity.Silent, ConsoleColor.Red, e.Message);
             }
+        }
+
+        private static void WriteLine(Options options, Verbosity level, ConsoleColor color, string format, params object[] formatArgs)
+        {
+            if (options.VerbosityLevel >= level)
+                CmdLine.CommandLine.WriteLineColor(color, format, formatArgs);
         }
 
         private static void BuildTarget(Options options)
         {
-            Console.WriteLine("Building the target project...");
+            WriteLine(options, Verbosity.Normal, ConsoleColor.White, "Building the target project...");
             options.Target = BuildProject(options.Target, options.BuildProperties);
         }
 
@@ -120,7 +125,7 @@ namespace Diversion.CLI
 
         private static bool GetReleaseUsingGit(Options options)
         {
-            Console.WriteLine("Attempting to rebuild the last deployed release from git repository...");
+            WriteLine(options, Verbosity.Normal, ConsoleColor.White, "Attempting to rebuild the last deployed release from git repository...");
             try
             {
                 CloneRemoteReleaseBranch(options);
@@ -140,10 +145,10 @@ namespace Diversion.CLI
                 Directory.CreateDirectory(options.WorkingDirectory);
             options.NuGetPackageId = options.NuGetPackageId ?? Path.GetFileNameWithoutExtension(options.Target);
 
-            if (!IsNuGetAvailable(options.WorkingDirectory))
+            if (!IsNuGetAvailable(options))
                 return false;
 
-            Console.WriteLine("Attempting to download the last deployed release from nuget...");
+            WriteLine(options, Verbosity.Normal, ConsoleColor.White, "Attempting to download the last deployed release from nuget...");
 
             string packages = Path.Combine(options.WorkingDirectory, "packages");
             string references = Path.Combine(options.WorkingDirectory, "references");
@@ -189,15 +194,15 @@ namespace Diversion.CLI
             return process.ExitCode == 0;
         }
 
-        private static bool IsNuGetAvailable(string path)
+        private static bool IsNuGetAvailable(Options options)
         {
-            string nugetPath = Path.Combine(path, "nuget.exe");
+            string nugetPath = Path.Combine(options.WorkingDirectory, "nuget.exe");
             if (File.Exists(nugetPath))
                 return true;
             try
             {
-                Console.WriteLine("Downloading latest version of nuget.exe...");
-                new WebClient().DownloadFile("https://www.nuget.org/nuget.exe", Path.Combine(path, "nuget.exe"));
+                WriteLine(options, Verbosity.Normal, ConsoleColor.White, "Downloading latest version of nuget.exe...");
+                new WebClient().DownloadFile("https://www.nuget.org/nuget.exe", nugetPath);
                 return true;
             }
             catch (Exception ex)
@@ -249,5 +254,13 @@ namespace Diversion.CLI
                 return output + ".git";
             throw new ApplicationException(error);
         }
+    }
+
+    enum Verbosity
+    {
+        Silent,
+        Minimal,
+        Normal,
+        Verbose
     }
 }
