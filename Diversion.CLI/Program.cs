@@ -17,7 +17,7 @@ namespace Diversion.CLI
             try
             {
                 var options = CmdLine.CommandLine.Parse<Options>();
-                options.Target = options.Target ?? GetProjectFilePath(Environment.CurrentDirectory);
+                options.Target = options.Target ?? FindProjectFilePath(Environment.CurrentDirectory);
                 if (options.Target == null)
                 {
                     WriteLine(options, Verbosity.Silent, ConsoleColor.Red, "A valid target could not be found in the working directory.");
@@ -88,7 +88,7 @@ namespace Diversion.CLI
 
         private static void WriteLine(Options options, Verbosity level, ConsoleColor color, string format, params object[] formatArgs)
         {
-            if (options.VerbosityLevel >= level)
+            if (options.Verbosity >= level)
                 CmdLine.CommandLine.WriteLineColor(color, format, formatArgs);
         }
 
@@ -114,22 +114,49 @@ namespace Diversion.CLI
                 .ToDictionary(property => property[0].Trim(), property => property[1].Trim());
         }
 
-        private static string GetProjectFilePath(string path)
+        private static string FindProjectFilePath(string path)
         {
-            string[] projectExtensions = new[] { ".csproj", ".vbproj", ".proj" };
-            var projectFile = Directory.EnumerateFiles(path).Select(file => new FileInfo(file)).FirstOrDefault(file => file.Name.Equals(file.Directory.Name) && projectExtensions.Contains(file.Extension)) ??
-                Directory.EnumerateFiles(path).Select(file => new FileInfo(file)).FirstOrDefault(file => projectExtensions.Contains(file.Extension));
+            return FindContainerFilePath(path, new[] { ".csproj", ".vbproj", ".proj" });
+        }
+
+        private static string FindContainerFilePath(string path, string[] extensions)
+        {
+            var projectFile =
+                Directory.EnumerateFiles(path)
+                    .Select(file => new FileInfo(file))
+                    .FirstOrDefault(file => file.Name.Equals(file.Directory.Name) && extensions.Contains(file.Extension)) ??
+                Directory.EnumerateFiles(path)
+                    .Select(file => new FileInfo(file))
+                    .FirstOrDefault(file => extensions.Contains(file.Extension));
             return projectFile == null ? null : projectFile.FullName;
         }
 
+        private static string FindSolutionFilePath(string path)
+        {
+            return FindContainerFilePath(path, new[] {".sln"});
+        }
 
         private static bool GetReleaseUsingGit(Options options)
         {
+            if (!IsCommandAvailable("git.exe"))
+            {
+                WriteLine(options, Verbosity.Minimal, ConsoleColor.Red,  "git.exe is not available.");
+                return false;
+            }
             WriteLine(options, Verbosity.Normal, ConsoleColor.White, "Attempting to rebuild the last deployed release from git repository...");
             try
             {
                 CloneRemoteReleaseBranch(options);
-                string projectFile = GetProjectFilePath(Path.Combine(options.WorkingDirectory, "repo", Path.Combine(options.ProjectDirectory.Split(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar).Skip(GetLocalGitRepository(options.GitPath).Split(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar).Length).ToArray())));
+                if (IsNuGetAvailable(options))
+                {
+                    string output, error;
+                    ExecuteCommand("nuget", string.Format("restore \"{0}\"",  FindSolutionFilePath(Path.Combine(options.WorkingDirectory, "repo"))), out output, out error);
+                    if (!string.IsNullOrWhiteSpace(output))
+                        WriteLine(options, Verbosity.Normal, ConsoleColor.White, output);
+                    if (!string.IsNullOrWhiteSpace(error))
+                        WriteLine(options, Verbosity.Minimal, ConsoleColor.Red, error);
+                }
+                string projectFile = FindProjectFilePath(Path.Combine(options.WorkingDirectory, "repo", Path.Combine(options.ProjectDirectory.Split(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar).Skip(GetLocalGitRepository().Split(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar).Length).ToArray())));
                 options.ReleasedPath = BuildProject(projectFile, options.BuildProperties);
                 return true;
             }
@@ -152,7 +179,6 @@ namespace Diversion.CLI
 
             string packages = Path.Combine(options.WorkingDirectory, "packages");
             string references = Path.Combine(options.WorkingDirectory, "references");
-            string nuget = Path.Combine(options.WorkingDirectory, "nuget.exe");
             if (!Directory.Exists(packages))
                 Directory.CreateDirectory(packages);
             if (!Directory.Exists(references))
@@ -160,13 +186,27 @@ namespace Diversion.CLI
             var argBuilder = new StringBuilder();
             argBuilder.AppendFormat("install -OutputDirectory \"{0}\" ", packages);
             argBuilder.AppendFormat("{0} {1}", options.NuGetPackageId, options.NuGetPackageVersion);
-            ExecuteCommand(nuget, argBuilder.ToString());
+            ExecuteCommand("nuget", argBuilder.ToString());
 
-            foreach (string assembly in Directory.EnumerateDirectories(packages).Select(path => Path.Combine(path, "lib")).Where(Directory.Exists).SelectMany(path => Directory.EnumerateFiles(path, "*.dll", SearchOption.AllDirectories).Concat(Directory.EnumerateFiles(path, "*.exe", SearchOption.AllDirectories))))
+            foreach (string assembly in AssembliesInPackages(packages))
                 File.Copy(assembly, Path.Combine(references, Path.GetFileName(assembly)), true);
             if (File.Exists(Path.Combine(references, Path.GetFileName(options.Target))))
                 options.ReleasedPath = Path.Combine(references, Path.GetFileName(options.Target));
             return options.ReleasedPath != null;
+        }
+
+        private static IEnumerable<string> AssembliesInPackages(string packages)
+        {
+            return Directory.EnumerateDirectories(packages).Select(path => Path.Combine(path, "lib"))
+                .Where(Directory.Exists).SelectMany(
+                    path => Directory.EnumerateFiles(path, "*.dll", SearchOption.AllDirectories)
+                        .Concat(Directory.EnumerateFiles(path, "*.exe", SearchOption.AllDirectories)));
+        }
+
+        private static bool IsCommandAvailable(string cmd)
+        {
+            return Environment.ExpandEnvironmentVariables(Environment.GetEnvironmentVariable("Path") ?? string.Empty).Split(';')
+                .Any(path => File.Exists(Path.Combine(path, cmd)));
         }
 
         private static bool ExecuteCommand(string cmd, string args)
@@ -196,6 +236,8 @@ namespace Diversion.CLI
 
         private static bool IsNuGetAvailable(Options options)
         {
+            if (IsCommandAvailable("nuget.exe"))
+                return true;
             string nugetPath = Path.Combine(options.WorkingDirectory, "nuget.exe");
             if (File.Exists(nugetPath))
                 return true;
@@ -203,6 +245,7 @@ namespace Diversion.CLI
             {
                 WriteLine(options, Verbosity.Normal, ConsoleColor.White, "Downloading latest version of nuget.exe...");
                 new WebClient().DownloadFile("https://www.nuget.org/nuget.exe", nugetPath);
+                Environment.SetEnvironmentVariable("Path", Environment.GetEnvironmentVariable("Path") + ";" + options.WorkingDirectory);
                 return true;
             }
             catch (Exception ex)
@@ -212,14 +255,13 @@ namespace Diversion.CLI
             }
         }
 
-
         private static void CloneRemoteReleaseBranch(Options options)
         {
             if (Directory.Exists(Path.Combine(options.WorkingDirectory, "repo")))
                 DeleteReadOnlyDirectory(Path.Combine(options.WorkingDirectory, "repo"));
-            options.GitRepository = options.GitReleaseBranch.Contains("/") ? GetGitRepositoryFromRemote(options.GitPath, options.GitReleaseBranch.Substring(0, options.GitReleaseBranch.IndexOf("/"))) : GetLocalGitRepository(options.GitPath);
+            options.GitRepository = options.GitReleaseBranch.Contains("/") ? GetGitRepositoryFromRemote(options.GitReleaseBranch.Substring(0, options.GitReleaseBranch.IndexOf("/"))) : GetLocalGitRepository();
             options.GitReleaseBranch = options.GitReleaseBranch.Substring(options.GitReleaseBranch.IndexOf("/") + 1);
-            ExecuteCommand(options.GitPath, string.Format("clone -b {0} --depth 1 --single-branch {1} \".diversion/repo\"", options.GitReleaseBranch, options.GitRepository));
+            ExecuteCommand("git", string.Format("clone -b {0} --depth 1 --single-branch {1} \".diversion/repo\"", options.GitReleaseBranch, options.GitRepository));
         }
 
         private static void DeleteReadOnlyDirectory(string directory)
@@ -237,30 +279,22 @@ namespace Diversion.CLI
             Directory.Delete(directory);
         }
 
-        private static string GetGitRepositoryFromRemote(string git, string remote)
+        private static string GetGitRepositoryFromRemote(string remote)
         {
             string output;
             string error;
-            if (ExecuteCommand(git, string.Format("remote show -n {0}", remote), out output, out error))
+            if (ExecuteCommand("git", string.Format("remote show -n {0}", remote), out output, out error))
                 return Regex.Match(output, "Fetch URL: (.*)").Groups[1].Value;
             throw new ApplicationException(error);
         }
 
-        private static string GetLocalGitRepository(string git)
+        private static string GetLocalGitRepository()
         {
             string output;
             string error;
-            if (ExecuteCommand(git, "rev-parse --show-toplevel", out output, out error))
+            if (ExecuteCommand("git", "rev-parse --show-toplevel", out output, out error))
                 return output + ".git";
             throw new ApplicationException(error);
         }
-    }
-
-    enum Verbosity
-    {
-        Silent,
-        Minimal,
-        Normal,
-        Verbose
     }
 }

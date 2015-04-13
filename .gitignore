@@ -192,4 +192,4 @@ ModelManifest.xml
 .diversion/
 
 # NuGet packing directory
-.build/
+.artifacts/
