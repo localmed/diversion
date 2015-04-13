@@ -17,11 +17,11 @@ namespace Diversion.CLI
         [CmdLine.CommandLineParameter(Command = "c", Name = "Correct", Description = "Update the assembly versions in AssemblyInfo file to the calculated semantic version.", Default = false)]
         public bool Correct { get; set; }
 
-        [CmdLine.CommandLineParameter(Command = "a", Name = "AssemblyInfoFile", Description = "The path to the file that contains the assembly version attributes.", Default = "Properties\\AssemblyInfo.cs")]
+        [CmdLine.CommandLineParameter(Command = "a", Name = "AssemblyInfoFile", Description = "The path to the file that contains the assembly version attributes.", Default = @"Properties\AssemblyInfo.cs")]
         public string AssemblyInfoFile { get; set; }
 
-        [CmdLine.CommandLineParameter(Command = "s", Name = "ReleaseSource", Description = "The method for retrieving the released version of the assembly. Choices are Auto | NuGet | Git.", Default = CLI.ReleaseSource.Auto)]
-        public string ReleaseSource { get; set; }
+        [CmdLine.CommandLineParameter(Command = "s", Name = "ReleaseSource", Description = "The method for retrieving the released version of the assembly. Choices are Auto | NuGet | Git.", Default = "Auto")]
+        public string ReleaseSourceText { get; set; }
 
         [CmdLine.CommandLineParameter(Command = "r", Name = "ReleasedPath", Description = "The path to the released assembly, set this in lieu of using nuget or git to retrieve the last deployed release.")]
         public string ReleasedPath { get; set; }
@@ -32,19 +32,31 @@ namespace Diversion.CLI
         [CmdLine.CommandLineParameter(Command = "GitRepository", Name = "GitRepository", Description = "The git repository to use when rebuilding the released assembly.")]
         public string GitRepository { get; internal set; }
 
-        [CmdLine.CommandLineParameter(Command = "GitPath", Name = "GitPath", Default = "git", Description = "The path to the git executable.")]
-        public string GitPath { get; set; }
-
         [CmdLine.CommandLineParameter(Command = "NuGetPackageId", Name = "NuGetPackageId", Description = "The nuget package id of the package that contains the released assembly.")]
         public string NuGetPackageId { get; set; }
 
         [CmdLine.CommandLineParameter(Command = "NuGetPackageVersion", Name = "NuGetPackageVersion", Description = "The nuget package version of the package that contains the released assembly.")]
         public string NuGetPackageVersion { get; set; }
 
-        [CmdLine.CommandLineParameter(Command = "Verbosity", Name = "Verbosity", Description = "Amount of detail to output. Choices are Silent | Minimal | Normal | Verbose. ", Default = "Normal")]
-        public string Verbosity { get; set; }
+        [CmdLine.CommandLineParameter(Command = "Verbosity", Name = "Verbosity", Description = "Amount of detail to output. Choices are Silent | Minimal | Normal | Detailed. ", Default = "Normal")]
+        public string VerbosityText { get; set; }
 
-        internal Verbosity VerbosityLevel { get { return (Verbosity) Enum.Parse(typeof (Verbosity), Verbosity); } }
+        public Verbosity Verbosity {
+            get
+            {
+                Verbosity value;
+                return Enum.TryParse(VerbosityText, true, out value) ? value : Verbosity.Normal;
+            }
+        }
+
+        public ReleaseSource ReleaseSource
+        {
+            get
+            {
+                ReleaseSource value;
+                return Enum.TryParse(ReleaseSourceText, true, out value) ? value : ReleaseSource.Auto;
+            }
+        }
 
         internal string ProjectDirectory { get; set; }
 

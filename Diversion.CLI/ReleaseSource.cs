@@ -1,9 +1,9 @@
 namespace Diversion.CLI
 {
-    static class ReleaseSource
+    enum ReleaseSource
     {
-        public const string Auto = "Auto";
-        public const string NuGet = "NuGet";
-        public const string Git = "Git";
+        Auto,
+        NuGet,
+        Git
     }
 }

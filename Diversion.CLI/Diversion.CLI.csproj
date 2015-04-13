@@ -53,6 +53,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ReleaseSource.cs" />
+    <Compile Include="Verbosity.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Diversion.CLI.nuspec">
@@ -71,7 +72,7 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>move /Y diver.exe Diversion.CLI.exe
-$(SolutionDir)packages\ILMerge.Tools.2.14.1208\tools\ILMerge /out:diver.exe Diversion.CLI.exe Diversion.dll CmdLine.dll</PostBuildEvent>
+$(ProjectDir)..\packages\ILMerge.Tools.2.14.1208\tools\ILMerge /out:diver.exe Diversion.CLI.exe Diversion.dll CmdLine.dll</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
