@@ -1,6 +1,12 @@
 version: 1.0.{build}
 configuration: Release
 clone_depth: 2
+environment:
+  nuget_user: localmed
+  nuget_password:
+    secure: 2rbqdU+Xk3dgYQajqCrcWK1dOgTwnwBiJqNA2xMr7tQ=
+install:
+- cmd: nuget sources add -Name localmed -Source https://www.myget.org/F/localmed/api/v3/index.json -UserName %nuget_user% -Password %nuget_password%
 before_build:
 - cmd: nuget restore
 build:
@@ -11,11 +17,11 @@ after_build:
 
     cd Diversion
 
-    nuget pack Diversion.csproj -p Configuration=Release -OutputDirectory ..\.artifacts
+    nuget pack -p Configuration=Release -OutputDirectory ..\.artifacts
 
     cd ..\Diversion.CLI
 
-    nuget pack Diversion.CLI.csproj -p Configuration=Release -Tool -OutputDirectory ..\.artifacts
+    nuget pack -p Configuration=Release -Tool -OutputDirectory ..\.artifacts
 artifacts:
 - path: .artifacts\*.nupkg
 deploy:
