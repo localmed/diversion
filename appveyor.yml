@@ -17,11 +17,11 @@ after_build:
 
     cd Diversion
 
-    nuget pack -p Configuration=Release -OutputDirectory ..\.artifacts
+    nuget pack Diversion.csproj -p Configuration=Release -OutputDirectory ..\.artifacts
 
     cd ..\Diversion.CLI
 
-    nuget pack -p Configuration=Release -Tool -OutputDirectory ..\.artifacts
+    nuget pack Diversion.CLI.csproj -p Configuration=Release -Tool -OutputDirectory ..\.artifacts
 artifacts:
 - path: .artifacts\*.nupkg
 deploy:
