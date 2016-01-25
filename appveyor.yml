@@ -2,23 +2,27 @@ version: 1.0.{build}
 configuration: Release
 clone_depth: 2
 before_build:
-- nuget restore
+- cmd: nuget restore
 build:
   verbosity: minimal
 after_build:
-- mkdir .artifacts
-- cd Diversion
-- nuget pack -p Configuration=Release -OutputDirectory ..\.artifacts
-- cd ..\Diversion.CLI
-- nuget pack -p Configuration=Release -Tool -OutputDirectory ..\.artifacts
-- cd ..
+- cmd: >-
+    mkdir .artifacts
+
+    cd Diversion
+
+    nuget pack -p Configuration=Release -OutputDirectory ..\.artifacts
+
+    cd ..\Diversion.CLI
+
+    nuget pack -p Configuration=Release -Tool -OutputDirectory ..\.artifacts
 artifacts:
 - path: .artifacts\*.nupkg
 deploy:
 - provider: NuGet
-  server: http://nuget.localmed.org/api/v2
+  server: https://www.myget.org/F/localmed/api/v3/index.json
   api_key:
-    secure: OEqrzo1+tAdt+bxGRqDBozBE1hPgt1UvCpcB4w5YSt2cciPfw4/4sP4V1UgQmoKK
+    secure: AURbJMRwqYr6CThnpQMeo5XYaTrBLIYhq+Red3oklaihM3RGZ0QNs3qLMpdICQBw
   skip_symbols: true
   on:
     branch: master
