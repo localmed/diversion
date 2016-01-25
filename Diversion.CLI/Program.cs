@@ -12,13 +12,16 @@ namespace Diversion.CLI
 {
     class Program
     {
+        private static readonly string[] SupportedProjectTypes = new[] { ".csproj", ".vbproj", ".proj" };
         static void Main(string[] args)
         {
             try
             {
                 var options = CmdLine.CommandLine.Parse<Options>();
-                options.Target = options.Target ?? FindProjectFilePath(Environment.CurrentDirectory);
-                if (options.Target == null)
+                options.Target = options.Target ?? Environment.CurrentDirectory;
+                if (Directory.Exists(options.Target))
+                    options.Target = FindProjectFilePath(options.Target);
+                if (options.Target == null || !File.Exists(options.Target) || !SupportedProjectTypes.Any(extension => Path.GetExtension(options.Target).Equals(extension, StringComparison.OrdinalIgnoreCase)))
                 {
                     WriteLine(options, Verbosity.Silent, ConsoleColor.Red, "A valid target could not be found in the working directory.");
                     return;
@@ -116,7 +119,7 @@ namespace Diversion.CLI
 
         private static string FindProjectFilePath(string path)
         {
-            return FindContainerFilePath(path, new[] { ".csproj", ".vbproj", ".proj" });
+            return FindContainerFilePath(path, SupportedProjectTypes);
         }
 
         private static string FindContainerFilePath(string path, string[] extensions)
@@ -244,7 +247,7 @@ namespace Diversion.CLI
             try
             {
                 WriteLine(options, Verbosity.Normal, ConsoleColor.White, "Downloading latest version of nuget.exe...");
-                new WebClient().DownloadFile("https://www.nuget.org/nuget.exe", nugetPath);
+                new WebClient().DownloadFile("https://dist.nuget.org/win-x86-commandline/latest/nuget.exe", nugetPath);
                 Environment.SetEnvironmentVariable("Path", Environment.GetEnvironmentVariable("Path") + ";" + options.WorkingDirectory);
                 return true;
             }
