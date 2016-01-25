@@ -24,7 +24,7 @@ namespace Diversion.CLI
                     options.Target = FindProjectFilePath(options.Target);
                 if (options.Target == null || !File.Exists(options.Target) || !SupportedProjectTypes.Any(extension => Path.GetExtension(options.Target).Equals(extension, StringComparison.OrdinalIgnoreCase)))
                 {
-                    WriteLine(options, Verbosity.Silent, ConsoleColor.Red, $"A valid target could not be found for {target}.");
+                    WriteLine(options, Verbosity.Silent, ConsoleColor.Red, "A valid target could not be found for {0}.", target);
                     return;
                 }
                 options.ProjectDirectory = Path.GetDirectoryName(options.Target);
