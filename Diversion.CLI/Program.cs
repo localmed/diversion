@@ -22,7 +22,7 @@ namespace Diversion.CLI
                 var target = Path.GetFileName(options.Target);
                 if (Directory.Exists(options.Target))
                     options.Target = FindProjectFilePath(options.Target);
-                if (options.Target == null || !File.Exists(options.Target) || !SupportedProjectTypes.Any(extension => Path.GetExtension(options.Target).Equals(extension, StringComparison.OrdinalIgnoreCase)))
+                if (options.Target == null || !File.Exists(options.Target))
                 {
                     WriteLine(options, Verbosity.Silent, ConsoleColor.Red, "A valid target could not be found for {0}.", target);
                     return;
@@ -76,7 +76,7 @@ namespace Diversion.CLI
                     else
                     {
                         WriteLine(options, Verbosity.Normal, ConsoleColor.White, "Updating the assembly info in the target project...");
-                        File.WriteAllText(options.AssemblyInfoFile, string.Format(Regex.Replace(File.ReadAllText(options.AssemblyInfoFile), "(Assembly(?:File|Informational)?Version)\\s*\\(\\s*\"([0-9.]*)\"\\s*\\)", "$1(\"{0}\")"), version), Encoding.Unicode);
+                        File.WriteAllText(options.AssemblyInfoFile, string.Format(Regex.Replace(File.ReadAllText(options.AssemblyInfoFile), "(Assembly(?:File|Informational)?Version)\\s*\\(\\s*\"([0-9.]*)\"\\s*\\)", "$1(\"{0}\")"), version), Encoding.UTF8);
                         WriteLine(options, Verbosity.Minimal, ConsoleColor.DarkCyan, "{0} {1} [Was {2}]", Path.GetFileNameWithoutExtension(options.Target), version, diversion.New.Version);
                     }
                 else if (version == diversion.New.Version)
