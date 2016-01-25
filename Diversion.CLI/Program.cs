@@ -19,11 +19,12 @@ namespace Diversion.CLI
             {
                 var options = CmdLine.CommandLine.Parse<Options>();
                 options.Target = options.Target ?? Environment.CurrentDirectory;
+                var target = Path.GetFileName(options.Target);
                 if (Directory.Exists(options.Target))
                     options.Target = FindProjectFilePath(options.Target);
                 if (options.Target == null || !File.Exists(options.Target) || !SupportedProjectTypes.Any(extension => Path.GetExtension(options.Target).Equals(extension, StringComparison.OrdinalIgnoreCase)))
                 {
-                    WriteLine(options, Verbosity.Silent, ConsoleColor.Red, "A valid target could not be found in the working directory.");
+                    WriteLine(options, Verbosity.Silent, ConsoleColor.Red, $"A valid target could not be found for {target}.");
                     return;
                 }
                 options.ProjectDirectory = Path.GetDirectoryName(options.Target);
@@ -47,7 +48,7 @@ namespace Diversion.CLI
                 if (options.ReleasedPath != null)
                     DivineDiversion(options);
                 else
-                    WriteLine(options, Verbosity.Silent, ConsoleColor.Red, "Could not acquire the last deployed release.");
+                    WriteLine(options, Verbosity.Silent, ConsoleColor.Red, "Could not acquire the latest release.");
             }
             catch (CmdLine.CommandLineException exception)
             {
@@ -64,24 +65,24 @@ namespace Diversion.CLI
         {
             try
             {
-                WriteLine(options, Verbosity.Normal, ConsoleColor.White, "Divining the semantic version of the target assembly based on its diversion from the last deployed release...");
+                WriteLine(options, Verbosity.Normal, ConsoleColor.White, "Divining the semantic version based on the diversion from the latest release...");
                 var diversion = new AssemblyDiversionDiviner().Divine(options.ReleasedPath, options.Target);
                 var version = new NextVersion().Determine(diversion);
                 if (version > diversion.New.Version)
                     if (!options.Correct)
                     {
-                        WriteLine(options, Verbosity.Minimal, ConsoleColor.DarkRed, "{0} [Currently {1}]", version, diversion.New.Version);
+                        WriteLine(options, Verbosity.Minimal, ConsoleColor.DarkRed, "{0} {1} [Currently {2}]", Path.GetFileNameWithoutExtension(options.Target), version, diversion.New.Version);
                     }
                     else
                     {
                         WriteLine(options, Verbosity.Normal, ConsoleColor.White, "Updating the assembly info in the target project...");
-                        File.WriteAllText(options.AssemblyInfoFile, string.Format(Regex.Replace(File.ReadAllText(options.AssemblyInfoFile), "(Assembly(?:File|Informational)?Version)\\s*\\(\\s*\"([0-9.]*)\"\\s*\\)", "$1(\"{0}\")"), version));
-                        WriteLine(options, Verbosity.Minimal, ConsoleColor.DarkCyan, "{0} [Was {1}]", version, diversion.New.Version);
+                        File.WriteAllText(options.AssemblyInfoFile, string.Format(Regex.Replace(File.ReadAllText(options.AssemblyInfoFile), "(Assembly(?:File|Informational)?Version)\\s*\\(\\s*\"([0-9.]*)\"\\s*\\)", "$1(\"{0}\")"), version), Encoding.Unicode);
+                        WriteLine(options, Verbosity.Minimal, ConsoleColor.DarkCyan, "{0} {1} [Was {2}]", Path.GetFileNameWithoutExtension(options.Target), version, diversion.New.Version);
                     }
                 else if (version == diversion.New.Version)
-                    WriteLine(options, Verbosity.Minimal, ConsoleColor.Green, "{0}", version);
+                    WriteLine(options, Verbosity.Minimal, ConsoleColor.Green, "{0} {1}", Path.GetFileNameWithoutExtension(options.Target), version);
                 else
-                    WriteLine(options, Verbosity.Minimal, ConsoleColor.DarkGreen, "{0} [Determined {1}]", diversion.New.Version, version);
+                    WriteLine(options, Verbosity.Minimal, ConsoleColor.DarkGreen, "{0} {1} [Determined {2}]", Path.GetFileNameWithoutExtension(options.Target), diversion.New.Version, version);
             }
             catch (Exception e)
             {
@@ -97,7 +98,7 @@ namespace Diversion.CLI
 
         private static void BuildTarget(Options options)
         {
-            WriteLine(options, Verbosity.Normal, ConsoleColor.White, "Building the target project...");
+            WriteLine(options, Verbosity.Normal, ConsoleColor.White, "Building {0}...", Path.GetFileNameWithoutExtension(options.Target));
             options.Target = BuildProject(options.Target, options.BuildProperties);
         }
 
@@ -146,7 +147,7 @@ namespace Diversion.CLI
                 WriteLine(options, Verbosity.Minimal, ConsoleColor.Red,  "git.exe is not available.");
                 return false;
             }
-            WriteLine(options, Verbosity.Normal, ConsoleColor.White, "Attempting to rebuild the last deployed release from git repository...");
+            WriteLine(options, Verbosity.Normal, ConsoleColor.White, "Attempting to rebuild the latest release from git repository...");
             try
             {
                 CloneRemoteReleaseBranch(options);
@@ -178,7 +179,7 @@ namespace Diversion.CLI
             if (!IsNuGetAvailable(options))
                 return false;
 
-            WriteLine(options, Verbosity.Normal, ConsoleColor.White, "Attempting to download the last deployed release from nuget...");
+            WriteLine(options, Verbosity.Normal, ConsoleColor.White, "Attempting to download the latest release from nuget...");
 
             string packages = Path.Combine(options.WorkingDirectory, "packages");
             string references = Path.Combine(options.WorkingDirectory, "references");
