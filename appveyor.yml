@@ -26,7 +26,7 @@ artifacts:
 - path: .artifacts\*.nupkg
 deploy:
 - provider: NuGet
-  server: https://www.myget.org/F/localmed/api/v3/index.json
+  server: https://www.myget.org/F/localmed/api/v2/package
   api_key:
     secure: AURbJMRwqYr6CThnpQMeo5XYaTrBLIYhq+Red3oklaihM3RGZ0QNs3qLMpdICQBw
   skip_symbols: true
