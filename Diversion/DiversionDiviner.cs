@@ -53,7 +53,7 @@ namespace Diversion
                 var collectionChanges = diviner.DivineCollectionDiversions(o, n);
                 Added = collectionChanges.Added;
                 Removed = collectionChanges.Removed;
-                Diverged = o.Except(Removed).Zip(n.Except(Added), subdiviner).Where(c => c.HasDiverged()).ToArray();
+                Diverged = o.Except(Removed).Join(n.Except(Added), _ => _, _ => _, subdiviner).Where(c => c.HasDiverged()).ToArray();
             }
 
             public IReadOnlyList<T> Added { get; private set; }

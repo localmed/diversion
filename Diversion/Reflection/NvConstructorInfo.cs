@@ -11,6 +11,7 @@ namespace Diversion.Reflection
         private readonly IReadOnlyList<IParameterInfo> _parameters;
         private readonly bool _isPublic;
         private readonly bool _isStatic;
+        private readonly byte[] _implementation;
 
         public NvConstructorInfo(IReflectionInfoFactory reflectionInfoFactory, ConstructorInfo member)
             : base(reflectionInfoFactory, member)
@@ -18,6 +19,7 @@ namespace Diversion.Reflection
             _isPublic = member.IsPublic;
             _isStatic = member.IsStatic;
             _parameters = member.GetParameters().Select(reflectionInfoFactory.GetInfo).ToArray();
+            _implementation = member.GetMethodBody()?.GetILAsByteArray() ?? new byte[0];
         }
 
         public override bool IsPublic
@@ -38,6 +40,11 @@ namespace Diversion.Reflection
         public override string Identity
         {
             get { return string.Format("{0}.{1}({2})", DeclaringType, DeclaringType.Name, string.Join(",", Parameters.Select(p => p.Type))); }
+        }
+
+        public override byte[] Implementation
+        {
+            get { return _implementation; }
         }
     }
 }

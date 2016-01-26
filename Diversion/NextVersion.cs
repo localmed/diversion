@@ -58,18 +58,13 @@ namespace Diversion
         {
             //Contract.Requires<ArgumentNullException>(diversion != null, "diversion must not be null.");
             return
-                !Identical(diversion) ?
+                diversion.HasDiverged() ?
                     !ShouldIncrementMajor(diversion) ?
                         !ShouldIncrementMinor(diversion) ?
                             diversion.Old.Version.IncrementBuild() :
                         diversion.Old.Version.IncrementMinor() :
                     diversion.Old.Version.IncrementMajor() :
                 diversion.Old.Version;
-        }
-
-        private static bool Identical(IAssemblyDiversion diversion)
-        {
-            return diversion.Old.Hash.SequenceEqual(diversion.New.Hash);
         }
 
         private bool ShouldIncrementMajor(IAssemblyDiversion diversion)

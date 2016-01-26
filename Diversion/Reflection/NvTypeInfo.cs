@@ -14,10 +14,10 @@ namespace Diversion.Reflection
         public NvTypeInfo(IReflectionInfoFactory reflectionInfoFactory, Type type) : base(reflectionInfoFactory, type)
         {
             Base = type.BaseType == null ? null : reflectionInfoFactory.GetReference(type.BaseType);
-            Interfaces = type.GetInterfaces().Select(reflectionInfoFactory.GetReference).ToArray();
+            Interfaces = type.GetInterfaces().Select(reflectionInfoFactory.GetReference).OrderBy(i => i.Identity).ToArray();
             Members = type
                 .GetMembers(BindingFlags.Instance|BindingFlags.Static|BindingFlags.Public|BindingFlags.NonPublic)
-                .Where(m => m.IsPublicOrProtected()).Select(reflectionInfoFactory.GetInfo).ToArray();
+                .Where(m => m.IsPublicOrProtected()).Select(reflectionInfoFactory.GetInfo).OrderBy(i => i.Identity).ToArray();
             GenericArguments = type.GetGenericArguments().Select(reflectionInfoFactory.GetReference).ToArray();
             _isPublic = type.IsPublic;
             _isStatic = type.IsSealed && type.IsAbstract && type.IsClass;

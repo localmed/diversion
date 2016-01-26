@@ -13,7 +13,6 @@ namespace Diversion.Reflection
     {
         public NvAssemblyInfo(string assemblyPath)
         {
-            Hash = System.Security.Cryptography.MD5.Create().ComputeHash(File.ReadAllBytes(assemblyPath));
             var assembly = Assembly.LoadFrom(assemblyPath);
             var reflectionInfoFactory = new NvReflectionInfoFactory();
             Name = assembly.FullName;
@@ -31,7 +30,7 @@ namespace Diversion.Reflection
                     var match = Regex.Match((string) attr.Arguments[0].Value, @"\.NETFramework,Version=v(.*)");
                     return match.Success ? new Version(match.Result("$1")) : null;
                 }).FirstOrDefault() ?? new Version(assembly.ImageRuntimeVersion.Substring(1));
-            Types = assembly.GetExportedTypes().AsParallel().Select(reflectionInfoFactory.GetInfo).ToArray();
+            Types = assembly.GetExportedTypes().AsParallel().Select(reflectionInfoFactory.GetInfo).OrderBy(i => i.Identity).ToArray();
         }
 
         public string Name { get; private set; }
@@ -39,8 +38,6 @@ namespace Diversion.Reflection
         public Version Version { get; private set; }
 
         public Version FrameworkVersion { get; private set; }
-
-        public byte[] Hash { get; private set; }
 
         public IReadOnlyList<ITypeInfo> Types { get; private set; }
 

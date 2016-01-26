@@ -54,5 +54,7 @@ namespace Diversion.Reflection
         {
             return Identity;
         }
+
+        public virtual byte[] Implementation { get { return new byte[0]; } }
     }
 }

@@ -6,5 +6,6 @@ namespace Diversion.Reflection
         string Name { get; }
         bool IsPublic { get; }
         bool IsStatic { get; }
+        byte[] Implementation { get; }
     }
 }

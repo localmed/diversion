@@ -17,26 +17,13 @@ namespace Diversion.Test
         IAssemblyDiversion ReleaseToBuild { get; set; }
         NextVersion NextVersion { get; set; }
 
-        [Given(@"the newly built assembly is identical to the released assembly")]
-        public void GivenTheNewlyBuiltAssemblyIsIdenticalToTheReleasedAssembly()
-        {
-            ReleaseToBuild = Mock.Of<IAssemblyDiversion>(ac =>
-                ac.New == Mock.Of<IAssemblyInfo>(obj => obj.Hash == new byte[] { 0 }) &&
-                ac.Old == Mock.Of<IAssemblyInfo>(obj => obj.Hash == new byte[] { 0 }));
-        }
-
         [Given(@"the currently released assembly version number is (.*)\.(.*)\.(.*)")]
         public void GivenTheCurrentlyReleasedAssemblyVersionNumberIs_(int major, int minor, int patch)
         {
-            Mock.Get(ReleaseToBuild.Old).SetupGet(obj => obj.Version).Returns(new Version(major, minor, patch));
-        }
-
-        [Given(@"the newly built assembly is not identical to the released assembly")]
-        public void GivenTheNewlyBuiltAssemblyIsNotIdenticalToTheReleasedAssembly()
-        {
             ReleaseToBuild = Mock.Of<IAssemblyDiversion>(ac =>
-                ac.New == Mock.Of<IAssemblyInfo>(obj => obj.Hash == new byte[] { 0 }) &&
-                ac.Old == Mock.Of<IAssemblyInfo>(obj => obj.Hash == new byte[] { 1 }));
+                ac.New == Mock.Of<IAssemblyInfo>() &&
+                ac.Old == Mock.Of<IAssemblyInfo>(obj => obj.Version == new Version(major, minor, patch)) &&
+                ac.HasDiverged());
         }
 
         [Given(@"NextVersion has been initialized with major and minor version triggers that never trigger")]

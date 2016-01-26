@@ -16,6 +16,7 @@ namespace Diversion.Reflection
         private readonly bool _isVirtual;
         private readonly bool _isAbstract;
         private readonly bool _isGenericMethod;
+        private readonly byte[] _implementation;
 
         public NvMethodInfo(IReflectionInfoFactory reflectionInfoFactory, MethodInfo method) : base(reflectionInfoFactory, method)
         {
@@ -27,6 +28,7 @@ namespace Diversion.Reflection
             _parameters = method.GetParameters().Select(reflectionInfoFactory.GetInfo).ToArray();
             _genericArguments = method.GetGenericArguments().Select(reflectionInfoFactory.GetReference).ToArray();
             _returnType = reflectionInfoFactory.GetInfo(method.ReturnParameter);
+            _implementation = method.GetMethodBody()?.GetILAsByteArray() ?? new byte[0];
         }
 
         public override bool IsPublic
@@ -72,6 +74,11 @@ namespace Diversion.Reflection
         public override string Identity
         {
             get { return string.Format("{0}({1})", base.Identity, string.Join(",", Parameters.Select(p => p.Type))); }
+        }
+
+        public override byte[] Implementation
+        {
+            get { return _implementation; }
         }
     }
 }

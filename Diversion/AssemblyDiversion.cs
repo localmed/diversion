@@ -14,7 +14,7 @@ namespace Diversion
             _typeDiversions = new Lazy<IDiversions<ITypeInfo, ITypeDiversion>>(() => diviner.DivineDiversions(old.Types, @new.Types,
                 (o, n) => new TypeDiversion(diviner, o, n)), true);
             _attributeDiversions = new Lazy<ICollectionDiversions<IAttributeInfo>>(() => diviner.DivineCollectionDiversions(old.Attributes, @new.Attributes), true);
-            _hasDiverged = new Lazy<bool>(() => base.HasDiverged() || TypeDiversions.HasDiverged() || AttributeDiversions.HasDiverged(), true);
+            _hasDiverged = new Lazy<bool>(() => TypeDiversions.HasDiverged() || AttributeDiversions.HasDiverged() || base.HasDiverged(), true);
         }
 
         public IDiversions<ITypeInfo, ITypeDiversion> TypeDiversions
