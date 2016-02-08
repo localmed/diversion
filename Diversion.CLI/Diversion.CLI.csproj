@@ -73,7 +73,7 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>move /Y diver.exe Diversion.CLI.exe
+    <PostBuildEvent Condition="'$(Configuration)' == 'Release'">move /Y diver.exe Diversion.CLI.exe
 $(ProjectDir)..\packages\ILMerge.Tools.2.14.1208\tools\ILMerge /out:diver.exe Diversion.CLI.exe Diversion.dll CmdLine.dll</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

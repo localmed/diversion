@@ -246,9 +246,10 @@ namespace Diversion.CLI
                 RedirectStandardError = true,
                 CreateNoWindow = true
             });
-            process.WaitForExit();
+            var futureError = process.StandardError.ReadToEndAsync();
             output = process.StandardOutput.ReadToEnd();
-            error = process.StandardError.ReadToEnd();
+            process.WaitForExit();
+            error = futureError.Result;
             return process.ExitCode == 0;
         }
 
