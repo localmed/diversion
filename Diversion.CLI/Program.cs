@@ -99,14 +99,25 @@ namespace Diversion.CLI
         private static void BuildTarget(Options options)
         {
             WriteLine(options, Verbosity.Normal, ConsoleColor.White, "Building {0}...", Path.GetFileNameWithoutExtension(options.Target));
-            options.Target = BuildProject(options.Target, options.BuildProperties);
+            options.Target = BuildProject(options, options.Target);
         }
 
-        private static string BuildProject(string projectFile, string properties)
+        private static string BuildProject(Options options, string projectFile)
         {
-            ProjectCollection projects = new ProjectCollection(ToDictionary(properties));
+            ProjectCollection projects = new ProjectCollection(ToDictionary(options.BuildProperties));
             var project = projects.LoadProject(projectFile);
-            project.Build();
+            switch (options.Verbosity)
+            {
+                case Verbosity.Detailed:
+                    project.Build(new ConsoleLogger(LoggerVerbosity.Normal));
+                    break;
+                case Verbosity.Normal:
+                    project.Build(new ConsoleLogger(LoggerVerbosity.Quiet));
+                    break;
+                default:
+                    project.Build();
+                    break;
+            }
             return Path.Combine(project.DirectoryPath, project.GetPropertyValue("OutputPath"), project.GetPropertyValue("TargetFileName"));
         }
 
@@ -161,7 +172,7 @@ namespace Diversion.CLI
                         WriteLine(options, Verbosity.Minimal, ConsoleColor.Red, error);
                 }
                 string projectFile = FindProjectFilePath(Path.Combine(options.WorkingDirectory, "repo", Path.Combine(options.ProjectDirectory.Split(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar).Skip(GetLocalGitRepository().Split(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar).Length).ToArray())));
-                options.ReleasedPath = BuildProject(projectFile, options.BuildProperties);
+                options.ReleasedPath = BuildProject(options, projectFile);
                 return true;
             }
             catch
