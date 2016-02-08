@@ -7,6 +7,8 @@ using System.Net;
 using System.Text.RegularExpressions;
 using System.Diagnostics;
 using System.Text;
+using Microsoft.Build.Logging;
+using Microsoft.Build.Framework;
 
 namespace Diversion.CLI
 {
@@ -277,7 +279,7 @@ namespace Diversion.CLI
                 DeleteReadOnlyDirectory(Path.Combine(options.WorkingDirectory, "repo"));
             options.GitRepository = options.GitReleaseBranch.Contains("/") ? GetGitRepositoryFromRemote(options.GitReleaseBranch.Substring(0, options.GitReleaseBranch.IndexOf("/"))) : GetLocalGitRepository();
             options.GitReleaseBranch = options.GitReleaseBranch.Substring(options.GitReleaseBranch.IndexOf("/") + 1);
-            ExecuteCommand("git", string.Format("clone -b {0} --depth 1 --single-branch {1} \".diversion/repo\"", options.GitReleaseBranch, options.GitRepository));
+            ExecuteCommand("git", string.Format("clone -b {0} -q --single-branch --reference \"{1}\" \"{2}\" \"{3}\"", options.GitReleaseBranch, GetLocalGitRepositoryPath(), options.GitRepository, Path.Combine(options.WorkingDirectory, "repo")));
         }
 
         private static void DeleteReadOnlyDirectory(string directory)
@@ -300,17 +302,22 @@ namespace Diversion.CLI
             string output;
             string error;
             if (ExecuteCommand("git", string.Format("remote show -n {0}", remote), out output, out error))
-                return Regex.Match(output, "Fetch URL: (.*)").Groups[1].Value;
+                return Regex.Match(output, "Fetch URL: (.*)").Groups[1].Value.Trim();
+            throw new ApplicationException(error);
+        }
+
+        private static string GetLocalGitRepositoryPath()
+        {
+            string output;
+            string error;
+            if (ExecuteCommand("git", "rev-parse --show-toplevel", out output, out error))
+                return output.Trim();
             throw new ApplicationException(error);
         }
 
         private static string GetLocalGitRepository()
         {
-            string output;
-            string error;
-            if (ExecuteCommand("git", "rev-parse --show-toplevel", out output, out error))
-                return output + ".git";
-            throw new ApplicationException(error);
+            return GetLocalGitRepositoryPath() + ".git";
         }
     }
 }
