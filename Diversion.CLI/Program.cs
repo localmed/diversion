@@ -224,15 +224,16 @@ namespace Diversion.CLI
                 .Any(path => File.Exists(Path.Combine(path, cmd)));
         }
 
-        private static bool ExecuteCommand(string cmd, string args)
+        private static bool ExecuteCommand(string cmd, string args, bool echo = false)
         {
             string output;
             string error;
             return ExecuteCommand(cmd, args, out output, out error);
         }
 
-        private static bool ExecuteCommand(string cmd, string args, out string output, out string error)
+        private static bool ExecuteCommand(string cmd, string args, out string output, out string error, bool echo = false)
         {
+            if (echo) CmdLine.CommandLine.WriteLineColor(ConsoleColor.Cyan, $"{cmd} {args}");
             var process = Process.Start(new ProcessStartInfo
             {
                 UseShellExecute = false,
