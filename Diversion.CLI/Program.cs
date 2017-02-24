@@ -15,8 +15,9 @@ namespace Diversion.CLI
     class Program
     {
         private static readonly string[] SupportedProjectTypes = new[] { ".csproj", ".vbproj", ".proj" };
-        static void Main(string[] args)
+        static int Main(string[] args)
         {
+            int exitCode = -1;
             try
             {
                 var options = CmdLine.CommandLine.Parse<Options>();
@@ -27,7 +28,7 @@ namespace Diversion.CLI
                 if (options.Target == null || !File.Exists(options.Target))
                 {
                     WriteLine(options, Verbosity.Silent, ConsoleColor.Red, "A valid target could not be found for {0}.", target);
-                    return;
+                    return exitCode;
                 }
                 options.ProjectDirectory = Path.GetDirectoryName(options.Target);
                 options.WorkingDirectory = Path.Combine(options.ProjectDirectory, ".diversion");
@@ -48,7 +49,7 @@ namespace Diversion.CLI
                         break;
                 }
                 if (options.ReleasedPath != null)
-                    DivineDiversion(options);
+                    exitCode = DivineDiversion(options);
                 else
                     WriteLine(options, Verbosity.Silent, ConsoleColor.Red, "Could not acquire the latest release.");
             }
@@ -61,19 +62,27 @@ namespace Diversion.CLI
 #if DEBUG
             CmdLine.CommandLine.Pause();
 #endif
+            return exitCode;
         }
 
-        private static void DivineDiversion(Options options)
+        private static int DivineDiversion(Options options)
         {
             try
             {
                 WriteLine(options, Verbosity.Normal, ConsoleColor.White, "Divining the semantic version based on the diversion from the latest release...");
                 var diversion = new AssemblyDiversionDiviner().Divine(options.ReleasedPath, options.Target);
                 var version = new NextVersion().Determine(diversion);
-                if (version > diversion.New.Version)
+                if (version == diversion.Old.Version)
+                {
+                    WriteLine(options, Verbosity.Minimal, ConsoleColor.White, "The target project has not diverged from the released version.");
+                    return 1;
+                }
+                else if (version > diversion.New.Version)
+                {
                     if (!options.Correct)
                     {
                         WriteLine(options, Verbosity.Minimal, ConsoleColor.DarkRed, "{0} {1} [Currently {2}]", Path.GetFileNameWithoutExtension(options.Target), version, diversion.New.Version);
+                        return 2;
                     }
                     else
                     {
@@ -81,14 +90,21 @@ namespace Diversion.CLI
                         File.WriteAllText(options.AssemblyInfoFile, string.Format(Regex.Replace(File.ReadAllText(options.AssemblyInfoFile), "(Assembly(?:File|Informational)?Version)\\s*\\(\\s*\"([0-9.]*)\"\\s*\\)", "$1(\"{0}\")"), version), Encoding.UTF8);
                         WriteLine(options, Verbosity.Minimal, ConsoleColor.DarkCyan, "{0} {1} [Was {2}]", Path.GetFileNameWithoutExtension(options.Target), version, diversion.New.Version);
                     }
+                }
                 else if (version == diversion.New.Version)
+                {
                     WriteLine(options, Verbosity.Minimal, ConsoleColor.Green, "{0} {1}", Path.GetFileNameWithoutExtension(options.Target), version);
+                }
                 else
+                {
                     WriteLine(options, Verbosity.Minimal, ConsoleColor.DarkGreen, "{0} {1} [Determined {2}]", Path.GetFileNameWithoutExtension(options.Target), diversion.New.Version, version);
+                }
+                return 0;
             }
             catch (Exception e)
             {
                 WriteLine(options, Verbosity.Silent, ConsoleColor.Red, e.Message);
+                return -1;
             }
         }
 
