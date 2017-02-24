@@ -217,8 +217,11 @@ namespace Diversion.CLI
             if (!Directory.Exists(references))
                 Directory.CreateDirectory(references);
             var argBuilder = new StringBuilder();
-            argBuilder.AppendFormat("install -OutputDirectory \"{0}\" ", packages);
-            argBuilder.AppendFormat("{0} {1}", options.NuGetPackageId, options.NuGetPackageVersion);
+            argBuilder.AppendFormat($"install -OutputDirectory \"{packages}\" ");
+            if (!string.IsNullOrWhiteSpace(options.NuGetPackageSource))
+                argBuilder.AppendFormat($"-Source {options.NuGetPackageSource} ");
+            argBuilder.AppendFormat($"{options.NuGetPackageId} {options.NuGetPackageVersion}");
+
             ExecuteCommand("nuget", argBuilder.ToString());
 
             foreach (string assembly in AssembliesInPackages(packages))

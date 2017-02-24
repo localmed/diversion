@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using Diversion.Reflection;
 
 namespace Diversion

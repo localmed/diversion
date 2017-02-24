@@ -32,6 +32,9 @@ namespace Diversion.CLI
         [CmdLine.CommandLineParameter(Command = "GitRepository", Name = "GitRepository", Description = "The git repository to use when rebuilding the released assembly.")]
         public string GitRepository { get; internal set; }
 
+        [CmdLine.CommandLineParameter(Command = "NuGetPackageSource", Name = "NuGetPackageSource", Description = "The nuget package source of the package that contains the released assembly.")]
+        public string NuGetPackageSource { get; set; }
+
         [CmdLine.CommandLineParameter(Command = "NuGetPackageId", Name = "NuGetPackageId", Description = "The nuget package id of the package that contains the released assembly.")]
         public string NuGetPackageId { get; set; }
 
