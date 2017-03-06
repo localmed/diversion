@@ -9,7 +9,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("LocalMed")]
 [assembly: AssemblyProduct("Diversion.CLI")]
-[assembly: AssemblyCopyright("Copyright © LocalMed 2015")]
+[assembly: AssemblyCopyright("Copyright © LocalMed 2015-2017")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -21,5 +21,5 @@ using System.Runtime.InteropServices;
 // The following GUID is for the ID of the typelib if this project is exposed to COM
 [assembly: Guid("aeaf2077-dfa6-4e31-9d8c-914855c90998")]
 
-[assembly: AssemblyVersion("0.18.0")]
-[assembly: AssemblyInformationalVersion("0.18.0")]
+[assembly: AssemblyVersion("0.19.0")]
+[assembly: AssemblyInformationalVersion("0.19.0")]

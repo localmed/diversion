@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Reflection;
 
 namespace Diversion.Reflection
@@ -24,6 +25,69 @@ namespace Diversion.Reflection
                     return ((Type)member).IsPublicOrProtected();
             }
             return false;
+        }
+
+        public static Type GetBaseDeclaringType(this MemberInfo member)
+        {
+            switch (member.MemberType)
+            {
+                case MemberTypes.Event:
+                    return ((EventInfo)member).GetBaseDeclaringType();
+                case MemberTypes.Method:
+                    return ((MethodInfo)member).GetBaseDeclaringType();
+                case MemberTypes.Property:
+                    return ((PropertyInfo)member).GetBaseDeclaringType();
+            }
+            return member.DeclaringType;
+        }
+
+        public static Type GetBaseDeclaringType(this EventInfo it)
+        {
+            return (it.GetAddMethod(true) ?? it.GetRemoveMethod(true)).GetBaseDefinition()?.DeclaringType ?? it.DeclaringType;
+        }
+
+        public static Type GetBaseDeclaringType(this PropertyInfo it)
+        {
+            return (it.GetGetMethod(true) ?? it.GetSetMethod(true)).GetBaseDefinition()?.DeclaringType ?? it.DeclaringType;
+        }
+
+        public static Type GetBaseDeclaringType(this MethodInfo it)
+        {
+            return it.GetBaseDefinition().DeclaringType;
+        }
+
+        public static bool IsOverride(this MethodInfo method)
+        {
+            return method.GetBaseDeclaringType() != method.DeclaringType;
+        }
+
+        public static bool IsOverride(this PropertyInfo property)
+        {
+            return property.GetBaseDeclaringType() != property.DeclaringType;
+        }
+
+        public static bool IsOverride(this EventInfo it)
+        {
+            return it.GetBaseDeclaringType() != it.DeclaringType;
+        }
+
+        public static PropertyInfo GetBaseDefinition(this PropertyInfo property)
+        {
+            var key = (property.GetGetMethod(true) ?? property.GetSetMethod(true)).GetBaseDefinition();
+
+            return key.DeclaringType == property.DeclaringType ? property :
+                key.DeclaringType.GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static | BindingFlags.DeclaredOnly)
+                .First(p => (p.GetGetMethod(true) ?? p.GetSetMethod(true)) == key);
+        }
+
+
+        public static EventInfo GetBaseDefinition(this EventInfo property)
+        {
+            var key = (property.GetAddMethod(true) ?? property.GetRemoveMethod(true)).GetBaseDefinition();
+
+            return key.DeclaringType == property.DeclaringType ? property :
+                key.DeclaringType.GetEvents(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static | BindingFlags.DeclaredOnly)
+                .First(p => (p.GetAddMethod(true) ?? p.GetRemoveMethod(true)) == key);
         }
 
         private static bool IsPublicOrProtected(this MethodBase member)

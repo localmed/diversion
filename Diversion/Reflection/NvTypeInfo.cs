@@ -17,7 +17,8 @@ namespace Diversion.Reflection
             Interfaces = type.GetInterfaces().Select(reflectionInfoFactory.GetReference).OrderBy(i => i.Identity).ToArray();
             Members = type
                 .GetMembers(BindingFlags.Instance|BindingFlags.Static|BindingFlags.Public|BindingFlags.NonPublic)
-                .Where(m => m.IsPublicOrProtected()).Select(reflectionInfoFactory.GetInfo).OrderBy(i => i.Identity).ToArray();
+                .Where(m => m.IsPublicOrProtected())//.SelectMany(GetOverriddenMemberAsWell)
+                .Select(reflectionInfoFactory.GetInfo).OrderBy(i => i.Identity).ToArray();
             GenericArguments = type.GetGenericArguments().Select(reflectionInfoFactory.GetReference).ToArray();
             _isPublic = type.IsPublic;
             _isStatic = type.IsSealed && type.IsAbstract && type.IsClass;
@@ -26,6 +27,20 @@ namespace Diversion.Reflection
             IsAbstract = type.IsAbstract;
             Namespace = type.Namespace;
             Name = type.IsGenericType && type.Name.Contains('`') ? string.Format("{0}<{1}>", type.Name.Substring(0, type.Name.IndexOf('`')), string.Join(",", type.GetGenericArguments().Select(t => t.IsGenericParameter ? string.Empty : reflectionInfoFactory.GetReference(t).Identity))) : type.Name;
+        }
+
+        private IEnumerable<MemberInfo> GetOverriddenMemberAsWell(MemberInfo member)
+        {
+            var method = member as MethodInfo;
+            if (method?.IsOverride() ?? false)
+                yield return method.GetBaseDefinition();
+            var property = member as PropertyInfo;
+            if (property?.IsOverride() ?? false)
+                yield return property.GetBaseDefinition();
+            var @event = member as EventInfo;
+            if (@event?.IsOverride() ?? false)
+                yield return @event.GetBaseDefinition();
+            yield return member;
         }
 
         public override bool IsPublic
@@ -56,7 +71,7 @@ namespace Diversion.Reflection
 
         public override string Identity
         {
-            get { return DeclaringType == null ? string.Join(".", Namespace, Name) : string.Join("+", DeclaringType, Name); }
+            get { return BaseDeclaringType == null ? string.Join(".", Namespace, Name) : string.Join("+", BaseDeclaringType, Name); }
         }
     }
 }

@@ -39,7 +39,7 @@ namespace Diversion.Reflection
 
         public override string Identity
         {
-            get { return string.Format("{0}.{1}({2})", DeclaringType, DeclaringType.Name, string.Join(",", Parameters.Select(p => p.Type))); }
+            get { return string.Format("{0}.{1}({2})", BaseDeclaringType, BaseDeclaringType.Name, string.Join(",", Parameters.Select(p => p.Type))); }
         }
 
         public override byte[] Implementation

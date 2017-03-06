@@ -10,12 +10,19 @@ namespace Diversion.Reflection
     {
         private readonly IReadOnlyList<IAttributeInfo> _attributes;
         private readonly ITypeReference _declaringType;
+        private readonly ITypeReference _baseDeclaringType;
 
         protected NvMemberInfo(IReflectionInfoFactory reflectionInfoFactory, MemberInfo member)
         {
+            _baseDeclaringType = member.GetBaseDeclaringType() == null ? null : reflectionInfoFactory.GetReference(member.GetBaseDeclaringType());
             _declaringType = member.DeclaringType == null ? null : reflectionInfoFactory.GetReference(member.DeclaringType);
             _attributes = member.GetCustomAttributesData().Select(reflectionInfoFactory.GetInfo).ToArray();
             Name = member.Name;
+        }
+
+        public ITypeReference BaseDeclaringType
+        {
+            get { return _baseDeclaringType; }
         }
 
         public ITypeReference DeclaringType
@@ -47,7 +54,7 @@ namespace Diversion.Reflection
 
         public virtual string Identity
         {
-            get { return string.Join(".", DeclaringType, Name); }
+            get { return string.Join(".", BaseDeclaringType, Name); }
         }
 
         public sealed override string ToString()
