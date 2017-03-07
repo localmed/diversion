@@ -2,7 +2,7 @@ using System;
 
 namespace Diversion.CLI
 {
-    [CmdLine.CommandLineArguments(Program = "diver.exe", Title = "Diversion.CLI", Description= "A tool for assigning the correct semantic version of an assembly based on its diversion from the last deployed release.")] 
+    [CmdLine.CommandLineArguments(Program = "diver.exe", Title = "Diversion.CLI", Description= "A tool for assigning the correct semantic version of an assembly based on its diversion from the last deployed release.")]
     class Options
     {
         [CmdLine.CommandLineParameter(Command = "?", Name = "Help", Description = "Show Help", Default = false, IsHelp = true)]

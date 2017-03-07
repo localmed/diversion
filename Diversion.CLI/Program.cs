@@ -21,7 +21,11 @@ namespace Diversion.CLI
             try
             {
                 var options = CmdLine.CommandLine.Parse<Options>();
-                options.Target = options.Target ?? Environment.CurrentDirectory;
+                if (options.Target == null)
+                {
+                    Console.WriteLine(new CmdLine.CommandArgumentHelp(typeof(Options)).GetHelpText(Console.BufferWidth).Replace('/', '-'));
+                    return exitCode;
+                }
                 var target = Path.GetFileName(options.Target);
                 if (Directory.Exists(options.Target))
                     options.Target = FindProjectFilePath(options.Target);
@@ -30,10 +34,11 @@ namespace Diversion.CLI
                     WriteLine(options, Verbosity.Silent, ConsoleColor.Red, "A valid target could not be found for {0}.", target);
                     return exitCode;
                 }
-                options.ProjectDirectory = Path.GetDirectoryName(options.Target);
-                options.WorkingDirectory = Path.Combine(options.ProjectDirectory, ".diversion");
+                bool isProjectFile = !Regex.IsMatch(options.Target, ".*(.dll|.exe)$");
+                options.ProjectDirectory = Path.GetDirectoryName(isProjectFile ? options.Target : FindProjectFilePath(Path.GetFileNameWithoutExtension(options.Target)));
+                options.WorkingDirectory = Path.Combine(Environment.CurrentDirectory, ".diversion");
                 options.AssemblyInfoFile = Path.Combine(options.ProjectDirectory, options.AssemblyInfoFile);
-                if (!Regex.IsMatch(options.Target, ".*(.dll|.exe)$"))
+                if (isProjectFile)
                     BuildTarget(options);
                 switch (options.ReleaseSource)
                 {
@@ -52,6 +57,10 @@ namespace Diversion.CLI
                     exitCode = DivineDiversion(options);
                 else
                     WriteLine(options, Verbosity.Silent, ConsoleColor.Red, "Could not acquire the latest release.");
+            }
+            catch(CmdLine.CommandLineHelpException clhe)
+            {
+                Console.WriteLine(clhe.ArgumentHelp.GetHelpText(Console.BufferWidth).Replace('/', '-'));
             }
             catch (CmdLine.CommandLineException exception)
             {
@@ -203,15 +212,17 @@ namespace Diversion.CLI
         {
             if (!Directory.Exists(options.WorkingDirectory))
                 Directory.CreateDirectory(options.WorkingDirectory);
-            options.NuGetPackageId = options.NuGetPackageId ?? Path.GetFileNameWithoutExtension(options.Target);
 
             if (!IsNuGetAvailable(options))
                 return false;
 
+            options.NuGetPackageId = options.NuGetPackageId ?? Path.GetFileNameWithoutExtension(options.Target);
             WriteLine(options, Verbosity.Normal, ConsoleColor.White, "Attempting to download the latest release from nuget...");
-
-            string packages = Path.Combine(options.WorkingDirectory, "packages");
-            string references = Path.Combine(options.WorkingDirectory, "references");
+            string nugetWorking = Path.Combine(options.WorkingDirectory, options.NuGetPackageId);
+            string packages = Path.Combine(nugetWorking, "packages");
+            string references = Path.Combine(nugetWorking, "references");
+            if (!Directory.Exists(nugetWorking))
+                Directory.CreateDirectory(nugetWorking);
             if (!Directory.Exists(packages))
                 Directory.CreateDirectory(packages);
             if (!Directory.Exists(references))
