@@ -1,13 +1,14 @@
 <?xml version="1.0"?>
 <package>
-  <metadata>
-    <id>Diversion.CLI</id>
-    <version>$version$</version>
-    <title>$title$</title>
-    <authors>$author$</authors>
-    <owners>$author$</owners>
-    <description>$description$</description>
-    <copyright>$copyright$</copyright>
-    <tags>NuGet, SemVer, Semantic, Version, Git, Build, Diversion, CI, Release, Deployment</tags>
-  </metadata>
+    <metadata>
+        <id>Diversion.CLI</id>
+        <version>$version$</version>
+        <title>$title$</title>
+        <authors>$author$</authors>
+        <owners>$author$</owners>
+        <description>$description$</description>
+        <copyright>$copyright$</copyright>
+        <developmentDependency>true</developmentDependency>
+        <tags>NuGet, SemVer, Semantic, Version, Git, Build, Diversion, CI, Release, Deployment</tags>
+    </metadata>
 </package>

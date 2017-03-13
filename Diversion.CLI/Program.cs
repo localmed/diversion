@@ -287,6 +287,7 @@ namespace Diversion.CLI
         {
             if (IsCommandAvailable("nuget.exe"))
                 return true;
+            Environment.SetEnvironmentVariable("Path", Environment.GetEnvironmentVariable("Path") + ";" + options.WorkingDirectory);
             string nugetPath = Path.Combine(options.WorkingDirectory, "nuget.exe");
             if (File.Exists(nugetPath))
                 return true;
@@ -294,7 +295,6 @@ namespace Diversion.CLI
             {
                 WriteLine(options, Verbosity.Normal, ConsoleColor.White, "Downloading latest version of nuget.exe...");
                 new WebClient().DownloadFile("https://dist.nuget.org/win-x86-commandline/latest/nuget.exe", nugetPath);
-                Environment.SetEnvironmentVariable("Path", Environment.GetEnvironmentVariable("Path") + ";" + options.WorkingDirectory);
                 return true;
             }
             catch (Exception ex)
