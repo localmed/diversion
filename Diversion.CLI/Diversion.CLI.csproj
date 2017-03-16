@@ -77,9 +77,9 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent Condition="'$(Configuration)' == 'Release'">move /Y diver.exe Diversion.CLI.exe
-$(ProjectDir)..\packages\ILMerge.Tools.2.14.1208\tools\ILMerge /out:diver.exe Diversion.CLI.exe Diversion.dll CmdLine.dll</PostBuildEvent>
+$(ProjectDir)..\packages\ILMerge.Tools.2.14.1208\tools\ILMerge /out:diver.exe Diversion.CLI.exe Diversion.dll CmdLine.dll Newtonsoft.Json.dll</PostBuildEvent>
   </PropertyGroup>
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
   </Target>
