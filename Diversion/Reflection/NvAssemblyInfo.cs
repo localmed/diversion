@@ -33,6 +33,8 @@ namespace Diversion.Reflection
             Types = assembly.GetExportedTypes().AsParallel().Select(reflectionInfoFactory.GetInfo).OrderBy(i => i.Identity).ToArray();
         }
 
+        public string Identity => Name;
+
         public string Name { get; private set; }
 
         public Version Version { get; private set; }

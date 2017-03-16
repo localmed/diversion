@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Diversion.Reflection
 {
@@ -33,14 +35,14 @@ namespace Diversion.Reflection
 
         private bool Equals(NvAttributeArgumentInfo other)
         {
-            return string.Equals(_name, other._name) && Equals(_value, other._value);
+            return string.Equals(_name, other._name) && ((_value as Array)?.OfType<object>().SequenceEqual(other._value as IEnumerable<object>) ?? Equals(_value, other._value));
         }
 
         public override int GetHashCode()
         {
             unchecked
             {
-                return (_name.GetHashCode() * 397) ^ (_value != null ? _value.GetHashCode() : 0);
+                return (_name.GetHashCode() * 397) ^ (_value != null ? ((_value as Array)?.OfType<object>().Take(16).Aggregate(19, (result, item) => result * 31 + item.GetHashCode()) ?? _value.GetHashCode()) : 0);
             }
         }
     }

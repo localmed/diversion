@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -16,25 +17,19 @@ namespace Diversion.Reflection
             _type = reflectionInfoFactory.GetReference(attribute.AttributeType);
             _arguments =
                 attribute.Constructor.GetParameters().Zip(attribute.ConstructorArguments,
-                    (p, a) => new NvAttributeArgumentInfo(p.Name, ToSafeArgumentValue(reflectionInfoFactory, a.Value))).ToArray();
+                    (p, a) => new NvAttributeArgumentInfo(p.Name, GetArgumentValue(reflectionInfoFactory, a))).ToArray();
             if (attribute.NamedArguments != null)
                 _arguments = _arguments.Concat(attribute.NamedArguments.Select(
-                    a => new NvAttributeArgumentInfo(a.MemberName, ToSafeArgumentValue(reflectionInfoFactory, a.TypedValue.Value)))).ToArray();
+                    a => new NvAttributeArgumentInfo(a.MemberName, GetArgumentValue(reflectionInfoFactory, a.TypedValue)))).ToArray();
         }
 
-        private object ToSafeArgumentValue(IReflectionInfoFactory reflectionInfoFactory, object value)
+        private object GetArgumentValue(IReflectionInfoFactory reflectionInfoFactory, CustomAttributeTypedArgument argument)
         {
-            return AsType(reflectionInfoFactory, value as Type) ?? AsString(value);
-        }
-
-        private object AsString(object value)
-        {
-            return value == null ? null : ((value.GetType().Namespace ?? "").StartsWith("System") ? value : value.ToString());
-        }
-
-        private object AsType(IReflectionInfoFactory reflectionInfoFactory, Type type)
-        {
-            return type == null ? null : reflectionInfoFactory.GetReference(type);
+            if (Equals(argument.ArgumentType, typeof(Type)))
+                return reflectionInfoFactory.GetReference((Type)argument.Value);
+            else if (argument.ArgumentType.IsArray)
+                return ((IEnumerable)argument.Value).OfType<CustomAttributeTypedArgument>().Select(e => GetArgumentValue(reflectionInfoFactory, e)).ToArray();
+            return argument.Value;
         }
 
         public ITypeReference Type
@@ -46,6 +41,10 @@ namespace Diversion.Reflection
         {
             get { return _arguments; }
         }
+
+        public override string ToString() => Identity;
+
+        public string Identity => $"{Type.Identity}({string.Join(", ", Arguments.Select(a => $"{a.Name}={a.Value}"))})";
 
         public override bool Equals(object obj)
         {

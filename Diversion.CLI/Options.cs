@@ -44,6 +44,9 @@ namespace Diversion.CLI
         [CmdLine.CommandLineParameter(Command = "Verbosity", Name = "Verbosity", Description = "Amount of detail to output. Choices are Silent | Minimal | Normal | Detailed. ", Default = "Normal")]
         public string VerbosityText { get; set; }
 
+        [CmdLine.CommandLineParameter(Command = "g", Name = "GenerateFile", Description = "Generate a diversion.json file to \".diversion\\<ProjectName>\".", Default = false)]
+        public bool GenerateFile { get; set; }
+
         public Verbosity Verbosity {
             get
             {

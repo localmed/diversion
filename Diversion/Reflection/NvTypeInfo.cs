@@ -17,7 +17,7 @@ namespace Diversion.Reflection
             Interfaces = type.GetInterfaces().Select(reflectionInfoFactory.GetReference).OrderBy(i => i.Identity).ToArray();
             Members = type
                 .GetMembers(BindingFlags.Instance|BindingFlags.Static|BindingFlags.Public|BindingFlags.NonPublic)
-                .Where(m => m.IsPublicOrProtected())//.SelectMany(GetOverriddenMemberAsWell)
+                .Where(m => m.IsPublicOrProtected())
                 .Select(reflectionInfoFactory.GetInfo).OrderBy(i => i.Identity).ToArray();
             GenericArguments = type.GetGenericArguments().Select(reflectionInfoFactory.GetReference).ToArray();
             _isPublic = type.IsPublic;
@@ -29,19 +29,20 @@ namespace Diversion.Reflection
             Name = type.IsGenericType && type.Name.Contains('`') ? string.Format("{0}<{1}>", type.Name.Substring(0, type.Name.IndexOf('`')), string.Join(",", type.GetGenericArguments().Select(t => t.IsGenericParameter ? string.Empty : reflectionInfoFactory.GetReference(t).Identity))) : type.Name;
         }
 
-        private IEnumerable<MemberInfo> GetOverriddenMemberAsWell(MemberInfo member)
-        {
-            var method = member as MethodInfo;
-            if (method?.IsOverride() ?? false)
-                yield return method.GetBaseDefinition();
-            var property = member as PropertyInfo;
-            if (property?.IsOverride() ?? false)
-                yield return property.GetBaseDefinition();
-            var @event = member as EventInfo;
-            if (@event?.IsOverride() ?? false)
-                yield return @event.GetBaseDefinition();
-            yield return member;
-        }
+        // Maybe later, no use for this now
+        //private IEnumerable<MemberInfo> GetOverriddenMemberAsWell(MemberInfo member)
+        //{
+        //    var method = member as MethodInfo;
+        //    if (method?.IsOverride() ?? false)
+        //        yield return method.GetBaseDefinition();
+        //    var property = member as PropertyInfo;
+        //    if (property?.IsOverride() ?? false)
+        //        yield return property.GetBaseDefinition();
+        //    var @event = member as EventInfo;
+        //    if (@event?.IsOverride() ?? false)
+        //        yield return @event.GetBaseDefinition();
+        //    yield return member;
+        //}
 
         public override bool IsPublic
         {

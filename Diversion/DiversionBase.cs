@@ -15,6 +15,8 @@ namespace Diversion
             New = @new;
         }
 
+        public virtual string Identity => Old.ToString();
+
         public T Old { get; private set; }
 
         public T New { get; private set; }

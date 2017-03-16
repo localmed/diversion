@@ -9,6 +9,9 @@ using System.Diagnostics;
 using System.Text;
 using Microsoft.Build.Logging;
 using Microsoft.Build.Framework;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
+using System.Reflection;
 
 namespace Diversion.CLI
 {
@@ -80,6 +83,9 @@ namespace Diversion.CLI
             {
                 WriteLine(options, Verbosity.Normal, ConsoleColor.White, "Divining the semantic version based on the diversion from the latest release...");
                 var diversion = new AssemblyDiversionDiviner().Divine(options.ReleasedPath, options.Target);
+                if (options.GenerateFile)
+                    using (var writer = new StreamWriter(File.Create(Path.Combine(options.WorkingDirectory, Path.GetFileNameWithoutExtension(options.Target), "diversion.json"))))
+                        JsonSerializer.CreateDefault(new JsonSerializerSettings { ContractResolver = new CustomContractResolver() }).Serialize(writer, diversion);
                 var version = new NextVersion().Determine(diversion);
                 if (version == diversion.Old.Version)
                 {
@@ -218,7 +224,7 @@ namespace Diversion.CLI
 
             options.NuGetPackageId = options.NuGetPackageId ?? Path.GetFileNameWithoutExtension(options.Target);
             WriteLine(options, Verbosity.Normal, ConsoleColor.White, "Attempting to download the latest release from nuget...");
-            string nugetWorking = Path.Combine(options.WorkingDirectory, options.NuGetPackageId);
+            string nugetWorking = Path.Combine(options.WorkingDirectory, Path.GetFileNameWithoutExtension(options.Target));
             string packages = Path.Combine(nugetWorking, "packages");
             string references = Path.Combine(nugetWorking, "references");
             if (!Directory.Exists(nugetWorking))
@@ -349,6 +355,15 @@ namespace Diversion.CLI
         private static string GetLocalGitRepository()
         {
             return GetLocalGitRepositoryPath() + ".git";
+        }
+
+        private class CustomContractResolver : DefaultContractResolver
+        {
+            protected override List<MemberInfo> GetSerializableMembers(Type objectType)
+            {
+                var members = base.GetSerializableMembers(objectType);
+                return typeof(IAssemblyDiversion).IsAssignableFrom(objectType) ? members.FindAll(m => !m.Name.Equals("Old") && !m.Name.Equals("New")) : members;
+            }
         }
     }
 }

@@ -11,6 +11,7 @@ namespace Diversion.Reflection
             DeclaringType = type.DeclaringType == null ? null : factory.GetReference(type.DeclaringType);
             Namespace = type.Namespace;
             Name = type.IsGenericType && type.Name.Contains('`') ? string.Format("{0}<{1}>", type.Name.Substring(0, type.Name.IndexOf('`')), string.Join(",", type.GetGenericArguments().Select(t => t.IsGenericParameter ? string.Empty : factory.GetReference(t).Identity))) : type.Name;
+            IsArray = type.IsArray;
         }
 
         public string Identity
@@ -23,6 +24,9 @@ namespace Diversion.Reflection
         public string Name { get; private set; }
 
         public string Namespace { get; private set; }
+
+        public bool IsArray { get; private set; }
+
         public sealed override string ToString()
         {
             return Identity;

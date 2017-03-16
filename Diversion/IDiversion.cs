@@ -1,6 +1,6 @@
 namespace Diversion
 {
-    public interface IDiversion<out T>
+    public interface IDiversion<out T> : IIdentifiable
     {
         bool HasDiverged();
         T Old { get; }

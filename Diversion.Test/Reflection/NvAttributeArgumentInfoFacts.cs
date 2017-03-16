@@ -24,7 +24,7 @@ namespace Diversion.Test.Reflection
         public void ValueShouldBeSetCorrectly()
         {
             var value = new object();
-            new NvAttributeArgumentInfo("Argument1", value).Value.Should().Equal(value);
+            new NvAttributeArgumentInfo("Argument1",  value).Value.Should().Equal(value);
         }
     }
 }

@@ -5,5 +5,6 @@
         ITypeReference DeclaringType { get; }
         string Name { get; }
         string Namespace { get; }
+        bool IsArray { get; }
     }
 }
