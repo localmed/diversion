@@ -1,17 +1,17 @@
 ﻿using System;
-using Microsoft.Build.Evaluation;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Collections.Generic;
 using System.Net;
-using System.Text.RegularExpressions;
-using System.Diagnostics;
+using System.Reflection;
 using System.Text;
-using Microsoft.Build.Logging;
+using System.Text.RegularExpressions;
+using Microsoft.Build.Evaluation;
 using Microsoft.Build.Framework;
+using Microsoft.Build.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
-using System.Reflection;
 
 namespace Diversion.CLI
 {
@@ -258,7 +258,7 @@ namespace Diversion.CLI
 
         private static bool IsCommandAvailable(string cmd)
         {
-            return Environment.ExpandEnvironmentVariables(Environment.GetEnvironmentVariable("Path") ?? string.Empty).Split(';')
+            return Environment.ExpandEnvironmentVariables(Environment.GetEnvironmentVariable("Path") ?? string.Empty).Split(';').Concat(new[] { Environment.CurrentDirectory })
                 .Any(path => File.Exists(Path.Combine(path, cmd)));
         }
 
