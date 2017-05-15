@@ -1,0 +1,43 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net451</TargetFramework>
+        <PackageId>Diversion.MSBuild</PackageId>
+        <Version>0.3.1</Version>
+        <Authors>LocalMed, LLC</Authors>
+        <Company>LocalMed, LLC</Company>
+        <Copyright>Copyright 2017 $(Company)</Copyright>
+        <Description>Provides an MSBuild target that will ensure an incorrect semantic version is not used.</Description>
+        <NuspecFile>Diversion.MSBuild.nuspec</NuspecFile>
+        <NuspecBasePath>$(ProjectDir)</NuspecBasePath>
+        <NuspecProperties>id=$(PackageId);configuration=$(Configuration);version=$(Version);description=$(Description);author=$(Authors);owner=$(Company);copyright=$(Copyright)</NuspecProperties>
+        <IsTool>True</IsTool>
+        <DevelopmentDependency>True</DevelopmentDependency>
+        <IsPackable>True</IsPackable>
+        <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Newtonsoft.Json" Version="9.0.1">
+            <PrivateAssets>All</PrivateAssets>
+        </PackageReference>
+        <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="1.1.1">
+            <PrivateAssets>All</PrivateAssets>
+        </PackageReference>
+        <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="1.1.1">
+            <PrivateAssets>All</PrivateAssets>
+        </PackageReference>
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Diversion\Diversion.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <Reference Include="Microsoft.Build" />
+        <Reference Include="Microsoft.Build.Engine" />
+        <Reference Include="Microsoft.Build.Framework" />
+        <Reference Include="Microsoft.Build.Utilities.v4.0" />
+    </ItemGroup>
+
+</Project>
