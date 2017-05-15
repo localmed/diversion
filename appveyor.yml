@@ -24,7 +24,7 @@ after_build:
     nuget pack Diversion.CLI.csproj -p Configuration=Release -Tool -OutputDirectory ..\.artifacts
 artifacts:
 - path: .artifacts\*.nupkg
-- path: '*\bin\Release\*.nupkg''
+- path: '*\bin\Release\*.nupkg'
 deploy:
 - provider: NuGet
   server: https://www.myget.org/F/localmed/api/v2/package
