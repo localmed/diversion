@@ -9,7 +9,7 @@ namespace Diversion.Triggers
     {
         public bool IsTriggered(IAssemblyDiversion diversion)
         {
-            return diversion.TypeDiversions.Added.Any();
+            return diversion.TypeDiversions.Added.Any(t => t.IsOnApiSurface) || diversion.TypeDiversions.Diverged.Any(t => !t.Old.IsOnApiSurface && t.New.IsOnApiSurface);
         }
     }
 }

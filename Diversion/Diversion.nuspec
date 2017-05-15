@@ -5,7 +5,7 @@
     <version>$version$</version>
     <title>$title$</title>
     <authors>$author$</authors>
-    <owners>$author$</owners>
+    <owners>$company$</owners>
     <description>$description$</description>
     <copyright>$copyright$</copyright>
     <tags>SemVer, Semantic, Version, Build, Diversion, CI, Release, Deployment</tags>

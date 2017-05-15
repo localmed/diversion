@@ -1,21 +1,10 @@
 ﻿using System;
-using System.IO;
 using System.Reflection;
 
 namespace Diversion.Reflection
 {
-    [Serializable]
-    public class NvReflectionInfoFactory : IReflectionInfoFactory
+    class NvReflectionInfoFactory : IReflectionInfoFactory
     {
-        public IAssemblyInfo FromFile(string assemblyPath)
-        {
-            using (var context = new AppDomainContext(new FileInfo(assemblyPath).DirectoryName))
-            {
-                return (IAssemblyInfo)context.Domain.CreateInstanceFromAndUnwrap(Assembly.GetExecutingAssembly().Location,
-                    typeof (NvAssemblyInfo).FullName, false, BindingFlags.Default, null, new object[]{assemblyPath}, null, null);
-            }
-        }
-
         public ITypeReference GetReference(Type type)
         {
             return type.IsGenericParameter ? new NvGenericParameterInfo(this, type) : new NvTypeReference(this, type);

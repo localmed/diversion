@@ -11,6 +11,7 @@ namespace Diversion.Reflection
         private readonly bool _isStatic;
         private readonly bool _isReadOnly;
         private readonly bool _isConstant;
+        private readonly bool _isOnApiSurface;
 
         public NvFieldInfo(IReflectionInfoFactory reflectionInfoFactory, FieldInfo member)
             : base(reflectionInfoFactory, member)
@@ -20,31 +21,19 @@ namespace Diversion.Reflection
             _isStatic = member.IsStatic;
             _isReadOnly = member.IsInitOnly;
             _isConstant = member.IsLiteral;
+            _isOnApiSurface = member.IsPublicOrProtected();
         }
 
-        public override bool IsPublic
-        {
-            get { return _isPublic; }
-        }
+        public override bool IsOnApiSurface => _isOnApiSurface;
 
-        public override bool IsStatic
-        {
-            get { return _isStatic; }
-        }
+        public override bool IsPublic => _isPublic;
 
-        public ITypeReference Type
-        {
-            get { return _type; }
-        }
+        public override bool IsStatic => _isStatic;
 
-        public bool IsReadOnly
-        {
-            get { return _isReadOnly; }
-        }
+        public ITypeReference Type => _type;
 
-        public bool IsConstant
-        {
-            get { return _isConstant; }
-        }
+        public bool IsReadOnly => _isReadOnly;
+
+        public bool IsConstant => _isConstant;
     }
 }

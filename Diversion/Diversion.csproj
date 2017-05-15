@@ -12,6 +12,8 @@
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <CodeContractsAssemblyMode>1</CodeContractsAssemblyMode>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -129,12 +131,14 @@
     <Compile Include="DiversionDiviner.cs" />
     <Compile Include="IDiversionDiviner.cs" />
     <Compile Include="IIdentifiable.cs" />
-    <Compile Include="Reflection\AppDomainContext.cs" />
+    <Compile Include="AppDomainContext.cs" />
     <Compile Include="Reflection\GenericTypeVariance.cs" />
+    <Compile Include="Reflection\IAssemblyInfoFactory.cs" />
     <Compile Include="Reflection\IAttributeArgumentInfo.cs" />
     <Compile Include="Reflection\IReflectionInfoFactory.cs" />
     <Compile Include="Reflection\ITypeReference.cs" />
     <Compile Include="Reflection\MemberInfoExtensions.cs" />
+    <Compile Include="Reflection\NvAssemblyInfoFactory.cs" />
     <Compile Include="Reflection\NvAttributeArgumentInfo.cs" />
     <Compile Include="Reflection\NvAttributeInfo.cs" />
     <Compile Include="Reflection\NvConstructorInfo.cs" />

@@ -41,6 +41,8 @@ namespace Diversion.Reflection
 
         public abstract bool IsStatic { get; }
 
+        public abstract bool IsOnApiSurface { get; }
+
         public override bool Equals(object obj)
         {
             var other = obj as NvMemberInfo;

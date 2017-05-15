@@ -16,11 +16,11 @@ namespace Diversion.Test.Triggers
                 obj => obj.TypeDiversions == Mock.Of<IDiversions<ITypeInfo, ITypeDiversion>>(
                     tcs => tcs.Diverged == new [] {
                         Mock.Of<ITypeDiversion>(
-                            tc => tc.MemberDiversions == Mock.Of<IDiversions<IMemberInfo>>(
+                            tc => tc.New.IsOnApiSurface && tc.MemberDiversions == Mock.Of<IDiversions<IMemberInfo>>(
                                 mcs => mcs.Diverged == new[] {
                                     Mock.Of<IDiversion<IMethodInfo>>(
-                                        mc => mc.New == Mock.Of<IMethodInfo>(mi => mi.IsVirtual == true) &&
-                                            mc.Old == Mock.Of<IMethodInfo>(mi =>  mi.IsVirtual == false))
+                                        mc => mc.New == Mock.Of<IMethodInfo>(mi => mi.IsVirtual == true && mi.IsOnApiSurface) &&
+                                            mc.Old == Mock.Of<IMethodInfo>(mi =>  mi.IsVirtual == false && mi.IsOnApiSurface))
                                 }))
                     }));
             new NewlyVirtualMemberTrigger().IsTriggered(change).ShouldBeTrue();
@@ -33,14 +33,14 @@ namespace Diversion.Test.Triggers
                 obj => obj.TypeDiversions == Mock.Of<IDiversions<ITypeInfo, ITypeDiversion>>(
                     tcs => tcs.Diverged == new[] {
                         Mock.Of<ITypeDiversion>(
-                            tc => tc.MemberDiversions == Mock.Of<IDiversions<IMemberInfo>>(
+                            tc => tc.New.IsOnApiSurface && tc.MemberDiversions == Mock.Of<IDiversions<IMemberInfo>>(
                                 mcs => mcs.Diverged == new[] {
                                     Mock.Of<IDiversion<IMethodInfo>>(
-                                        mc => mc.Old == Mock.Of<IMethodInfo>(mi => mi.IsVirtual == true) &&
-                                            mc.New == Mock.Of<IMethodInfo>(mi => mi.IsVirtual == true)),
+                                        mc => mc.Old == Mock.Of<IMethodInfo>(mi => mi.IsVirtual == true && mi.IsOnApiSurface) &&
+                                            mc.New == Mock.Of<IMethodInfo>(mi => mi.IsVirtual == true && mi.IsOnApiSurface)),
                                     Mock.Of<IDiversion<IMethodInfo>>(
-                                        mc => mc.Old == Mock.Of<IMethodInfo>(mi => mi.IsVirtual == false) &&
-                                            mc.New == Mock.Of<IMethodInfo>(mi => mi.IsVirtual == false))
+                                        mc => mc.Old == Mock.Of<IMethodInfo>(mi => mi.IsVirtual == false && mi.IsOnApiSurface) &&
+                                            mc.New == Mock.Of<IMethodInfo>(mi => mi.IsVirtual == false && mi.IsOnApiSurface))
                                 }))
                     }));
             new NewlyVirtualMemberTrigger().IsTriggered(change).ShouldBeFalse();
@@ -53,11 +53,11 @@ namespace Diversion.Test.Triggers
                 obj => obj.TypeDiversions == Mock.Of<IDiversions<ITypeInfo, ITypeDiversion>>(
                     tcs => tcs.Diverged == new[] {
                         Mock.Of<ITypeDiversion>(
-                            tc => tc.MemberDiversions == Mock.Of<IDiversions<IMemberInfo>>(
+                            tc => tc.New.IsOnApiSurface && tc.MemberDiversions == Mock.Of<IDiversions<IMemberInfo>>(
                                 mcs => mcs.Diverged == new[] {
                                     Mock.Of<IDiversion<IMethodInfo>>(
-                                        mc => mc.Old == Mock.Of<IMethodInfo>(mi => mi.IsVirtual == true) &&
-                                            mc.New == Mock.Of<IMethodInfo>(mi => mi.IsVirtual == false)),
+                                        mc => mc.Old == Mock.Of<IMethodInfo>(mi => mi.IsVirtual == true && mi.IsOnApiSurface) &&
+                                            mc.New == Mock.Of<IMethodInfo>(mi => mi.IsVirtual == false && mi.IsOnApiSurface)),
                                 }))
                     }));
             new NewlyVirtualMemberTrigger().IsTriggered(change).ShouldBeFalse();

@@ -15,8 +15,9 @@ namespace Diversion.Test.Triggers
             var change = Mock.Of<IAssemblyDiversion>(
                 obj => obj.TypeDiversions == Mock.Of<IDiversions<ITypeInfo, ITypeDiversion>>(
                     tcs => tcs.Diverged == new [] {Mock.Of<ITypeDiversion>(
-                        tc => tc.MemberDiversions == Mock.Of<IDiversions<IMemberInfo>>(
-                            mc => mc.Added == new[] {Mock.Of<IPropertyInfo>(mi => mi.IsAbstract == true)}))}));
+                        tc => tc.New.IsOnApiSurface &&
+                            tc.MemberDiversions == Mock.Of<IDiversions<IMemberInfo>>(
+                            mc => mc.Added == new[] {Mock.Of<IPropertyInfo>(mi => mi.IsAbstract)}))}));
             new NewAbstractMemberTrigger().IsTriggered(change).ShouldBeTrue();
         }
 
@@ -26,7 +27,8 @@ namespace Diversion.Test.Triggers
             var change = Mock.Of<IAssemblyDiversion>(
                 obj => obj.TypeDiversions == Mock.Of<IDiversions<ITypeInfo, ITypeDiversion>>(
                     tcs => tcs.Diverged == new[] {Mock.Of<ITypeDiversion>(
-                        tc => tc.MemberDiversions == Mock.Of<IDiversions<IMemberInfo>>(
+                        tc => tc.New.IsOnApiSurface &&
+                            tc.MemberDiversions == Mock.Of<IDiversions<IMemberInfo>>(
                             mc => mc.Added == new[] {Mock.Of<IPropertyInfo>()}))}));
             new NewAbstractMemberTrigger().IsTriggered(change).ShouldBeFalse();
         }

@@ -49,5 +49,7 @@ namespace Diversion.Reflection
         {
             return (GetType() + Identity).GetHashCode();
         }
+
+        public sealed override string ToString() => Identity;
     }
 }

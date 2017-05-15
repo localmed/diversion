@@ -45,5 +45,7 @@ namespace Diversion.Reflection
                 return (_name.GetHashCode() * 397) ^ (_value != null ? ((_value as Array)?.OfType<object>().Take(16).Aggregate(19, (result, item) => result * 31 + item.GetHashCode()) ?? _value.GetHashCode()) : 0);
             }
         }
+
+        public override string ToString() => $"{Name} = {Value}";
     }
 }

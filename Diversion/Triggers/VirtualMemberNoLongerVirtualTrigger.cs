@@ -10,7 +10,7 @@ namespace Diversion.Triggers
     {
         public bool IsTriggered(IAssemblyDiversion diversion)
         {
-            return diversion.TypeDiversions.Diverged.AsParallel().Any(tc => tc.MemberDiversions.Diverged.AsParallel().OfType<IDiversion<IVirtualizable>>().Any(mc => !mc.New.IsVirtual && mc.Old.IsVirtual));
+            return diversion.TypeDiversions.Diverged.AsParallel().Any(tc => tc.New.IsOnApiSurface && tc.MemberDiversions.Diverged.AsParallel().OfType<IDiversion<IVirtualizable>>().Any(mc => !mc.New.IsVirtual && mc.Old.IsVirtual));
         }
     }
 

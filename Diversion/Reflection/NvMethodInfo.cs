@@ -16,6 +16,7 @@ namespace Diversion.Reflection
         private readonly bool _isVirtual;
         private readonly bool _isAbstract;
         private readonly bool _isGenericMethod;
+        private readonly bool _isOnPublicApiSurface;
         private readonly byte[] _implementation;
 
         public NvMethodInfo(IReflectionInfoFactory reflectionInfoFactory, MethodInfo method) : base(reflectionInfoFactory, method)
@@ -29,56 +30,32 @@ namespace Diversion.Reflection
             _genericArguments = method.GetGenericArguments().Select(reflectionInfoFactory.GetReference).ToArray();
             _returnType = reflectionInfoFactory.GetInfo(method.ReturnParameter);
             _implementation = method.GetMethodBody()?.GetILAsByteArray() ?? new byte[0];
+            _isOnPublicApiSurface = method.IsPublicOrProtected();
         }
 
-        public override bool IsPublic
-        {
-            get { return _isPublic; }
-        }
+        public override bool IsOnApiSurface => _isOnPublicApiSurface;
 
-        public override bool IsStatic
-        {
-            get { return _isStatic; }
-        }
+        public override bool IsPublic => _isPublic;
 
-        public bool IsVirtual
-        {
-            get { return _isVirtual; }
-        }
+        public override bool IsStatic => _isStatic;
 
-        public bool IsAbstract
-        {
-            get { return _isAbstract; }
-        }
+        public bool IsVirtual => _isVirtual;
 
-        public IReadOnlyList<IParameterInfo> Parameters
-        {
-            get { return _parameters; }
-        }
+        public bool IsAbstract => _isAbstract;
 
-        public IReadOnlyList<ITypeReference> GenericArguments
-        {
-            get { return _genericArguments; }
-        }
+        public IReadOnlyList<IParameterInfo> Parameters => _parameters;
 
-        public IParameterInfo ReturnType
-        {
-            get { return _returnType; }
-        }
+        public IReadOnlyList<ITypeReference> GenericArguments => _genericArguments;
 
-        public bool IsGenericMethod
-        {
-            get { return _isGenericMethod; }
-        }
+        public IParameterInfo ReturnType => _returnType;
+
+        public bool IsGenericMethod => _isGenericMethod;
 
         public override string Identity
         {
             get { return string.Format("{0}({1})", base.Identity, string.Join(",", Parameters.Select(p => p.Type))); }
         }
 
-        public override byte[] Implementation
-        {
-            get { return _implementation; }
-        }
+        public override byte[] Implementation => _implementation;
     }
 }

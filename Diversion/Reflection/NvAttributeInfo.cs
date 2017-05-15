@@ -42,7 +42,7 @@ namespace Diversion.Reflection
             get { return _arguments; }
         }
 
-        public override string ToString() => Identity;
+        public sealed override string ToString() => Identity;
 
         public string Identity => $"{Type.Identity}({string.Join(", ", Arguments.Select(a => $"{a.Name}={a.Value}"))})";
 

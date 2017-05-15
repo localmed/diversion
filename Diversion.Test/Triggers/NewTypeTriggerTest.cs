@@ -14,7 +14,7 @@ namespace Diversion.Test.Triggers
         {
             var change = Mock.Of<IAssemblyDiversion>(obj =>
                 obj.TypeDiversions == Mock.Of<IDiversions<ITypeInfo, ITypeDiversion>>(tc =>
-                    tc.Added == new[] {Mock.Of<ITypeInfo>()}));
+                    tc.Added == new[] {Mock.Of<ITypeInfo>(t => t.IsOnApiSurface)}));
             new NewTypeTrigger().IsTriggered(change).ShouldBeTrue();
         }
 
@@ -23,6 +23,7 @@ namespace Diversion.Test.Triggers
         {
             var change = Mock.Of<IAssemblyDiversion>(obj =>
                 obj.TypeDiversions == Mock.Of<IDiversions<ITypeInfo, ITypeDiversion>>(tc =>
+                    tc.Diverged == new ITypeDiversion[0] &&
                     tc.Added == new ITypeInfo[0]));
             new NewTypeTrigger().IsTriggered(change).ShouldBeFalse();
         }

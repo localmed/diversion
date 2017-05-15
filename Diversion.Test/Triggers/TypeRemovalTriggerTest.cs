@@ -14,7 +14,7 @@ namespace Diversion.Test.Triggers
         {
             var change = Mock.Of<IAssemblyDiversion>(
                 obj => obj.TypeDiversions == Mock.Of<IDiversions<ITypeInfo, ITypeDiversion>>(
-                    tc => tc.Removed == new[] {Mock.Of<ITypeInfo>()}));
+                    tc => tc.Removed == new[] {Mock.Of<ITypeInfo>(t => t.IsOnApiSurface)}));
             new TypeRemovalTrigger().IsTriggered(change).ShouldBeTrue();
         }
 
@@ -23,7 +23,9 @@ namespace Diversion.Test.Triggers
         {
             var change = Mock.Of<IAssemblyDiversion>(
                 obj => obj.TypeDiversions == Mock.Of<IDiversions<ITypeInfo, ITypeDiversion>>(
-                    tc => tc.Removed == new ITypeInfo[0]));
+                    tc =>
+                    tc.Diverged == new ITypeDiversion[0] &&
+                    tc.Removed == new ITypeInfo[0]));
             new TypeRemovalTrigger().IsTriggered(change).ShouldBeFalse();
         }
     }

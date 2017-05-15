@@ -9,7 +9,7 @@ namespace Diversion.Triggers
     {
         public bool IsTriggered(IAssemblyDiversion diversion)
         {
-            return diversion.TypeDiversions.Diverged.AsParallel().Any(t => t.InterfaceDiversions.Removed.Any());
+            return diversion.TypeDiversions.Diverged.AsParallel().Any(t => t.New.IsOnApiSurface && t.InterfaceDiversions.Removed.Any());
         }
     }
 }

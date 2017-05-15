@@ -12,12 +12,13 @@ namespace Diversion.Test.Triggers
         [TestMethod]
         public void ShouldTriggerIfAnyMemberWereAddedToPublicTypes()
         {
-            var change = Mock.Of<IAssemblyDiversion>(obj => 
-                obj.TypeDiversions == Mock.Of<IDiversions<ITypeInfo, ITypeDiversion>>(tcs => 
+            var change = Mock.Of<IAssemblyDiversion>(obj =>
+                obj.TypeDiversions == Mock.Of<IDiversions<ITypeInfo, ITypeDiversion>>(tcs =>
                     tcs.Diverged == new [] {
-                        Mock.Of<ITypeDiversion>(tc => 
-                            tc.MemberDiversions == Mock.Of<IDiversions<IMemberInfo>>(mc => 
-                                mc.Added == new[] {Mock.Of<IMemberInfo>()}))
+                        Mock.Of<ITypeDiversion>(tc =>
+                            tc.New.IsOnApiSurface &&
+                            tc.MemberDiversions == Mock.Of<IDiversions<IMemberInfo>>(mc =>
+                                mc.Added == new[] {Mock.Of<IMemberInfo>(m => m.IsOnApiSurface)}))
                     }));
             new NewMemberTrigger().IsTriggered(change).ShouldBeTrue();
         }
@@ -29,7 +30,10 @@ namespace Diversion.Test.Triggers
                 obj.TypeDiversions == Mock.Of<IDiversions<ITypeInfo, ITypeDiversion>>(tcs =>
                     tcs.Diverged == new[] {
                         Mock.Of<ITypeDiversion>(tc =>
+                            tc.New.IsOnApiSurface &&
+                            tc.Old.IsOnApiSurface &&
                             tc.MemberDiversions == Mock.Of<IDiversions<IMemberInfo>>(mc =>
+                                mc.Diverged == new IDiversion<IMemberInfo>[0] &&
                                 mc.Added == new IMemberInfo[0]))
                     }));
             new NewMemberTrigger().IsTriggered(change).ShouldBeFalse();

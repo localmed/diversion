@@ -16,6 +16,7 @@ namespace Diversion.Test.Triggers
                 obj.TypeDiversions == Mock.Of<IDiversions<ITypeInfo, ITypeDiversion>>(tcs =>
                     tcs.Diverged == new[] {
                         Mock.Of<ITypeDiversion>(tc =>
+                            tc.New.IsOnApiSurface == true &&
                             tc.InterfaceDiversions == Mock.Of<ICollectionDiversions<ITypeReference>>(ics =>
                                 ics.Added == new []{ Mock.Of<ITypeReference>()}))
                     }));
@@ -29,6 +30,7 @@ namespace Diversion.Test.Triggers
                 obj.TypeDiversions == Mock.Of<IDiversions<ITypeInfo, ITypeDiversion>>(tcs =>
                     tcs.Diverged == new[] {
                         Mock.Of<ITypeDiversion>(tc =>
+                            tc.New.IsOnApiSurface == true &&
                             tc.InterfaceDiversions == Mock.Of<ICollectionDiversions<ITypeReference>>(ics =>
                                 ics.Added == new ITypeReference[0]))
                     }));

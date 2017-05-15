@@ -1,9 +1,9 @@
 using System;
 using System.Diagnostics;
 
-namespace Diversion.Reflection
+namespace Diversion
 {
-    public sealed class AppDomainContext : IDisposable
+    sealed class AppDomainContext : IDisposable
     {
         private readonly AppDomain _domain;
         private bool _disposed;

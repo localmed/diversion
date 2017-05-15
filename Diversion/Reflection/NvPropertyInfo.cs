@@ -12,6 +12,7 @@ namespace Diversion.Reflection
         private readonly bool _isStatic;
         private readonly bool _isVirtual;
         private readonly bool _isAbstract;
+        private readonly bool _isOnApiSurface;
 
         public NvPropertyInfo(IReflectionInfoFactory reflectionInfoFactory, PropertyInfo member)
             : base(reflectionInfoFactory, member)
@@ -22,27 +23,18 @@ namespace Diversion.Reflection
             _isStatic = (member.GetMethod ?? member.SetMethod).IsStatic;
             _isVirtual = (member.GetMethod ?? member.SetMethod).IsVirtual;
             _isAbstract = (member.GetMethod ?? member.SetMethod).IsAbstract;
+            _isOnApiSurface = member.IsPublicOrProtected();
         }
 
-        public override bool IsPublic
-        {
-            get { return _isPublic; }
-        }
+        public override bool IsOnApiSurface => _isOnApiSurface;
 
-        public override bool IsStatic
-        {
-            get { return _isStatic; }
-        }
+        public override bool IsPublic => _isPublic;
 
-        public bool IsVirtual
-        {
-            get { return _isVirtual; }
-        }
+        public override bool IsStatic => _isStatic;
 
-        public bool IsAbstract
-        {
-            get { return _isAbstract; }
-        }
+        public bool IsVirtual => _isVirtual;
+
+        public bool IsAbstract => _isAbstract;
 
         public IReadOnlyList<IParameterInfo> IndexerParameters { get; private set; }
 

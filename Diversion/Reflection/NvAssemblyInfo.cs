@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.Versioning;
@@ -15,6 +14,7 @@ namespace Diversion.Reflection
         {
             var assembly = Assembly.LoadFrom(assemblyPath);
             var reflectionInfoFactory = new NvReflectionInfoFactory();
+            Identity = assembly.GetName().Name;
             Name = assembly.FullName;
             Attributes = assembly.GetCustomAttributesData().Select(reflectionInfoFactory.GetInfo).ToArray();
 
@@ -30,10 +30,10 @@ namespace Diversion.Reflection
                     var match = Regex.Match((string) attr.Arguments[0].Value, @"\.NETFramework,Version=v(.*)");
                     return match.Success ? new Version(match.Result("$1")) : null;
                 }).FirstOrDefault() ?? new Version(assembly.ImageRuntimeVersion.Substring(1));
-            Types = assembly.GetExportedTypes().AsParallel().Select(reflectionInfoFactory.GetInfo).OrderBy(i => i.Identity).ToArray();
+            Types = assembly.DefinedTypes.AsParallel().Select(reflectionInfoFactory.GetInfo).OrderBy(i => i.Identity).ToArray();
         }
 
-        public string Identity => Name;
+        public string Identity { get; private set; }
 
         public string Name { get; private set; }
 
@@ -44,5 +44,7 @@ namespace Diversion.Reflection
         public IReadOnlyList<ITypeInfo> Types { get; private set; }
 
         public IReadOnlyList<IAttributeInfo> Attributes { get; private set; }
+
+        public override string ToString() => Identity;
     }
 }

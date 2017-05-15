@@ -1,22 +1,22 @@
-﻿using System;
-using System.Diagnostics.Contracts;
-using System.IO;
+﻿//using System;
+//using System.Diagnostics.Contracts;
+//using System.IO;
 using Diversion.Reflection;
 
 namespace Diversion
 {
     public class AssemblyDiversionDiviner
     {
-        private readonly IReflectionInfoFactory _reflectionInfoFactory;
+        private readonly IAssemblyInfoFactory _assemblyInfoFactory;
         private readonly IDiversionDiviner _diviner;
 
-        public AssemblyDiversionDiviner(IReflectionInfoFactory reflectionInfoFactory, IDiversionDiviner diviner)
+        public AssemblyDiversionDiviner(IAssemblyInfoFactory assemblyInfoFactory, IDiversionDiviner diviner)
         {
-            _reflectionInfoFactory = reflectionInfoFactory;
+            _assemblyInfoFactory = assemblyInfoFactory;
             _diviner = diviner;
         }
 
-        public AssemblyDiversionDiviner() : this(new NvReflectionInfoFactory(), new DiversionDiviner())
+        public AssemblyDiversionDiviner() : this(new NvAssemblyInfoFactory(), new DiversionDiviner())
         {
         }
 
@@ -26,7 +26,7 @@ namespace Diversion
             //Contract.Requires<ArgumentNullException>(newAssemblyLocation != null, "newAssemblyPath must not be null.");
             //Contract.Requires<ArgumentException>(File.Exists(oldAssemblyLocation), "oldAssemblyPath must exist.");
             //Contract.Requires<ArgumentException>(File.Exists(newAssemblyLocation), "newAssemblyPath must exist.");
-            return new AssemblyDiversion(_diviner, _reflectionInfoFactory.FromFile(oldAssemblyLocation), _reflectionInfoFactory.FromFile(newAssemblyLocation));
+            return new AssemblyDiversion(_diviner, _assemblyInfoFactory.FromFile(oldAssemblyLocation), _assemblyInfoFactory.FromFile(newAssemblyLocation));
         }
     }
 }

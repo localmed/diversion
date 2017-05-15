@@ -9,6 +9,7 @@ namespace Diversion.Reflection
     class NvConstructorInfo : NvMemberInfo, IConstructorInfo
     {
         private readonly IReadOnlyList<IParameterInfo> _parameters;
+        private readonly bool _isOnApiSurface;
         private readonly bool _isPublic;
         private readonly bool _isStatic;
         private readonly byte[] _implementation;
@@ -19,32 +20,23 @@ namespace Diversion.Reflection
             _isPublic = member.IsPublic;
             _isStatic = member.IsStatic;
             _parameters = member.GetParameters().Select(reflectionInfoFactory.GetInfo).ToArray();
+            _isOnApiSurface = member.IsPublicOrProtected();
             _implementation = member.GetMethodBody()?.GetILAsByteArray() ?? new byte[0];
         }
 
-        public override bool IsPublic
-        {
-            get { return _isPublic; }
-        }
+        public override bool IsOnApiSurface => _isOnApiSurface;
 
-        public override bool IsStatic
-        {
-            get { return _isStatic; }
-        }
+        public override bool IsPublic => _isPublic;
 
-        public IReadOnlyList<IParameterInfo> Parameters
-        {
-            get { return _parameters; }
-        }
+        public override bool IsStatic => _isStatic;
+
+        public IReadOnlyList<IParameterInfo> Parameters => _parameters;
 
         public override string Identity
         {
             get { return string.Format("{0}.{1}({2})", BaseDeclaringType, BaseDeclaringType.Name, string.Join(",", Parameters.Select(p => p.Type))); }
         }
 
-        public override byte[] Implementation
-        {
-            get { return _implementation; }
-        }
+        public override byte[] Implementation => _implementation;
     }
 }

@@ -14,9 +14,14 @@ namespace Diversion.Test.Triggers
         {
             var change = Mock.Of<IAssemblyDiversion>(
                 obj => obj.TypeDiversions == Mock.Of<IDiversions<ITypeInfo, ITypeDiversion>>(
-                    tcs => tcs.Diverged == new [] {Mock.Of<ITypeDiversion>(
-                        tc => tc.MemberDiversions == Mock.Of<IDiversions<IMemberInfo>>(
-                            mc => mc.Removed == new[] {Mock.Of<IMemberInfo>()}))}));
+                    tcs => tcs.Diverged == new [] {
+                        // API Surface type with removed API Surface member.
+                        Mock.Of<ITypeDiversion>(tc =>
+                            tc.New == Mock.Of<ITypeInfo>(t => t.IsOnApiSurface == true) &&
+                            tc.MemberDiversions == Mock.Of<IDiversions<IMemberInfo>>(
+                                mc =>
+                                mc.Diverged == new IDiversion<IMemberInfo>[0] &&
+                                mc.Removed == new[] {Mock.Of<IMemberInfo>( m => m.IsOnApiSurface == true)}))}));
             new MemberRemovalTrigger().IsTriggered(change).ShouldBeTrue();
         }
 
@@ -25,9 +30,14 @@ namespace Diversion.Test.Triggers
         {
             var change = Mock.Of<IAssemblyDiversion>(
                 obj => obj.TypeDiversions == Mock.Of<IDiversions<ITypeInfo, ITypeDiversion>>(
-                    tcs => tcs.Diverged == new[] {Mock.Of<ITypeDiversion>(
-                        tc => tc.MemberDiversions == Mock.Of<IDiversions<IMemberInfo>>(
-                            mc => mc.Removed == new IMemberInfo[0]))}));
+                    tcs => tcs.Diverged == new[] {
+                        // API Surface type without removed API Surface member.
+                        Mock.Of<ITypeDiversion>(tc =>
+                            tc.New == Mock.Of<ITypeInfo>(t => t.IsOnApiSurface == true) &&
+                            tc.MemberDiversions == Mock.Of<IDiversions<IMemberInfo>>(
+                                mc =>
+                                mc.Diverged == new IDiversion<IMemberInfo>[0] &&
+                                mc.Removed == new IMemberInfo[0]))}));
             new MemberRemovalTrigger().IsTriggered(change).ShouldBeFalse();
         }
     }

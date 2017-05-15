@@ -27,10 +27,7 @@ namespace Diversion.Reflection
 
         public bool IsArray { get; private set; }
 
-        public sealed override string ToString()
-        {
-            return Identity;
-        }
+        public sealed override string ToString() => Identity;
 
         public override bool Equals(object obj)
         {

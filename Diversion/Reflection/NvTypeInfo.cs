@@ -10,18 +10,19 @@ namespace Diversion.Reflection
     {
         private readonly bool _isPublic;
         private readonly bool _isStatic;
+        private readonly bool _isOnApiSurface;
 
         public NvTypeInfo(IReflectionInfoFactory reflectionInfoFactory, Type type) : base(reflectionInfoFactory, type)
         {
             Base = type.BaseType == null ? null : reflectionInfoFactory.GetReference(type.BaseType);
-            Interfaces = type.GetInterfaces().Select(reflectionInfoFactory.GetReference).OrderBy(i => i.Identity).ToArray();
+            Interfaces = type.GetInterfaces().Where(t => t.IsPublicOrProtected()).Select(reflectionInfoFactory.GetReference).OrderBy(i => i.Identity).ToArray();
             Members = type
                 .GetMembers(BindingFlags.Instance|BindingFlags.Static|BindingFlags.Public|BindingFlags.NonPublic)
-                .Where(m => m.IsPublicOrProtected())
                 .Select(reflectionInfoFactory.GetInfo).OrderBy(i => i.Identity).ToArray();
             GenericArguments = type.GetGenericArguments().Select(reflectionInfoFactory.GetReference).ToArray();
             _isPublic = type.IsPublic;
             _isStatic = type.IsSealed && type.IsAbstract && type.IsClass;
+            _isOnApiSurface = type.IsPublicOrProtected();
             IsGenericType = type.IsGenericType;
             IsInterface = type.IsInterface;
             IsAbstract = type.IsAbstract;
@@ -44,31 +45,27 @@ namespace Diversion.Reflection
         //    yield return member;
         //}
 
-        public override bool IsPublic
-        {
-            get { return _isPublic; }
-        }
+        public override bool IsPublic => _isPublic;
 
-        public override bool IsStatic
-        {
-            get { return _isStatic; }
-        }
+        public override bool IsStatic => _isStatic;
 
-        public bool IsAbstract { get; private set; }
+        public override bool IsOnApiSurface => _isOnApiSurface;
 
-        public bool IsInterface { get; private set; }
+        public bool IsAbstract { get; }
 
-        public string Namespace { get; private set; }
+        public bool IsInterface { get; }
 
-        public ITypeReference Base { get; private set; }
+        public string Namespace { get; }
 
-        public IReadOnlyList<ITypeReference> Interfaces { get; private set; }
+        public ITypeReference Base { get; }
 
-        public IReadOnlyList<IMemberInfo> Members { get; private set; }
+        public IReadOnlyList<ITypeReference> Interfaces { get; }
 
-        public bool IsGenericType { get; private set; }
+        public IReadOnlyList<IMemberInfo> Members { get; }
 
-        public IReadOnlyList<ITypeReference> GenericArguments { get; private set; }
+        public bool IsGenericType { get; }
+
+        public IReadOnlyList<ITypeReference> GenericArguments { get; }
 
         public override string Identity
         {
