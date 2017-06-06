@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 
@@ -8,7 +9,8 @@ namespace Diversion.Reflection
     {
         static NvAssemblyInfoFactory()
         {
-            AppDomain.CurrentDomain.AssemblyResolve += (s, a) => Assembly.Load(a.Name);
+            var assemblies = new HashSet<string>();
+            AppDomain.CurrentDomain.AssemblyResolve += (s, a) => assemblies.Add(a.Name) ? Assembly.Load(a.Name) : null;
         }
 
         public IAssemblyInfo FromFile(string assemblyPath)

@@ -13,6 +13,7 @@
       <Output TaskParameter="Version" PropertyName="Version" />
       <Output TaskParameter="Version" PropertyName="PackageVersion" />
       <Output TaskParameter="Verified" PropertyName="Verified" />
+      <Output TaskParameter="HasDiverged" PropertyName="GeneratePackageOnBuild" />
     </DiversionTask>
     <MSBuild Projects="$(MSBuildProjectFile)" Targets="Rebuild" Condition="'$(Verified)' == 'False'"
              Properties="GeneratePackageOnBuild=False;Corrected=True;Version=$(Version);Configuration=$(Configuration);FileVersion=$(OriginalFileVersion);AssemblyVersion=$(OriginalAssemblyVersion);InformationalVersion=$(OriginalInformationalVersion)" />
