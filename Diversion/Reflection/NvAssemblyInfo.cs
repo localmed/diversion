@@ -12,8 +12,14 @@ namespace Diversion.Reflection
     {
         public NvAssemblyInfo(string assemblyPath)
         {
-            var assembly = Assembly.LoadFrom(assemblyPath);
+            AppDomain.CurrentDomain.ReflectionOnlyAssemblyResolve += (s, a) =>
+            {
+                try { return Assembly.ReflectionOnlyLoad(a.Name); }
+                catch { return null; }
+            };
+            var assembly = Assembly.ReflectionOnlyLoadFrom(assemblyPath);
             var reflectionInfoFactory = new NvReflectionInfoFactory();
+
             Identity = assembly.GetName().Name;
             Name = assembly.FullName;
             Attributes = assembly.GetCustomAttributesData().Select(reflectionInfoFactory.GetInfo).ToArray();

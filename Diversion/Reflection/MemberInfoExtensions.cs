@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
@@ -116,6 +117,18 @@ namespace Diversion.Reflection
             return (member.AddMethod != null && member.AddMethod.IsPublicOrProtected()) ||
                    (member.RemoveMethod != null && member.RemoveMethod.IsPublicOrProtected()) ||
                    (member.RaiseMethod != null && member.RaiseMethod.IsPublicOrProtected());
+        }
+
+        public static IEnumerable<TypeInfo> GetLoadableTypes(this Assembly assembly)
+        {
+            try
+            {
+                return assembly.DefinedTypes;
+            }
+            catch (ReflectionTypeLoadException e)
+            {
+                return e.Types.OfType<Type>().Select(t => t.GetTypeInfo());
+            }
         }
     }
 }
