@@ -18,6 +18,8 @@ namespace Diversion.MSBuild
         public string Version { get; set; }
         [Output]
         public bool HasDiverged { get; set; }
+        [Output]
+        public bool RequiresCorrection { get; set; }
 
         public string PackageId { get; set; }
         public string TargetPath { get; set; }
@@ -51,13 +53,22 @@ namespace Diversion.MSBuild
             HasDiverged = diversion.HasDiverged();
             Version = version.ToString();
             Verified = version == diversion.New.Version;
+            RequiresCorrection = !Verified && Configuration.IsCorrectionEnabled;
             if (!HasDiverged)
-                Log.LogMessage(MessageImportance.High, $"${diversion.Identity} has not diverged from its latest release.");
+                Log.LogMessage(MessageImportance.High, $"{diversion.Identity} has not diverged from its latest release.");
             if (!Verified && !Configuration.IsCorrectionEnabled)
-                Log.LogError($"Based on diversion's semantic version rules, the version of {diversion.Identity} being built should be at least {nextVersion}, but is set at {diversion.New.Version}.");
+            {
+                var message = $"Based on diversion's semantic version rules, the version of {diversion.Identity} being built should be at least {nextVersion}, but is set at {diversion.New.Version}.";
+                if (Configuration.Warn)
+                    Log.LogWarning(message);
+                else
+                    Log.LogError(message);
+            }
             if (Verified && HasDiverged)
                 Log.LogMessage(MessageImportance.High, $"Based on diversion's semantic version rules, the version of {diversion.Identity} being built has the correct version of {diversion.New.Version}.");
-            return Configuration.IsCorrectionEnabled || Verified;
+            if (RequiresCorrection)
+                Log.LogMessage(MessageImportance.High, $"Based on diversion's semantic version rules, the version of {diversion.Identity} will be changed from {diversion.Old.Version} to {nextVersion}.");
+            return Configuration.IsCorrectionEnabled || Verified || Configuration.Warn;
         }
 
         private DiversionConfiguration GetConfiguration()
@@ -65,7 +76,9 @@ namespace Diversion.MSBuild
             IConfigurationBuilder builder = new ConfigurationBuilder();
             builder.AddInMemoryCollection(new Dictionary<string, string>{
                 { "IsCorrectionEnabled", "false"},
-                { "GenerateDiversionFile", "false"} });
+                { "GenerateDiversionFile", "false"},
+                { "Warn", "false" }
+            });
             if (File.Exists(ConfigFilePath))
                 builder = builder.AddJsonFile(ConfigFilePath);
             return builder.Build().Get<DiversionConfiguration>();
@@ -100,5 +113,6 @@ namespace Diversion.MSBuild
     {
         public bool IsCorrectionEnabled { get; set; }
         public bool GenerateDiversionFile { get; set; }
+        public bool Warn { get; set; }
     }
 }

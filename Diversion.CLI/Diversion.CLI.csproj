@@ -1,89 +1,38 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{CC204C8F-32C3-41C1-B1F2-518FFAF10C93}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Diversion.CLI</RootNamespace>
     <AssemblyName>diver</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <NuGetPackageImportStamp>2c0a1eb3</NuGetPackageImportStamp>
-    <TargetFrameworkProfile />
+    <TargetFramework>net46</TargetFramework>
+    <PackageId>Diversion.CLI</PackageId>
+    <Authors>LocalMed, LLC</Authors>
+    <Company>LocalMed, LLC</Company>
+    <Copyright>2015-2017 $(Company)</Copyright>
+    <Description>A command line interface for Diversion.</Description>
+    <PackageTags>SemVer, Semantic, Version, Build, Diversion, CI, Release, Deployment</PackageTags>
+    <PackageProjectUrl>https://github.com/localmed/diversion</PackageProjectUrl>
+    <PackageLicenseUrl>https://github.com/localmed/diversion/blob/master/LICENSE.md</PackageLicenseUrl>
+    <Version>0.24.0</Version>
+    <IsTool>True</IsTool>
+    <DevelopmentDependency>True</DevelopmentDependency>
+    <AutoGenerateBindingRedirects>True</AutoGenerateBindingRedirects>
+    <IsPackable>True</IsPackable>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <Deterministic>True</Deterministic>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>true</Prefer32Bit>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>true</Prefer32Bit>
-  </PropertyGroup>
+
   <ItemGroup>
-    <Reference Include="CmdLine, Version=1.0.7.509, Culture=neutral, PublicKeyToken=e6ac9ead3d3b48e4, processorArchitecture=MSIL">
-      <HintPath>..\packages\CmdLine.1.0.7.509\lib\net40-Client\CmdLine.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Microsoft.Build, Version=14.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
-    <Reference Include="Microsoft.Build.Framework, Version=14.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
-    <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
-    </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
+    <ProjectReference Include="../Diversion/Diversion.csproj" PrivateAssets="All" />
   </ItemGroup>
+
   <ItemGroup>
-    <Compile Include="Options.cs" />
-    <Compile Include="Program.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ReleaseSource.cs" />
-    <Compile Include="Verbosity.cs" />
+    <PackageReference Include="CmdLine" Version="1.0.7.509" PrivateAssets="All" />
+    <PackageReference Include="Costura.Fody" Version="1.6.2" PrivateAssets="All" />
+    <PackageReference Include="Fody" Version="2.3.23" PrivateAssets="All" />
+    <PackageReference Include="Newtonsoft.Json" Version="9.0.1" PrivateAssets="All" />
+    <PackageReference Include="Microsoft.Build" Version="15.5.180" PrivateAssets="All" />
+    <PackageReference Include="Microsoft.Build.Framework" Version="15.5.180" PrivateAssets="All" />
+    <PackageReference Include="Microsoft.Build.Tasks.Core" Version="15.5.180" PrivateAssets="All" />
   </ItemGroup>
-  <ItemGroup>
-    <None Include="Diversion.CLI.nuspec">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="packages.config">
-      <SubType>Designer</SubType>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Diversion\Diversion.csproj">
-      <Project>{9dc653c2-5b9b-4696-8f06-7834d5cdc18c}</Project>
-      <Name>Diversion</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <PropertyGroup>
-    <PostBuildEvent Condition="'$(Configuration)' == 'Release'">move /Y diver.exe Diversion.CLI.exe
-$(ProjectDir)..\packages\ILMerge.Tools.2.14.1208\tools\ILMerge /out:diver.exe Diversion.CLI.exe Diversion.dll CmdLine.dll Newtonsoft.Json.dll</PostBuildEvent>
-  </PropertyGroup>
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
+
 </Project>

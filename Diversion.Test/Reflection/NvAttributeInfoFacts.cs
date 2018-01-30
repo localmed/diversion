@@ -43,8 +43,7 @@ namespace Diversion.Test.Reflection
             {
                 field = param;
                 Property = field;
-                if (Changed != null)
-                    Changed(this, EventArgs.Empty);
+                Changed?.Invoke(this, EventArgs.Empty);
             }
 
             public event EventHandler Changed;

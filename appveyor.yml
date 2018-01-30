@@ -11,20 +11,8 @@ before_build:
 - cmd: nuget restore
 build:
   verbosity: minimal
-after_build:
-- cmd: >-
-    mkdir .artifacts
-
-    cd Diversion
-
-    nuget pack Diversion.csproj -p Configuration=Release -OutputDirectory ..\.artifacts
-
-    cd ..\Diversion.CLI
-
-    nuget pack Diversion.CLI.csproj -p Configuration=Release -Tool -OutputDirectory ..\.artifacts
 artifacts:
-- path: .artifacts\*.nupkg
-- path: '*\bin\Release\*.nupkg'
+- path: **\*.nupkg
 deploy:
 - provider: NuGet
   server: https://www.myget.org/F/localmed/api/v2/package

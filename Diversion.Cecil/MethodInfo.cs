@@ -1,12 +1,13 @@
+using Diversion.Reflection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
-namespace Diversion.Reflection
+namespace Diversion.Cecil
 {
     [Serializable]
-    class NvMethodInfo : NvMemberInfo, IMethodInfo
+    public class MethodInfo : MemberInfo, IMethodInfo
     {
         private readonly IReadOnlyList<IParameterInfo> _parameters;
         private readonly IReadOnlyList<ITypeReference> _genericArguments;
@@ -19,18 +20,18 @@ namespace Diversion.Reflection
         private readonly bool _isOnPublicApiSurface;
         private readonly byte[] _implementation;
 
-        public NvMethodInfo(IReflectionInfoFactory reflectionInfoFactory, MethodInfo method) : base(reflectionInfoFactory, method)
+        public MethodInfo(IReflectionInfoFactory reflectionInfoFactory, Mono.Cecil.MethodDefinition method) : base(reflectionInfoFactory, method)
         {
             _isPublic = method.IsPublic;
             _isStatic = method.IsStatic;
             _isVirtual = method.IsVirtual;
             _isAbstract = method.IsAbstract;
-            _isGenericMethod = method.IsGenericMethod;
-            _parameters = method.GetParameters().Select(reflectionInfoFactory.GetInfo).ToArray();
-            _genericArguments = method.GetGenericArguments().Select(reflectionInfoFactory.GetReference).ToArray();
-            _returnType = reflectionInfoFactory.GetReference(method.ReturnParameter.ParameterType);
-            _implementation = method.GetMethodBody()?.GetILAsByteArray() ?? new byte[0];
-            _isOnPublicApiSurface = method.IsPublicOrProtected();
+            _isGenericMethod = method.IsGenericInstance;
+            _parameters = method.Parameters.Select(reflectionInfoFactory.GetInfo).ToArray();
+            _genericArguments = method.GenericParameters.Select(reflectionInfoFactory.GetReference).ToArray();
+            _returnType = method.ReturnType != null ? reflectionInfoFactory.GetReference(method.ReturnType) : null;
+            _implementation = new byte[0];
+            _isOnPublicApiSurface = method.IsPublic || method.IsFamilyOrAssembly || method.IsFamily;
         }
 
         public override bool IsOnApiSurface => _isOnPublicApiSurface;

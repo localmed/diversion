@@ -36,7 +36,7 @@ namespace Diversion.Reflection
                     var match = Regex.Match((string) attr.Arguments[0].Value, @"\.NETFramework,Version=v(.*)");
                     return match.Success ? new Version(match.Result("$1")) : null;
                 }).FirstOrDefault() ?? new Version(assembly.ImageRuntimeVersion.Substring(1));
-            Types = assembly.DefinedTypes.AsParallel().Select(reflectionInfoFactory.GetInfo).OrderBy(i => i.Identity).ToArray();
+            Types = assembly.GetLoadableTypes().AsParallel().Select(reflectionInfoFactory.GetInfo).OrderBy(i => i.Identity).ToArray();
         }
 
         public string Identity { get; private set; }

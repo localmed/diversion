@@ -4,6 +4,7 @@
     <OriginalFileVersion>$(FileVersion)</OriginalFileVersion>
     <OriginalAssemblyVersion>$(AssemblyVersion)</OriginalAssemblyVersion>
     <OriginalInformationalVersion>$(InformationalVersion)</OriginalInformationalVersion>
+    <Deterministic>True</Deterministic>
   </PropertyGroup>
 
   <UsingTask AssemblyFile="$(DiversionTaskPath)Diversion.MSBuild.dll" TaskName="DiversionTask" />
@@ -14,8 +15,9 @@
       <Output TaskParameter="Version" PropertyName="PackageVersion" />
       <Output TaskParameter="Verified" PropertyName="Verified" />
       <Output TaskParameter="HasDiverged" PropertyName="GeneratePackageOnBuild" />
+      <Output TaskParameter="RequiresCorrection" PropertyName="RequiresCorrection" />
     </DiversionTask>
-    <MSBuild Projects="$(MSBuildProjectFile)" Targets="Rebuild" Condition="'$(Verified)' == 'False'"
+    <MSBuild Projects="$(MSBuildProjectFile)" Targets="Rebuild" Condition="'$(RequiresCorrection)' == 'True'"
              Properties="GeneratePackageOnBuild=False;Corrected=True;Version=$(Version);Configuration=$(Configuration);FileVersion=$(OriginalFileVersion);AssemblyVersion=$(OriginalAssemblyVersion);InformationalVersion=$(OriginalInformationalVersion)" />
   </Target>
 </Project>

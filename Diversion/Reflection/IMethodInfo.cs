@@ -5,7 +5,7 @@ namespace Diversion.Reflection
     public interface IMethodInfo : IMemberInfo, IVirtualizable
     {
         IReadOnlyList<IParameterInfo> Parameters { get; }
-        IParameterInfo ReturnType { get; }
+        ITypeReference ReturnType { get; }
         bool IsGenericMethod { get; }
         IReadOnlyList<ITypeReference> GenericArguments { get; }
     }

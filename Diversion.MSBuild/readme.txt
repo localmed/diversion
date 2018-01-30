@@ -6,8 +6,10 @@ To have diversion override the version specified if it is lower than the version
 
 {
     "IsCorrectionEnabled": true,
-    "GenerateDiversionFile": false
+    "GenerateDiversionFile": false,
+	"Warn": false
 }
 
 If you'd like to diversion to generate a diversion.output.json file into your output folder showing the differences detected, change "GenerateDiversionFile" to true.
 
+Changing "Warn" to true will generate a warning if the version is incorrect rather than an error.
