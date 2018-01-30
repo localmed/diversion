@@ -13,7 +13,7 @@ before_build:
 build:
   verbosity: minimal
 artifacts:
-- path: '**\*.nupkg'
+- path: '**\bin\{configuration}\*.nupkg'
 deploy:
 - provider: NuGet
   server: https://www.myget.org/F/localmed/api/v2/package
