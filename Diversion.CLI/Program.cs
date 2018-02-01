@@ -12,6 +12,7 @@ using Microsoft.Build.Framework;
 using Microsoft.Build.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
+using Diversion.Reflection;
 
 namespace Diversion.CLI
 {
@@ -82,7 +83,7 @@ namespace Diversion.CLI
             try
             {
                 WriteLine(options, Verbosity.Normal, ConsoleColor.White, "Divining the semantic version based on the diversion from the latest release...");
-                var diversion = new AssemblyDiversionDiviner().Divine(options.ReleasedPath, options.Target);
+                var diversion = new AssemblyDiversionDiviner(new NvAssemblyInfoFactory(), new DiversionDiviner()).Divine(options.ReleasedPath, options.Target);
                 if (options.GenerateFile)
                     using (var writer = new StreamWriter(File.Create(Path.Combine(options.WorkingDirectory, Path.GetFileNameWithoutExtension(options.Target), "diversion.json"))))
                         JsonSerializer.CreateDefault(new JsonSerializerSettings { ContractResolver = new CustomContractResolver() }).Serialize(writer, diversion);

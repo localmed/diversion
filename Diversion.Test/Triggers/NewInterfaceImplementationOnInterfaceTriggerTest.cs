@@ -1,15 +1,15 @@
 ﻿using Diversion.Reflection;
 using Diversion.Triggers;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xunit;
 using Moq;
 using Should;
 
 namespace Diversion.Test.Triggers
 {
-    [TestClass]
+    
     public class NewInterfaceImplementationOnInterfaceTriggerTest
     {
-        [TestMethod]
+        [Fact]
         public void ShouldTriggerIfAnInterfaceImplementationIsAddedToAnInterface()
         {
             var change = Mock.Of<IAssemblyDiversion>(obj =>
@@ -24,7 +24,7 @@ namespace Diversion.Test.Triggers
             new NewInterfaceImplementationOnInterfaceTrigger().IsTriggered(change).ShouldBeTrue();
         }
 
-        [TestMethod]
+        [Fact]
         public void ShouldNotTriggerIfAnInterfaceImplementationIsNotAddedToAnInterface()
         {
             var change = Mock.Of<IAssemblyDiversion>(obj =>

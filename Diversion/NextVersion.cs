@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics.Contracts;
 using System.Linq;
 using Diversion.Triggers;
 
@@ -56,7 +55,6 @@ namespace Diversion
 
         public Version Determine(IAssemblyDiversion diversion)
         {
-            //Contract.Requires<ArgumentNullException>(diversion != null, "diversion must not be null.");
             return
                 diversion.HasDiverged() ?
                     !ShouldIncrementMajor(diversion) ?

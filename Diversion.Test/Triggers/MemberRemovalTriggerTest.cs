@@ -1,15 +1,15 @@
 ﻿using Diversion.Reflection;
 using Diversion.Triggers;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xunit;
 using Moq;
 using Should;
 
 namespace Diversion.Test.Triggers
 {
-    [TestClass]
+    
     public class MemberRemovalTriggerTest
     {
-        [TestMethod]
+        [Fact]
         public void ShouldTriggerIfAnyPublicMembersOfAnyPublicTypesHaveBeenRemoved()
         {
             var change = Mock.Of<IAssemblyDiversion>(
@@ -25,7 +25,7 @@ namespace Diversion.Test.Triggers
             new MemberRemovalTrigger().IsTriggered(change).ShouldBeTrue();
         }
 
-        [TestMethod]
+        [Fact]
         public void ShouldNotTriggerIfNoPublicMembersOfAnyTypesHaveBeenRemoved()
         {
             var change = Mock.Of<IAssemblyDiversion>(

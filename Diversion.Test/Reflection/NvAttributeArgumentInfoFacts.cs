@@ -1,26 +1,27 @@
 ﻿using Diversion.Reflection;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+
 using Should.Fluent;
+using Xunit;
 
 namespace Diversion.Test.Reflection
 {
-    [TestClass]
+    
     public class NvAttributeArgumentInfoFacts
     {
 
-        [TestMethod]
+        [Fact]
         public void NameShouldBeSetCorrectly()
         {
             new NvAttributeArgumentInfo("Argument1", null).Name.Should().Equal("Argument1");
         }
 
-        [TestMethod]
+        [Fact]
         public void ValueShouldBeSetCorrectlyAndAllowedToBeNull()
         {
             new NvAttributeArgumentInfo("Argument1", null).Value.Should().Be.Null();
         }
 
-        [TestMethod]
+        [Fact]
         public void ValueShouldBeSetCorrectly()
         {
             var value = new object();

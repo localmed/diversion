@@ -1,16 +1,14 @@
 ﻿using System;
-using Diversion.Reflection;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xunit;
 using Moq;
-using Should;
 using Should.Fluent;
 
 namespace Diversion.Test
 {
-    [TestClass]
+
     public class DiversionDivinerFacts
     {
-        [TestMethod]
+        [Fact]
         public void DivineCollectionDiversionsShouldCreateAnICollectionDiversionsInstance()
         {
             new DiversionDiviner().DivineCollectionDiversions(
@@ -18,7 +16,7 @@ namespace Diversion.Test
                 new[] {Tuple.Create(1, 0), Tuple.Create(1, 2), Tuple.Create(1, 4)}).Should().Not.Be.Null();
         }
 
-        [TestMethod]
+        [Fact]
         public void ItemsThatOnlyExistInTheNewListShouldBeInTheAddedCollectionOfAnICollectionDiversionsInstance()
         {
             new DiversionDiviner().DivineCollectionDiversions(
@@ -26,7 +24,7 @@ namespace Diversion.Test
                 new[] { Tuple.Create(1, 0), Tuple.Create(1, 2), Tuple.Create(1, 4) }).Added.Should().Contain.One(Tuple.Create(1, 4));
         }
 
-        [TestMethod]
+        [Fact]
         public void ItemsThatOnlyExistInTheOldListShouldBeInTheRemovedCollectionOfAnICollectionDiversionsInstance()
         {
             new DiversionDiviner().DivineCollectionDiversions(
@@ -34,7 +32,7 @@ namespace Diversion.Test
                 new[] { Tuple.Create(1, 0), Tuple.Create(1, 2), Tuple.Create(1, 4) }).Removed.Should().Contain.One(Tuple.Create(1, 1));
         }
 
-        [TestMethod]
+        [Fact]
         public void DivineItemDiversionsShouldCreateAnIItemDiversionsInstance()
         {
             var repo = new MockRepository(MockBehavior.Default);
@@ -49,8 +47,7 @@ namespace Diversion.Test
             repo.VerifyAll();
         }
 
-
-        [TestMethod]
+        [Fact]
         public void DivineDiversionsWithASubdivinerShouldCreateAnIDiversionsInstanceUsingThatSubdivinerToDetermineWhetherItemsHaveDiverged()
         {
             var repo = new MockRepository(MockBehavior.Default);
@@ -65,7 +62,7 @@ namespace Diversion.Test
             repo.VerifyAll();
         }
 
-        [TestMethod]
+        [Fact]
         public void ItemsThatHaveDivergedShouldBeInTheDivergedCollectionOfAnIDiversionsInstance()
         {
             new DiversionDiviner().DivineDiversions(new[] { Tuple.Create(1, 0), Tuple.Create(1, 1), Tuple.Create(1, 2) },
@@ -73,7 +70,7 @@ namespace Diversion.Test
                 (o, n) => Mock.Of<IDiversion<Tuple<int, int>>>(obj => obj.HasDiverged())).Diverged.Should().Count.Exactly(2);
         }
 
-        [TestMethod]
+        [Fact]
         public void ItemsThatHaveNotDivergedShouldNotBeInTheDivergedCollectionOfAnIDiversionsInstance()
         {
             new DiversionDiviner().DivineDiversions(new[] { Tuple.Create(1, 0), Tuple.Create(1, 1), Tuple.Create(1, 2) },

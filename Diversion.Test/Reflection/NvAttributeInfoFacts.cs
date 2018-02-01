@@ -1,30 +1,28 @@
 ﻿using System;
-using System.ComponentModel;
 using Diversion.Reflection;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xunit;
 using Should.Fluent;
 
 namespace Diversion.Test.Reflection
 {
-    [TestClass]
+
     public class NvAttributeInfoFacts
     {
         private IReflectionInfoFactory _factory;
 
-        [TestInitialize]
-        public void Setup()
+        public NvAttributeInfoFacts()
         {
             _factory = new NvReflectionInfoFactory();
         }
 
-        [TestMethod]
+        [Fact]
         public void TypeOfAttributeShouldBeCorrectlySet()
         {
             _factory.GetInfo(typeof (Sample<>).GetCustomAttributesData()[0])
                 .Type.Should().Equal(_factory.GetReference(typeof (SampleAttribute)));
         }
 
-        [TestMethod]
+        [Fact]
         public void ArgumentsOfAttributeShouldBeCorrectlySet()
         {
             var attribute = _factory.GetInfo(typeof(Sample<>).GetCustomAttributesData()[0]);

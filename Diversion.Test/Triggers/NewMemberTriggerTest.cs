@@ -1,15 +1,15 @@
 ﻿using Diversion.Reflection;
 using Diversion.Triggers;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xunit;
 using Moq;
 using Should;
 
 namespace Diversion.Test.Triggers
 {
-    [TestClass]
+    
     public class NewMemberTriggerTest
     {
-        [TestMethod]
+        [Fact]
         public void ShouldTriggerIfAnyMemberWereAddedToPublicTypes()
         {
             var change = Mock.Of<IAssemblyDiversion>(obj =>
@@ -23,7 +23,7 @@ namespace Diversion.Test.Triggers
             new NewMemberTrigger().IsTriggered(change).ShouldBeTrue();
         }
 
-        [TestMethod]
+        [Fact]
         public void ShouldNotTriggerIfNoMembersWereAddedToPublicTypes()
         {
             var change = Mock.Of<IAssemblyDiversion>(obj =>

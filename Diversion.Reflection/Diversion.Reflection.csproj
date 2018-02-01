@@ -1,21 +1,20 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <Description>A library that determines what version the currently built assembly should be when compared to the last released assembly.</Description>
-    <Version>0.16.0</Version>
-    <Title>Diversion</Title>
+    <Description>An implementation of diversion's simplified reflection interface using .net framework reflection.</Description>
+    <Title>Diversion.Reflection</Title>
     <Company>LocalMed, LLC</Company>
     <Copyright>Copyright © LocalMed 2015-2018</Copyright>
     <PackageTags>SemVer, Semantic, Version, Build, Diversion, CI, Release, Deployment</PackageTags>
     <PackageProjectUrl>https://github.com/localmed/diversion</PackageProjectUrl>
     <PackageLicenseUrl>https://github.com/localmed/diversion/blob/master/LICENSE.md</PackageLicenseUrl>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFramework>net462</TargetFramework>
     <Deterministic>true</Deterministic>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Diversion.MSBuild" Version="0.4.0" PrivateAssets="All" />
+    <ProjectReference Include="../Diversion/Diversion.csproj" />
   </ItemGroup>
 
 </Project>

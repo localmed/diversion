@@ -1,78 +1,76 @@
 ﻿using System;
 using System.ComponentModel;
-using System.Reflection;
 using Diversion.Reflection;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xunit;
 using Should.Fluent;
 
 namespace Diversion.Test.Reflection
 {
-    [TestClass]
+
     public class NvReflectionInfoFactoryFacts
     {
         private IReflectionInfoFactory _factory;
 
-        [TestInitialize]
-        public void Setup()
+        public NvReflectionInfoFactoryFacts()
         {
             _factory = new NvReflectionInfoFactory();
         }
 
-        [TestMethod]
+        [Fact]
         public void PassingATypeToGetInfoShouldReturnAnInstanceOfNvTypeInfo()
         {
             _factory.GetInfo(typeof (object)).Should().Be.OfType<NvTypeInfo>();
         }
 
-        [TestMethod]
+        [Fact]
         public void PassingAFieldInfoToGetInfoShouldReturnAnInstanceOfNvFieldInfo()
         {
             _factory.GetInfo(typeof (Sample<>).GetField("field")).Should().Be.OfType<NvFieldInfo>();
         }
 
-        [TestMethod]
+        [Fact]
         public void PassingAPropertyInfoToGetInfoShouldReturnAnInstanceOfNvPropertyInfo()
         {
             _factory.GetInfo(typeof (Sample<>).GetProperty("Property")).Should().Be.OfType<NvPropertyInfo>();
         }
 
-        [TestMethod]
+        [Fact]
         public void PassingAConstructorInfoToGetInfoShouldReturnAnInstanceOfNvConstructorInfo()
         {
             _factory.GetInfo(typeof (Sample<>).GetConstructor(Type.EmptyTypes)).Should().Be.OfType<NvConstructorInfo>();
         }
 
-        [TestMethod]
+        [Fact]
         public void PassingAnEventInfoToGetInfoShouldReturnAnInstanceOfNvEventInfo()
         {
             _factory.GetInfo(typeof(Sample<>).GetEvent("Changed")).Should().Be.OfType<NvEventInfo>();
         }
 
-        [TestMethod]
+        [Fact]
         public void PassingAMethodInfoToGetInfoShouldReturnAnInstanceOfNvMethodInfo()
         {
             _factory.GetInfo(typeof(Sample<>).GetMethod("Method")).Should().Be.OfType<NvMethodInfo>();
         }
 
-        [TestMethod]
+        [Fact]
         public void PassingAParameterInfoToGetInfoShouldReturnAnInstanceOfNvParameterInfo()
         {
             _factory.GetInfo(typeof(Sample<>).GetMethod("Method").GetParameters()[0]).Should().Be.OfType<NvParameterInfo>();
         }
 
-        [TestMethod]
+        [Fact]
         public void PassingATypeThatRepresentsAGenericParameterToGetReferenceShouldReturnAnInstanceOfNvParameterInfo()
         {
             _factory.GetReference(typeof(Sample<>).GetGenericArguments()[0]).Should().Be.OfType<NvGenericParameterInfo>();
         }
 
-        [TestMethod]
+        [Fact]
         public void PassingATypeToGetReferenceShouldReturnAnInstanceOfNvTypeReference()
         {
             _factory.GetReference(typeof(object)).Should().Be.OfType<NvTypeReference>();
         }
 
-        [TestMethod]
+        [Fact]
         public void PassingACustomAttributeDataToGetInfoShouldReturnAnInstanceOfNvAttributeInfo()
         {
             _factory.GetInfo(typeof (Sample<>).GetCustomAttributesData()[0]).Should().Be.OfType<NvAttributeInfo>();

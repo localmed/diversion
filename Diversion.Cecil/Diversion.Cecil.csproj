@@ -1,7 +1,15 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net46</TargetFramework>
+    <Description>An implementation of diversion's simplified reflection interface using Mono.Cecil.</Description>
+    <Title>Diversion.Cecil</Title>
+    <Company>LocalMed, LLC</Company>
+    <Copyright>Copyright © LocalMed 2015-2018</Copyright>
+    <PackageTags>SemVer, Semantic, Version, Build, Diversion, CI, Release, Deployment</PackageTags>
+    <PackageProjectUrl>https://github.com/localmed/diversion</PackageProjectUrl>
+    <PackageLicenseUrl>https://github.com/localmed/diversion/blob/master/LICENSE.md</PackageLicenseUrl>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <TargetFramework>net462</TargetFramework>
     <Deterministic>true</Deterministic>
   </PropertyGroup>
 

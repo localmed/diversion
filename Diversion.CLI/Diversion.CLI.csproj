@@ -3,7 +3,7 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <AssemblyName>diver</AssemblyName>
-    <TargetFramework>net46</TargetFramework>
+    <TargetFramework>net462</TargetFramework>
     <PackageId>Diversion.CLI</PackageId>
     <Authors>LocalMed, LLC</Authors>
     <Company>LocalMed, LLC</Company>
@@ -23,6 +23,7 @@
 
   <ItemGroup>
     <ProjectReference Include="../Diversion/Diversion.csproj" PrivateAssets="All" />
+    <ProjectReference Include="../Diversion.Reflection/Diversion.Reflection.csproj" PrivateAssets="All" />
   </ItemGroup>
 
   <ItemGroup>
