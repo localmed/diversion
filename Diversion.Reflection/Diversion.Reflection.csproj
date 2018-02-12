@@ -19,7 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Diversion.MSBuild" Version="0.4.0" PrivateAssets="All" />
+    <PackageReference Include="Diversion.MSBuild" Version="0.4.1" PrivateAssets="All" />
   </ItemGroup>
 
 </Project>
