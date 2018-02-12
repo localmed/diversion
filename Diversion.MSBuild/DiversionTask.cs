@@ -40,6 +40,7 @@ namespace Diversion.MSBuild
             if (string.IsNullOrWhiteSpace(releasePath) || !File.Exists(releasePath))
             {
                 Log.LogMessage(MessageImportance.High, $"A release could not be located for {PackageId}; the assumption is that this will be the first published version for this framework.");
+                HasDiverged = true;
                 return true;
             }
             var diversion = new AssemblyDiversionDiviner(new NvAssemblyInfoFactory(), new DiversionDiviner()).Divine(releasePath, TargetPath);
