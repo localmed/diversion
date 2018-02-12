@@ -1,20 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Diversion.Reflection;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Diversion.Reflection;
+
 
 namespace Diversion.Test.Reflection
 {
-    [TestClass]
+
     public class NvPropertyInfoFacts
     {
         private IReflectionInfoFactory _factory;
 
-        [TestInitialize]
-        public void Setup()
+        public NvPropertyInfoFacts()
         {
             _factory = new NvReflectionInfoFactory();
         }

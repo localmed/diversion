@@ -1,14 +1,13 @@
 ﻿using System.Reflection;
 using Diversion.Reflection;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xunit;
 using Should.Fluent;
 
 namespace Diversion.Test
 {
-    [TestClass]
     public class AssemblyDiversionFacts
     {
-        [TestMethod]
+        [Fact]
         public void OldShouldBeSetProperly()
         {
             var old = new NvAssemblyInfo(Assembly.GetExecutingAssembly().Location);
@@ -17,7 +16,7 @@ namespace Diversion.Test
             ad.Old.Should().Equal(old);
         }
 
-        [TestMethod]
+        [Fact]
         public void NewShouldBeSetProperly()
         {
             var old = new NvAssemblyInfo(Assembly.GetExecutingAssembly().Location);
@@ -26,7 +25,7 @@ namespace Diversion.Test
             ad.New.Should().Equal(@new);
         }
 
-        [TestMethod]
+        [Fact]
         public void TypeDiversionsShouldBeSetProperly()
         {
             var old = new NvAssemblyInfo(Assembly.GetExecutingAssembly().Location);
@@ -35,7 +34,7 @@ namespace Diversion.Test
             ad.TypeDiversions.Should().Not.Be.Null();
         }
 
-        [TestMethod]
+        [Fact]
         public void AttributeDiversionsShouldBeSetProperly()
         {
             var old = new NvAssemblyInfo(Assembly.GetExecutingAssembly().Location);

@@ -3,7 +3,7 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <AssemblyName>diver</AssemblyName>
-    <TargetFramework>net46</TargetFramework>
+    <TargetFramework>net462</TargetFramework>
     <PackageId>Diversion.CLI</PackageId>
     <Authors>LocalMed, LLC</Authors>
     <Company>LocalMed, LLC</Company>
@@ -15,14 +15,13 @@
     <Version>0.24.0</Version>
     <IsTool>True</IsTool>
     <DevelopmentDependency>True</DevelopmentDependency>
-    <AutoGenerateBindingRedirects>True</AutoGenerateBindingRedirects>
-    <IsPackable>True</IsPackable>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <Deterministic>True</Deterministic>
   </PropertyGroup>
 
   <ItemGroup>
     <ProjectReference Include="../Diversion/Diversion.csproj" PrivateAssets="All" />
+    <ProjectReference Include="../Diversion.Reflection/Diversion.Reflection.csproj" PrivateAssets="All" />
   </ItemGroup>
 
   <ItemGroup>
@@ -33,6 +32,7 @@
     <PackageReference Include="Microsoft.Build" Version="15.5.180" PrivateAssets="All" />
     <PackageReference Include="Microsoft.Build.Framework" Version="15.5.180" PrivateAssets="All" />
     <PackageReference Include="Microsoft.Build.Tasks.Core" Version="15.5.180" PrivateAssets="All" />
+    <PackageReference Include="Diversion.MSBuild" Version="0.4.0" PrivateAssets="All" />
   </ItemGroup>
 
 </Project>

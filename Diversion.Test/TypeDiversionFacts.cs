@@ -1,21 +1,20 @@
 ﻿using Diversion.Reflection;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xunit;
 using Should.Fluent;
 
 namespace Diversion.Test
 {
-    [TestClass]
+
     public class TypeDiversionFacts
     {
         private IReflectionInfoFactory _factory;
 
-        [TestInitialize]
-        public void Setup()
+        public TypeDiversionFacts()
         {
             _factory = new NvReflectionInfoFactory();
         }
 
-        [TestMethod]
+        [Fact]
         public void OldShouldBeSetProperly()
         {
             var old = new NvTypeInfo(_factory, typeof(object));
@@ -24,7 +23,7 @@ namespace Diversion.Test
             ad.Old.Should().Equal(old);
         }
 
-        [TestMethod]
+        [Fact]
         public void NewShouldBeSetProperly()
         {
             var old = new NvTypeInfo(_factory, typeof(object));
@@ -33,7 +32,7 @@ namespace Diversion.Test
             ad.New.Should().Equal(@new);
         }
 
-        [TestMethod]
+        [Fact]
         public void InterfaceDiversionsShouldBeSetProperly()
         {
             var old = new NvTypeInfo(_factory, typeof(object));
@@ -42,7 +41,7 @@ namespace Diversion.Test
             ad.InterfaceDiversions.Should().Not.Be.Null();
         }
 
-        [TestMethod]
+        [Fact]
         public void MemberDiversionsShouldBeSetProperly()
         {
             var old = new NvTypeInfo(_factory, typeof(object));
@@ -51,7 +50,7 @@ namespace Diversion.Test
             ad.MemberDiversions.Should().Not.Be.Null();
         }
 
-        [TestMethod]
+        [Fact]
         public void AttributeDiversionsShouldBeSetProperly()
         {
             var old = new NvTypeInfo(_factory, typeof(object));

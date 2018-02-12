@@ -1,15 +1,15 @@
 ﻿using Diversion.Reflection;
 using Diversion.Triggers;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xunit;
 using Moq;
 using Should;
 
 namespace Diversion.Test.Triggers
 {
-    [TestClass]
+    
     public class NewlyVirtualMemberTriggerTest
     {
-        [TestMethod]
+        [Fact]
         public void ShouldTriggerIfAnyMembersHaveChangedFromNonVirtualToVirtual()
         {
             var change = Mock.Of<IAssemblyDiversion>(
@@ -26,7 +26,7 @@ namespace Diversion.Test.Triggers
             new NewlyVirtualMemberTrigger().IsTriggered(change).ShouldBeTrue();
         }
 
-        [TestMethod]
+        [Fact]
         public void ShouldNotTriggerIfVirtualMembersRemainedVirtualOrNonVirtual()
         {
             var change = Mock.Of<IAssemblyDiversion>(
@@ -46,7 +46,7 @@ namespace Diversion.Test.Triggers
             new NewlyVirtualMemberTrigger().IsTriggered(change).ShouldBeFalse();
         }
 
-        [TestMethod]
+        [Fact]
         public void ShouldNotTriggerIfVirtualMembersChangedToNonVirtual()
         {
             var change = Mock.Of<IAssemblyDiversion>(

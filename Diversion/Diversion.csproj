@@ -10,12 +10,12 @@
     <PackageProjectUrl>https://github.com/localmed/diversion</PackageProjectUrl>
     <PackageLicenseUrl>https://github.com/localmed/diversion/blob/master/LICENSE.md</PackageLicenseUrl>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <TargetFramework>net46</TargetFramework>
+    <TargetFramework>net462</TargetFramework>
     <Deterministic>true</Deterministic>
   </PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Diversion.MSBuild" Version="0.3.4" PrivateAssets="All" />
+   <ItemGroup>
+    <PackageReference Include="Diversion.MSBuild" Version="0.4.0" PrivateAssets="All" />
   </ItemGroup>
 
 </Project>
