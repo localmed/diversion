@@ -5,7 +5,7 @@ using System.Reflection;
 
 namespace Diversion.Reflection
 {
-    class NvAssemblyInfoFactory : IAssemblyInfoFactory
+    public class NvAssemblyInfoFactory : IAssemblyInfoFactory
     {
         static NvAssemblyInfoFactory()
         {

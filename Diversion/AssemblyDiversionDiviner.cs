@@ -1,7 +1,4 @@
-﻿//using System;
-//using System.Diagnostics.Contracts;
-//using System.IO;
-using Diversion.Reflection;
+﻿using Diversion.Reflection;
 
 namespace Diversion
 {
@@ -14,10 +11,6 @@ namespace Diversion
         {
             _assemblyInfoFactory = assemblyInfoFactory;
             _diviner = diviner;
-        }
-
-        public AssemblyDiversionDiviner() : this(new NvAssemblyInfoFactory(), new DiversionDiviner())
-        {
         }
 
         public IAssemblyDiversion Divine(string oldAssemblyLocation, string newAssemblyLocation)

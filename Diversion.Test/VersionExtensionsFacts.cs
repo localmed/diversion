@@ -1,13 +1,13 @@
 ﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xunit;
 using Should;
 
 namespace Diversion.Test
 {
-    [TestClass]
+    
     public class VersionExtensionsFacts
     {
-        [TestMethod]
+        [Fact]
         public void IncrementMajorTest()
         {
             var version = new Version(1,1,1);
@@ -15,7 +15,7 @@ namespace Diversion.Test
             version.ShouldEqual(new Version(1, 1, 1));
         }
 
-        [TestMethod]
+        [Fact]
         public void IncrementMinorTest()
         {
             var version = new Version(1, 1, 1);
@@ -23,7 +23,7 @@ namespace Diversion.Test
             version.ShouldEqual(new Version(1, 1, 1));
         }
 
-        [TestMethod]
+        [Fact]
         public void IncrementMinorWhenNoBuildSpecifiedTest()
         {
             var version = new Version(1, 1);
@@ -31,7 +31,7 @@ namespace Diversion.Test
             version.ShouldEqual(new Version(1, 1));
         }
 
-        [TestMethod]
+        [Fact]
         public void IncrementBuildTest()
         {
             var version = new Version(1, 1, 1);
@@ -39,7 +39,7 @@ namespace Diversion.Test
             version.ShouldEqual(new Version(1, 1, 1));
         }
 
-        [TestMethod]
+        [Fact]
         public void IncrementBuildWhenNoBuildSpecifiedTest()
         {
             var version = new Version(1, 1);

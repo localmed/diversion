@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using Microsoft.Extensions.Configuration;
+using Diversion.Reflection;
 
 namespace Diversion.MSBuild
 {
@@ -41,7 +42,7 @@ namespace Diversion.MSBuild
                 Log.LogMessage(MessageImportance.High, $"A release could not be located for {PackageId}; the assumption is that this will be the first published version for this framework.");
                 return true;
             }
-            var diversion = new AssemblyDiversionDiviner().Divine(releasePath, TargetPath);
+            var diversion = new AssemblyDiversionDiviner(new NvAssemblyInfoFactory(), new DiversionDiviner()).Divine(releasePath, TargetPath);
             if (Configuration.GenerateDiversionFile)
             {
                 using (var writer = new StreamWriter(File.Create(Path.Combine(Path.GetDirectoryName(TargetPath), "diversion.output.json"))))

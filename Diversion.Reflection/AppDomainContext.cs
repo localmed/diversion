@@ -3,7 +3,7 @@ using System.Diagnostics;
 
 namespace Diversion
 {
-    sealed class AppDomainContext : IDisposable
+    class AppDomainContext : IDisposable
     {
         private readonly AppDomain _domain;
         private bool _disposed;

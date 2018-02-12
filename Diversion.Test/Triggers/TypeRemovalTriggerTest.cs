@@ -1,15 +1,15 @@
 ﻿using Diversion.Reflection;
 using Diversion.Triggers;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xunit;
 using Moq;
 using Should;
 
 namespace Diversion.Test.Triggers
 {
-    [TestClass]
+    
     public class TypeRemovalTriggerTest
     {
-        [TestMethod]
+        [Fact]
         public void ShouldTriggerIfAnyPublicTypesHaveBeenRemoved()
         {
             var change = Mock.Of<IAssemblyDiversion>(
@@ -18,7 +18,7 @@ namespace Diversion.Test.Triggers
             new TypeRemovalTrigger().IsTriggered(change).ShouldBeTrue();
         }
 
-        [TestMethod]
+        [Fact]
         public void ShouldNotTriggerIfNoPublicTypesHaveBeenRemoved()
         {
             var change = Mock.Of<IAssemblyDiversion>(

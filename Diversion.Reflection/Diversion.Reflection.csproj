@@ -1,8 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <Description>An implementation of diversion's simplified reflection interface using Mono.Cecil.</Description>
-    <Title>Diversion.Cecil</Title>
+    <Description>An implementation of diversion's simplified reflection interface using .net framework reflection.</Description>
+    <Title>Diversion.Reflection</Title>
     <Company>LocalMed, LLC</Company>
     <Copyright>Copyright © LocalMed 2015-2018</Copyright>
     <PackageTags>SemVer, Semantic, Version, Build, Diversion, CI, Release, Deployment</PackageTags>
@@ -15,12 +15,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Diversion\Diversion.csproj" />
+    <ProjectReference Include="../Diversion/Diversion.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Mono.Cecil" Version="0.9.6.4" />
     <PackageReference Include="Diversion.MSBuild" Version="0.4.0" PrivateAssets="All" />
   </ItemGroup>
 
-  </Project>
+</Project>

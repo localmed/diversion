@@ -41,22 +41,26 @@ namespace Diversion
 
         public NextVersion WithMajorTriggers(params IVersionTrigger[] triggers)
         {
+            Contract.Ensures(Contract.Result<NextVersion>() != null);
             return new NextVersion(triggers ?? new IVersionTrigger[0], _minorTriggers);
         }
 
         public NextVersion WithMinorTriggers(params IVersionTrigger[] triggers)
         {
+            Contract.Ensures(Contract.Result<NextVersion>() != null);
             return new NextVersion(_majorTriggers, triggers ?? new IVersionTrigger[0]);
         }
 
         public bool IsCorrect(IAssemblyDiversion diversion)
         {
+            Contract.Requires(diversion != null);
             return Determine(diversion).Equals(diversion.New.Version);
         }
 
         public Version Determine(IAssemblyDiversion diversion)
         {
-            //Contract.Requires<ArgumentNullException>(diversion != null, "diversion must not be null.");
+            Contract.Requires(diversion != null);
+            Contract.Ensures(Contract.Result<Version>() != null);
             return
                 diversion.HasDiverged() ?
                     !ShouldIncrementMajor(diversion) ?
@@ -69,12 +73,14 @@ namespace Diversion
 
         private bool ShouldIncrementMajor(IAssemblyDiversion diversion)
         {
+            Contract.Requires(diversion != null);
             return diversion.Old.Version.Major == 0 && diversion.New.Version.Major == 1 ||
                 diversion.Old.Version.Major > 0 && _majorTriggers.Any(trigger => trigger.IsTriggered(diversion));
         }
 
         private bool ShouldIncrementMinor(IAssemblyDiversion diversion)
         {
+            Contract.Requires(diversion != null);
             return diversion.Old.Version.Major == 0 && _majorTriggers.Any(trigger => trigger.IsTriggered(diversion)) ||
                 _minorTriggers.Any(trigger => trigger.IsTriggered(diversion));
         }

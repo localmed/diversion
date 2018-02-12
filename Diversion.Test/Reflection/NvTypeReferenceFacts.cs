@@ -1,70 +1,69 @@
 ﻿using System;
 using Diversion.Reflection;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xunit;
 using Should.Fluent;
 
 namespace Diversion.Test.Reflection
 {
-    [TestClass]
+    
     public class NvTypeReferenceFacts
     {
         private IReflectionInfoFactory _factory;
 
-        [TestInitialize]
-        public void Setup()
+        public NvTypeReferenceFacts()
         {
             _factory = new NvReflectionInfoFactory();
         }
 
-        [TestMethod]
+        [Fact]
         public void DeclaringTypeShouldBeNullIfReferencedTypeIsNotANestedType()
         {
             _factory.GetReference(typeof(NvTypeReferenceFacts)).DeclaringType.Should().Equal(null);
         }
 
-        [TestMethod]
+        [Fact]
         public void DeclaringTypeShouldBeSetIfReferencedTypeIsANestedType()
         {
             _factory.GetReference(typeof(SampleNestedType)).DeclaringType.Should()
                  .Equal(_factory.GetReference(typeof (NvTypeReferenceFacts)));
         }
 
-        [TestMethod]
+        [Fact]
         public void NameShouldBeCorrectlySet()
         {
             _factory.GetReference(typeof(NvTypeReferenceFacts))
                 .Name.Should().Equal(typeof (NvTypeReferenceFacts).Name);
         }
 
-        [TestMethod]
+        [Fact]
         public void NameOfConstructedGenericTypeShouldBeCorrectlySet()
         {
             _factory.GetReference(typeof(EventHandler<EventArgs>))
                 .Name.Should().Equal("EventHandler<System.EventArgs>");
         }
 
-        [TestMethod]
+        [Fact]
         public void NameOfGenericTypeDefinitionShouldBeCorrectlySet()
         {
             _factory.GetReference(typeof(EventHandler<>))
                 .Name.Should().Equal("EventHandler<>");
         }
 
-        [TestMethod]
+        [Fact]
         public void NamespaceShouldBeCorrectlySet()
         {
             _factory.GetReference(typeof(NvTypeReferenceFacts))
                 .Namespace.Should().Equal(typeof (NvTypeReferenceFacts).Namespace);
         }
 
-        [TestMethod]
+        [Fact]
         public void IdentityShouldBeCorrectlySet()
         {
             _factory.GetReference(typeof(NvTypeReferenceFacts))
                 .Identity.Should().Equal("Diversion.Test.Reflection.NvTypeReferenceFacts");
         }
 
-        [TestMethod]
+        [Fact]
         public void IdentityOfNestedTypeShouldBeCorrectlySet()
         {
             _factory.GetReference(typeof(SampleNestedType))
