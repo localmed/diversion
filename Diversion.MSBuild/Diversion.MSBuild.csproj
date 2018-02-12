@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>net462</TargetFramework>
     <PackageId>Diversion.MSBuild</PackageId>
-    <Version>0.4.0</Version>
+    <Version>0.4.1</Version>
     <Authors>LocalMed, LLC</Authors>
     <Company>LocalMed, LLC</Company>
     <Copyright>Copyright 2017 $(Company)</Copyright>
@@ -13,10 +13,8 @@
     <PackageLicenseUrl>https://github.com/localmed/diversion/blob/master/LICENSE.md</PackageLicenseUrl>
     <IsTool>True</IsTool>
     <DevelopmentDependency>True</DevelopmentDependency>
-    <IsPackable>True</IsPackable>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <Deterministic>True</Deterministic>
-    <AutoGenerateBindingRedirects>True</AutoGenerateBindingRedirects>
   </PropertyGroup>
 
   <ItemGroup>

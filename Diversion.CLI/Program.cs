@@ -7,12 +7,12 @@ using System.Net;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
-using Microsoft.Build.Evaluation;
 using Microsoft.Build.Framework;
-using Microsoft.Build.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using Diversion.Reflection;
+using Microsoft.Build.Evaluation;
+using Microsoft.Build.Logging;
 
 namespace Diversion.CLI
 {
@@ -138,8 +138,10 @@ namespace Diversion.CLI
 
         private static string BuildProject(Options options, string projectFile)
         {
-            ProjectCollection projects = new ProjectCollection(ToDictionary(options.BuildProperties));
-            var project = projects.LoadProject(projectFile);
+            var properties = ToDictionary(options.BuildProperties);
+            var collection = new ProjectCollection(properties);
+            var project = collection.LoadProject(projectFile);
+            properties.Add("Deterministic", "True");
             switch (options.Verbosity)
             {
                 case Verbosity.Detailed:
@@ -177,7 +179,7 @@ namespace Diversion.CLI
                 Directory.EnumerateFiles(path)
                     .Select(file => new FileInfo(file))
                     .FirstOrDefault(file => extensions.Contains(file.Extension));
-            return projectFile == null ? null : projectFile.FullName;
+            return projectFile?.FullName;
         }
 
         private static string FindSolutionFilePath(string path)
@@ -198,8 +200,7 @@ namespace Diversion.CLI
                 CloneRemoteReleaseBranch(options);
                 if (IsNuGetAvailable(options))
                 {
-                    string output, error;
-                    ExecuteCommand("nuget", string.Format("restore \"{0}\"",  FindSolutionFilePath(Path.Combine(options.WorkingDirectory, "repo"))), out output, out error);
+                    ExecuteCommand("nuget", string.Format("restore \"{0}\"",  FindSolutionFilePath(Path.Combine(options.WorkingDirectory, "repo"))), out string output, out string error);
                     if (!string.IsNullOrWhiteSpace(output))
                         WriteLine(options, Verbosity.Normal, ConsoleColor.White, output);
                     if (!string.IsNullOrWhiteSpace(error))
@@ -265,9 +266,7 @@ namespace Diversion.CLI
 
         private static bool ExecuteCommand(string cmd, string args, bool echo = false)
         {
-            string output;
-            string error;
-            return ExecuteCommand(cmd, args, out output, out error);
+            return ExecuteCommand(cmd, args, out string output, out string error);
         }
 
         private static bool ExecuteCommand(string cmd, string args, out string output, out string error, bool echo = false)
@@ -328,8 +327,10 @@ namespace Diversion.CLI
             }
             foreach (var fileName in Directory.EnumerateFiles(directory))
             {
-                var fileInfo = new FileInfo(fileName);
-                fileInfo.Attributes = FileAttributes.Normal;
+                var fileInfo = new FileInfo(fileName)
+                {
+                    Attributes = FileAttributes.Normal
+                };
                 fileInfo.Delete();
             }
             Directory.Delete(directory);
@@ -337,18 +338,14 @@ namespace Diversion.CLI
 
         private static string GetGitRepositoryFromRemote(string remote)
         {
-            string output;
-            string error;
-            if (ExecuteCommand("git", string.Format("remote show -n {0}", remote), out output, out error))
+            if (ExecuteCommand("git", string.Format("remote show -n {0}", remote), out string output, out string error))
                 return Regex.Match(output, "Fetch URL: (.*)").Groups[1].Value.Trim();
             throw new ApplicationException(error);
         }
 
         private static string GetLocalGitRepositoryPath()
         {
-            string output;
-            string error;
-            if (ExecuteCommand("git", "rev-parse --show-toplevel", out output, out error))
+            if (ExecuteCommand("git", "rev-parse --show-toplevel", out string output, out string error))
                 return output.Trim();
             throw new ApplicationException(error);
         }

@@ -47,22 +47,9 @@ namespace Diversion.CLI
         [CmdLine.CommandLineParameter(Command = "g", Name = "GenerateFile", Description = "Generate a diversion.json file to \".diversion\\<ProjectName>\".", Default = false)]
         public bool GenerateFile { get; set; }
 
-        public Verbosity Verbosity {
-            get
-            {
-                Verbosity value;
-                return Enum.TryParse(VerbosityText, true, out value) ? value : Verbosity.Normal;
-            }
-        }
+        public Verbosity Verbosity => Enum.TryParse(VerbosityText, true, out Verbosity value) ? value : Verbosity.Normal;
 
-        public ReleaseSource ReleaseSource
-        {
-            get
-            {
-                ReleaseSource value;
-                return Enum.TryParse(ReleaseSourceText, true, out value) ? value : ReleaseSource.Auto;
-            }
-        }
+        public ReleaseSource ReleaseSource => Enum.TryParse(ReleaseSourceText, true, out ReleaseSource value) ? value : ReleaseSource.Auto;
 
         internal string ProjectDirectory { get; set; }
 

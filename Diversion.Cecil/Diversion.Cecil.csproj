@@ -11,6 +11,7 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <TargetFramework>net462</TargetFramework>
     <Deterministic>true</Deterministic>
+    <Version>0.1.0</Version>
   </PropertyGroup>
 
   <ItemGroup>
@@ -19,6 +20,7 @@
 
   <ItemGroup>
     <PackageReference Include="Mono.Cecil" Version="0.9.6.4" />
+    <PackageReference Include="Diversion.MSBuild" Version="0.4.0" PrivateAssets="All" />
   </ItemGroup>
 
-</Project>
+  </Project>
