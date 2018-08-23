@@ -3,7 +3,7 @@
     "diver-analyze": {
       "commandName": "Project",
       "commandLineArgs": "\"obj\\Debug\\net462\\latest\\bin\\net462\\Diversion.dll\" \"bin\\Debug\\net462\\Diversion.dll\" \"bin\\Debug\\net462\\diversion.output.json\"",
-      "workingDirectory": "C:\\Users\\Michael\\Repos\\diversion\\Diversion"
+      "workingDirectory": "..\\Diversion"
     }
   }
 }

@@ -41,7 +41,9 @@
 
   <ItemGroup>
     <None Include="readme.txt" Pack="true" PackagePath="." />
-    <None Include="../diver-analyze/bin/$(Configuration)/net462/diver-analyze.exe" Pack="true" PackagePath="tools" />
+    <None Include="../diver-analyze/bin/$(Configuration)/net462/diver-analyze.exe" Pack="true" PackagePath="tools">
+      <Link>tools/diver-analyze.exe</Link>
+    </None>
   </ItemGroup>
 
 </Project>
