@@ -8,6 +8,5 @@ namespace Diversion.Reflection
         bool IsOnApiSurface { get; }
         bool IsPublic { get; }
         bool IsStatic { get; }
-        byte[] Implementation { get; }
     }
 }

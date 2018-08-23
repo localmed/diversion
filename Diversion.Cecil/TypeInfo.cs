@@ -1,13 +1,10 @@
 using Diversion.Reflection;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using Mono.Cecil;
 
 namespace Diversion.Cecil
 {
-    [Serializable]
     public class TypeInfo : MemberInfo, ITypeInfo
     {
         private readonly bool _isPublic;
@@ -23,6 +20,7 @@ namespace Diversion.Cecil
                 .Concat(type.Fields.Select(reflectionInfoFactory.GetInfo))
                 .Concat(type.NestedTypes.Select(reflectionInfoFactory.GetInfo))
                 .Concat(type.Events.Select(reflectionInfoFactory.GetInfo))
+                .Where(m => m.IsOnApiSurface)
                 .OrderBy(i => i.Identity).ToArray();
             GenericArguments = type.GenericParameters.Select(reflectionInfoFactory.GetReference).ToArray();
             _isPublic = type.IsPublic;

@@ -7,7 +7,6 @@ using System.Linq;
 
 namespace Diversion.Cecil
 {
-    [Serializable]
     public class AttributeInfo : IAttributeInfo
     {
         private readonly ITypeReference _type;
@@ -17,7 +16,7 @@ namespace Diversion.Cecil
         {
             _type = reflectionInfoFactory.GetReference(attribute.AttributeType);
             _arguments =
-                attribute.Constructor.Parameters.Zip(attribute.ConstructorArguments,
+                attribute.Constructor.Resolve().Parameters.Zip(attribute.ConstructorArguments,
                     (p, a) => new AttributeArgumentInfo(p.Name, GetArgumentValue(reflectionInfoFactory, a))).ToArray();
             if (attribute.HasFields)
                 _arguments = _arguments.Concat(attribute.Fields.Select(

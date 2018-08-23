@@ -2,7 +2,7 @@
 using Diversion.Triggers;
 using Xunit;
 using Moq;
-using Should;
+using Shouldly;
 
 namespace Diversion.Test.Triggers
 {

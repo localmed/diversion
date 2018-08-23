@@ -6,7 +6,6 @@ using System.Linq;
 
 namespace Diversion.Cecil
 {
-    [Serializable]
     public class GenericParameterInfo : TypeReference, IGenericParameterInfo
     {
         public GenericParameterInfo(IReflectionInfoFactory reflectionInfoFactory, GenericParameter member) : base(reflectionInfoFactory, member)

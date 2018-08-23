@@ -1,7 +1,9 @@
 ﻿using System.Reflection;
 using Diversion.Reflection;
 using Xunit;
-using Should.Fluent;
+using Shouldly;
+using System.IO;
+using System;
 
 namespace Diversion.Test
 {
@@ -10,37 +12,52 @@ namespace Diversion.Test
         [Fact]
         public void OldShouldBeSetProperly()
         {
-            var old = new NvAssemblyInfo(Assembly.GetExecutingAssembly().Location);
-            var @new = new NvAssemblyInfo(Assembly.GetExecutingAssembly().Location);
+            var factory = new NvAssemblyInfoFactory();
+            var old = factory.FromFile(Path.Combine(Environment.CurrentDirectory, Path.GetFileName(Assembly.GetExecutingAssembly().Location)));
+            var @new = factory.FromFile(Path.Combine(Environment.CurrentDirectory, Path.GetFileName(Assembly.GetExecutingAssembly().Location)));
             var ad = new AssemblyDiversion(new DiversionDiviner(), old, @new);
-            ad.Old.Should().Equal(old);
+            ad.Old.ShouldBe(old);
         }
 
         [Fact]
         public void NewShouldBeSetProperly()
         {
-            var old = new NvAssemblyInfo(Assembly.GetExecutingAssembly().Location);
-            var @new = new NvAssemblyInfo(Assembly.GetExecutingAssembly().Location);
+            var factory = new NvAssemblyInfoFactory();
+            var old = factory.FromFile(Path.Combine(Environment.CurrentDirectory, Path.GetFileName(Assembly.GetExecutingAssembly().Location)));
+            var @new = factory.FromFile(Path.Combine(Environment.CurrentDirectory, Path.GetFileName(Assembly.GetExecutingAssembly().Location)));
             var ad = new AssemblyDiversion(new DiversionDiviner(), old, @new);
-            ad.New.Should().Equal(@new);
+            ad.New.ShouldBe(@new);
         }
 
         [Fact]
         public void TypeDiversionsShouldBeSetProperly()
         {
-            var old = new NvAssemblyInfo(Assembly.GetExecutingAssembly().Location);
-            var @new = new NvAssemblyInfo(Assembly.GetExecutingAssembly().Location);
+            var factory = new NvAssemblyInfoFactory();
+            var old = factory.FromFile(Path.Combine(Environment.CurrentDirectory, Path.GetFileName(Assembly.GetExecutingAssembly().Location)));
+            var @new = factory.FromFile(Path.Combine(Environment.CurrentDirectory, Path.GetFileName(Assembly.GetExecutingAssembly().Location)));
             var ad = new AssemblyDiversion(new DiversionDiviner(), old, @new);
-            ad.TypeDiversions.Should().Not.Be.Null();
+            ad.TypeDiversions.ShouldNotBeNull();
         }
 
         [Fact]
         public void AttributeDiversionsShouldBeSetProperly()
         {
-            var old = new NvAssemblyInfo(Assembly.GetExecutingAssembly().Location);
-            var @new = new NvAssemblyInfo(Assembly.GetExecutingAssembly().Location);
+            var factory = new NvAssemblyInfoFactory();
+            var old = factory.FromFile(Path.Combine(Environment.CurrentDirectory, Path.GetFileName(Assembly.GetExecutingAssembly().Location)));
+            var @new = factory.FromFile(Path.Combine(Environment.CurrentDirectory, Path.GetFileName(Assembly.GetExecutingAssembly().Location)));
             var ad = new AssemblyDiversion(new DiversionDiviner(), old, @new);
-            ad.AttributeDiversions.Should().Not.Be.Null();
+            ad.AttributeDiversions.ShouldNotBeNull();
         }
+
+        [Fact]
+        public void TheSameAssemblyCannotHaveDiverged()
+        {
+            var factory = new NvAssemblyInfoFactory();
+            var old = factory.FromFile(Path.Combine(Environment.CurrentDirectory, Path.GetFileName(Assembly.GetExecutingAssembly().Location)));
+            var @new = factory.FromFile(Path.Combine(Environment.CurrentDirectory, Path.GetFileName(Assembly.GetExecutingAssembly().Location)));
+            var ad = new AssemblyDiversion(new DiversionDiviner(), old, @new);
+            ad.HasDiverged().ShouldBeFalse();
+        }
+
     }
 }

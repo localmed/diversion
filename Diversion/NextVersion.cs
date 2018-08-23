@@ -1,7 +1,9 @@
 ﻿using System;
-using System.Diagnostics.Contracts;
 using System.Linq;
+using Diversion.Reflection;
 using Diversion.Triggers;
+using NuGet.Frameworks;
+using NuGet.Versioning;
 
 namespace Diversion
 {
@@ -41,49 +43,63 @@ namespace Diversion
 
         public NextVersion WithMajorTriggers(params IVersionTrigger[] triggers)
         {
-            Contract.Ensures(Contract.Result<NextVersion>() != null);
             return new NextVersion(triggers ?? new IVersionTrigger[0], _minorTriggers);
         }
 
         public NextVersion WithMinorTriggers(params IVersionTrigger[] triggers)
         {
-            Contract.Ensures(Contract.Result<NextVersion>() != null);
             return new NextVersion(_majorTriggers, triggers ?? new IVersionTrigger[0]);
         }
 
-        public bool IsCorrect(IAssemblyDiversion diversion)
+        public NuGetVersion Determine(IAssemblyDiversion diversion)
         {
-            Contract.Requires(diversion != null);
-            return Determine(diversion).Equals(diversion.New.Version);
-        }
-
-        public Version Determine(IAssemblyDiversion diversion)
-        {
-            Contract.Requires(diversion != null);
-            Contract.Ensures(Contract.Result<Version>() != null);
             return
                 diversion.HasDiverged() ?
                     !ShouldIncrementMajor(diversion) ?
                         !ShouldIncrementMinor(diversion) ?
-                            diversion.Old.Version.IncrementBuild() :
+                            diversion.Old.Version.IncrementPatch() :
                         diversion.Old.Version.IncrementMinor() :
                     diversion.Old.Version.IncrementMajor() :
                 diversion.Old.Version;
         }
 
+        public NextVersionAnalysis Analyze(IAssemblyDiversion diversion)
+        {
+            return new NextVersionAnalysis(diversion.Identity, diversion.New.TargetFramework,
+                diversion.Old.Version, diversion.New.Version, Determine(diversion));
+        }
+
         private bool ShouldIncrementMajor(IAssemblyDiversion diversion)
         {
-            Contract.Requires(diversion != null);
             return diversion.Old.Version.Major == 0 && diversion.New.Version.Major == 1 ||
                 diversion.Old.Version.Major > 0 && _majorTriggers.Any(trigger => trigger.IsTriggered(diversion));
         }
 
         private bool ShouldIncrementMinor(IAssemblyDiversion diversion)
         {
-            Contract.Requires(diversion != null);
             return diversion.Old.Version.Major == 0 && _majorTriggers.Any(trigger => trigger.IsTriggered(diversion)) ||
                 _minorTriggers.Any(trigger => trigger.IsTriggered(diversion));
         }
+    }
 
+    public class NextVersionAnalysis
+    {
+        public NextVersionAnalysis(string identity, NuGetFramework targetFramework,
+            NuGetVersion oldVersion, NuGetVersion newVersion, NuGetVersion calculatedVersion)
+        {
+            Identity = identity;
+            TargetFramework = targetFramework;
+            OldVersion = oldVersion;
+            NewVersion = newVersion;
+            CalculatedVersion = calculatedVersion;
+        }
+
+        public string Identity { get; }
+        public NuGetFramework TargetFramework { get; }
+        public NuGetVersion OldVersion { get; }
+        public NuGetVersion NewVersion { get; }
+        public NuGetVersion CalculatedVersion { get; }
+        public bool HasDiverged => !Equals(OldVersion, CalculatedVersion);
+        public bool IsNewVersionCorrect => NewVersion >= CalculatedVersion;
     }
 }

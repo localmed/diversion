@@ -9,7 +9,7 @@ using Mono.Cecil.Cil;
 
 namespace Diversion.Cecil.Test
 {
-    public class AssemblyInfoFactoryTests
+    public class AssemblyInfoFactoryFixture
     {
 
     }

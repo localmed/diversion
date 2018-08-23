@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.Versioning;
-using System.Text.RegularExpressions;
 using Diversion.Reflection;
+using NuGet.Frameworks;
+using NuGet.Versioning;
 
 namespace Diversion.Cecil
 {
-    [Serializable]
     public class AssemblyInfo : IAssemblyInfo
     {
         public AssemblyInfo(string assemblyPath)
@@ -18,34 +18,34 @@ namespace Diversion.Cecil
 
             Identity = assembly.Name.Name;
             Name = assembly.FullName;
+            Mvid = assembly.MainModule.Mvid;
             Attributes = assembly.CustomAttributes.Select(reflectionInfoFactory.GetInfo).ToArray();
 
             Version = Attributes.Where(attr => attr.Type.Name == nameof(AssemblyInformationalVersionAttribute)).Select(
+                attr => NuGetVersion.TryParse((string) attr.Arguments[0].Value, out NuGetVersion version) ? version : null)
+                .FirstOrDefault() ?? assembly.Name.Version.ToSemanticVersion();
+            TargetFramework = Attributes.Where(attr => Equals(attr.Type.Name, nameof(TargetFrameworkAttribute))).Select(
                 attr =>
                 {
-                    var match = Regex.Match((string) attr.Arguments[0].Value, @"([0-9]+\.[0-9]+\.[0-9]+).?");
-                    return match.Success ? new Version(match.Result("$1")) : null;
-                }).FirstOrDefault() ?? assembly.Name.Version;
-            FrameworkVersion = Attributes.Where(attr => Equals(attr.Type.Name, nameof(TargetFrameworkAttribute))).Select(
-                attr =>
-                {
-                    var match = Regex.Match((string) attr.Arguments[0].Value, @"\.NETFramework,Version=v(.*)");
-                    return match.Success ? new Version(match.Result("$1")) : null;
-                }).FirstOrDefault() ?? new Version(assembly.MainModule.RuntimeVersion.Substring(1));
-            Types = assembly.MainModule.Types.AsParallel().Select(reflectionInfoFactory.GetInfo).OrderBy(i => i.Identity).ToArray();
+                    var name = new FrameworkName((string) attr.Arguments[0].Value);
+                    return new NuGetFramework(name.Identifier, name.Version, name.Profile);
+                }).FirstOrDefault() ?? NuGetFramework.UnsupportedFramework;
+            Types = assembly.MainModule.Types.AsParallel().Select(reflectionInfoFactory.GetInfo).Where(t => t.IsOnApiSurface).AsSequential().OrderBy(i => i.Identity).ToArray();
         }
 
-        public string Identity { get; private set; }
+        public string Identity { get; }
 
-        public string Name { get; private set; }
+        public string Name { get;  }
 
-        public Version Version { get; private set; }
+        public Guid Mvid { get; }
 
-        public Version FrameworkVersion { get; private set; }
+        public NuGetVersion Version { get;  }
 
-        public IReadOnlyList<ITypeInfo> Types { get; private set; }
+        public NuGetFramework TargetFramework { get;  }
 
-        public IReadOnlyList<IAttributeInfo> Attributes { get; private set; }
+        public IReadOnlyList<ITypeInfo> Types { get;  }
+
+        public IReadOnlyList<IAttributeInfo> Attributes { get; }
 
         public override string ToString() => Identity;
     }

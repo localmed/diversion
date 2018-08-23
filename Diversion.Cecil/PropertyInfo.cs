@@ -5,13 +5,10 @@ using System.Linq;
 
 namespace Diversion.Cecil
 {
-    [Serializable]
     public class PropertyInfo : MemberInfo, IPropertyInfo
     {
         private readonly bool _isPublic;
         private readonly bool _isStatic;
-        private readonly bool _isVirtual;
-        private readonly bool _isAbstract;
         private readonly bool _isOnApiSurface;
 
         public PropertyInfo(IReflectionInfoFactory reflectionInfoFactory, Mono.Cecil.PropertyDefinition member)
@@ -23,8 +20,8 @@ namespace Diversion.Cecil
             var s = member.SetMethod ?? member.GetMethod;
             _isPublic = p.IsPublic || s.IsPublic;
             _isStatic = p.IsStatic;
-            _isVirtual = p.IsVirtual;
-            _isAbstract = p.IsAbstract;
+            IsVirtual = p.IsVirtual;
+            IsAbstract = p.IsAbstract;
             _isOnApiSurface = IsPublic || p.IsFamilyOrAssembly || p.IsFamily || s.IsFamilyOrAssembly || s.IsFamily;
         }
 
@@ -34,9 +31,9 @@ namespace Diversion.Cecil
 
         public override bool IsStatic => _isStatic;
 
-        public bool IsVirtual => _isVirtual;
+        public bool IsVirtual { get; }
 
-        public bool IsAbstract => _isAbstract;
+        public bool IsAbstract { get; }
 
         public IReadOnlyList<IParameterInfo> IndexerParameters { get; private set; }
 

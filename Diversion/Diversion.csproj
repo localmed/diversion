@@ -2,20 +2,29 @@
 
   <PropertyGroup>
     <Description>A library that determines what version the currently built assembly should be when compared to the last released assembly.</Description>
-    <Version>0.16.0</Version>
+    <Version>0.17.0</Version>
     <Title>Diversion</Title>
     <Company>LocalMed, LLC</Company>
     <Copyright>Copyright © LocalMed 2015-2018</Copyright>
-    <PackageTags>SemVer, Semantic, Version, Build, Diversion, CI, Release, Deployment</PackageTags>
+    <PackageTags>SemVer Semantic Version Build Diversion CI Release Deployment</PackageTags>
     <PackageProjectUrl>https://github.com/localmed/diversion</PackageProjectUrl>
     <PackageLicenseUrl>https://github.com/localmed/diversion/blob/master/LICENSE.md</PackageLicenseUrl>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <TargetFramework>net462</TargetFramework>
+    <TargetFrameworks>net462;netstandard1.6</TargetFrameworks>
     <Deterministic>true</Deterministic>
   </PropertyGroup>
 
-   <ItemGroup>
-    <PackageReference Include="Diversion.MSBuild" Version="0.4.1" PrivateAssets="All" />
+  <ItemGroup>
+    <PackageReference Include="NuGet.Frameworks" Version="4.5.0" />
+    <PackageReference Include="NuGet.Versioning" Version="4.5.0" />
+    <!--<PackageReference Include="Diversion.MSBuild" Version="0.4.8" PrivateAssets="All" />-->
   </ItemGroup>
-
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard1.6'">
+     <PackageReference Include="System.Linq.Parallel" Version="4.3.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
+      <_Parameter1>Diversion.Test</_Parameter1>
+    </AssemblyAttribute>
+  </ItemGroup>
 </Project>

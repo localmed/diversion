@@ -7,19 +7,6 @@ namespace Diversion.Reflection
 {
     public class NvAssemblyInfoFactory : IAssemblyInfoFactory
     {
-        static NvAssemblyInfoFactory()
-        {
-            var assemblies = new HashSet<string>();
-            AppDomain.CurrentDomain.AssemblyResolve += (s, a) =>
-            {
-                try
-                {
-                    return assemblies.Add(a.Name) ? Assembly.Load(a.Name) : null;
-                }
-                catch { return null; }
-            };
-        }
-
         public IAssemblyInfo FromFile(string assemblyPath)
         {
             using (var context = new AppDomainContext(Path.GetDirectoryName(assemblyPath)))

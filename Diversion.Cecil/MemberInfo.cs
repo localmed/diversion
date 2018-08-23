@@ -6,36 +6,22 @@ using System.Linq;
 
 namespace Diversion.Cecil
 {
-    [Serializable]
     public abstract class MemberInfo : IMemberInfo
     {
-        private readonly IReadOnlyList<IAttributeInfo> _attributes;
-        private readonly ITypeReference _declaringType;
-        private readonly ITypeReference _baseDeclaringType;
-
         protected MemberInfo(IReflectionInfoFactory reflectionInfoFactory, IMemberDefinition member)
         {
             var baseDeclaringType = member.GetBaseDeclaringType();
-            _baseDeclaringType = baseDeclaringType == null ? null : reflectionInfoFactory.GetReference(baseDeclaringType);
-            _declaringType = member.DeclaringType == null ? null : reflectionInfoFactory.GetReference(member.DeclaringType);
-            _attributes = member.CustomAttributes.Select(reflectionInfoFactory.GetInfo).ToArray();
+            BaseDeclaringType = baseDeclaringType == null ? null : reflectionInfoFactory.GetReference(baseDeclaringType);
+            DeclaringType = member.DeclaringType == null ? null : reflectionInfoFactory.GetReference(member.DeclaringType);
+            Attributes = member.CustomAttributes.Select(reflectionInfoFactory.GetInfo).ToArray();
             Name = member.Name;
         }
 
-        public ITypeReference BaseDeclaringType
-        {
-            get { return _baseDeclaringType; }
-        }
+        public ITypeReference BaseDeclaringType { get; }
 
-        public ITypeReference DeclaringType
-        {
-            get { return _declaringType; }
-        }
+        public ITypeReference DeclaringType { get; }
 
-        public IReadOnlyList<IAttributeInfo> Attributes
-        {
-            get { return _attributes; }
-        }
+        public IReadOnlyList<IAttributeInfo> Attributes { get; }
 
         public string Name { get; protected set; }
 
@@ -65,7 +51,5 @@ namespace Diversion.Cecil
         {
             return Identity;
         }
-
-        public virtual byte[] Implementation { get { return new byte[0]; } }
     }
 }

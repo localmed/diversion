@@ -4,7 +4,6 @@ using System.Reflection;
 
 namespace Diversion.Cecil
 {
-    [Serializable]
     public class FieldInfo : MemberInfo, IFieldInfo
     {
         private readonly ITypeReference _type;

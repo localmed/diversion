@@ -1,18 +1,25 @@
-﻿using System;
+﻿using Diversion.Reflection;
+
+using Microsoft.Build.Evaluation;
+using Microsoft.Build.Framework;
+using Microsoft.Build.Logging;
+
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
+
+using NuGet.Frameworks;
+using NuGet.Versioning;
+
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Reflection;
+using System.Runtime.Versioning;
 using System.Text;
 using System.Text.RegularExpressions;
-using Microsoft.Build.Framework;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
-using Diversion.Reflection;
-using Microsoft.Build.Evaluation;
-using Microsoft.Build.Logging;
 
 namespace Diversion.CLI
 {
@@ -87,33 +94,35 @@ namespace Diversion.CLI
                 if (options.GenerateFile)
                     using (var writer = new StreamWriter(File.Create(Path.Combine(options.WorkingDirectory, Path.GetFileNameWithoutExtension(options.Target), "diversion.json"))))
                         JsonSerializer.CreateDefault(new JsonSerializerSettings { ContractResolver = new CustomContractResolver() }).Serialize(writer, diversion);
-                var version = new NextVersion().Determine(diversion);
-                if (version == diversion.Old.Version)
+                var analysis = new NextVersion().Analyze(diversion);
+
+                var version = analysis.CalculatedVersion;
+                if (!analysis.HasDiverged)
                 {
                     WriteLine(options, Verbosity.Minimal, ConsoleColor.White, "The target project has not diverged from the released version.");
                     return 1;
                 }
-                else if (version > diversion.New.Version)
+                else if (analysis.CalculatedVersion > analysis.NewVersion)
                 {
                     if (!options.Correct)
                     {
-                        WriteLine(options, Verbosity.Minimal, ConsoleColor.DarkRed, "{0} {1} [Currently {2}]", Path.GetFileNameWithoutExtension(options.Target), version, diversion.New.Version);
+                        WriteLine(options, Verbosity.Minimal, ConsoleColor.DarkRed, "{0} {1} [Currently {2}]", analysis.Identity, analysis.CalculatedVersion, analysis.NewVersion);
                         return 2;
                     }
                     else
                     {
                         WriteLine(options, Verbosity.Normal, ConsoleColor.White, "Updating the assembly info in the target project...");
                         File.WriteAllText(options.AssemblyInfoFile, string.Format(Regex.Replace(File.ReadAllText(options.AssemblyInfoFile), "(Assembly(?:File|Informational)?Version)\\s*\\(\\s*\"([0-9.]*)\"\\s*\\)", "$1(\"{0}\")"), version), Encoding.UTF8);
-                        WriteLine(options, Verbosity.Minimal, ConsoleColor.DarkCyan, "{0} {1} [Was {2}]", Path.GetFileNameWithoutExtension(options.Target), version, diversion.New.Version);
+                        WriteLine(options, Verbosity.Minimal, ConsoleColor.DarkCyan, "{0} {1} [Was {2}]", analysis.Identity, analysis.CalculatedVersion, analysis.NewVersion);
                     }
                 }
-                else if (version == diversion.New.Version)
+                else if (analysis.CalculatedVersion == analysis.NewVersion)
                 {
-                    WriteLine(options, Verbosity.Minimal, ConsoleColor.Green, "{0} {1}", Path.GetFileNameWithoutExtension(options.Target), version);
+                    WriteLine(options, Verbosity.Minimal, ConsoleColor.Green, "{0} {1}", analysis.Identity, analysis.NewVersion);
                 }
                 else
                 {
-                    WriteLine(options, Verbosity.Minimal, ConsoleColor.DarkGreen, "{0} {1} [Determined {2}]", Path.GetFileNameWithoutExtension(options.Target), diversion.New.Version, version);
+                    WriteLine(options, Verbosity.Minimal, ConsoleColor.DarkGreen, "{0} {1} [Determined {2}]", analysis.Identity, analysis.NewVersion, analysis.CalculatedVersion);
                 }
                 return 0;
             }
@@ -363,5 +372,44 @@ namespace Diversion.CLI
                 return typeof(IAssemblyDiversion).IsAssignableFrom(objectType) ? members.FindAll(m => !m.Name.Equals("Old") && !m.Name.Equals("New")) : members;
             }
         }
+
+        private class NuGetVersionConverter : JsonConverter
+        {
+            public override bool CanConvert(Type objectType)
+            {
+                return typeof(NuGetVersion).Equals(objectType);
+            }
+
+            public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
+            {
+                return new NuGetVersion((string)reader.Value);
+            }
+
+            public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
+            {
+                writer.WriteValue(((NuGetVersion)value).ToFullString());
+            }
+        }
+
+
+        private class NuGetFrameworkConverter : JsonConverter
+        {
+            public override bool CanConvert(Type objectType)
+            {
+                return typeof(NuGetFramework).Equals(objectType);
+            }
+
+            public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
+            {
+                var frameworkName = new FrameworkName((string)reader.Value);
+                return new NuGetFramework(frameworkName.Identifier, frameworkName.Version, frameworkName.Profile);
+            }
+
+            public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
+            {
+                writer.WriteValue(((NuGetFramework)value).DotNetFrameworkName);
+            }
+        }
+
     }
 }

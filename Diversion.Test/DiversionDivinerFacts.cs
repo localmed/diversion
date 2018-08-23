@@ -1,7 +1,7 @@
 ﻿using System;
 using Xunit;
 using Moq;
-using Should.Fluent;
+using Shouldly;
 
 namespace Diversion.Test
 {
@@ -13,23 +13,28 @@ namespace Diversion.Test
         {
             new DiversionDiviner().DivineCollectionDiversions(
                 new[] {Tuple.Create(1, 0), Tuple.Create(1, 1), Tuple.Create(1, 2)},
-                new[] {Tuple.Create(1, 0), Tuple.Create(1, 2), Tuple.Create(1, 4)}).Should().Not.Be.Null();
+                new[] {Tuple.Create(1, 0), Tuple.Create(1, 2), Tuple.Create(1, 4)}).ShouldNotBeNull();
         }
 
         [Fact]
         public void ItemsThatOnlyExistInTheNewListShouldBeInTheAddedCollectionOfAnICollectionDiversionsInstance()
         {
+            var diversions =
             new DiversionDiviner().DivineCollectionDiversions(
                 new[] { Tuple.Create(1, 0), Tuple.Create(1, 1), Tuple.Create(1, 2) },
-                new[] { Tuple.Create(1, 0), Tuple.Create(1, 2), Tuple.Create(1, 4) }).Added.Should().Contain.One(Tuple.Create(1, 4));
+                new[] { Tuple.Create(1, 0), Tuple.Create(1, 2), Tuple.Create(1, 4) });
+            diversions.Added.ShouldHaveSingleItem();
+            diversions.Added.ShouldContain(Tuple.Create(1, 4));
         }
 
         [Fact]
         public void ItemsThatOnlyExistInTheOldListShouldBeInTheRemovedCollectionOfAnICollectionDiversionsInstance()
         {
-            new DiversionDiviner().DivineCollectionDiversions(
+            var diversions = new DiversionDiviner().DivineCollectionDiversions(
                 new[] { Tuple.Create(1, 0), Tuple.Create(1, 1), Tuple.Create(1, 2) },
-                new[] { Tuple.Create(1, 0), Tuple.Create(1, 2), Tuple.Create(1, 4) }).Removed.Should().Contain.One(Tuple.Create(1, 1));
+                new[] { Tuple.Create(1, 0), Tuple.Create(1, 2), Tuple.Create(1, 4) });
+            diversions.Removed.ShouldHaveSingleItem();
+            diversions.Removed.ShouldContain(Tuple.Create(1, 1));
         }
 
         [Fact]
@@ -41,10 +46,10 @@ namespace Diversion.Test
                 (o, n) =>
                 {
                     var x = repo.OneOf<IDiversion<Tuple<int, int>>>();
-                    Mock.Get(x).Setup(obj => obj.HasDiverged()).Returns(true).Verifiable();
+                    Mock.Get(x).Setup(obj => obj.HasDiverged()).Returns(false).Verifiable();
                     return x;
-                }).Should().Not.Be.Null();
-            repo.VerifyAll();
+                }).ShouldNotBeNull();
+            repo.Verify();
         }
 
         [Fact]
@@ -56,18 +61,18 @@ namespace Diversion.Test
                 (o, n) =>
                 {
                     var x = repo.OneOf<IDiversion<Tuple<int, int>>>();
-                    Mock.Get(x).Setup(obj => obj.HasDiverged()).Returns(true).Verifiable();
+                    Mock.Get(x).Setup(obj => obj.HasDiverged()).Returns(false).Verifiable();
                     return x;
-                }).Should().Not.Be.Null();
-            repo.VerifyAll();
+                }).ShouldNotBeNull();
+            repo.Verify();
         }
 
         [Fact]
         public void ItemsThatHaveDivergedShouldBeInTheDivergedCollectionOfAnIDiversionsInstance()
         {
             new DiversionDiviner().DivineDiversions(new[] { Tuple.Create(1, 0), Tuple.Create(1, 1), Tuple.Create(1, 2) },
-                new[] {Tuple.Create(1, 0), Tuple.Create(1, 2), Tuple.Create(1, 4)},
-                (o, n) => Mock.Of<IDiversion<Tuple<int, int>>>(obj => obj.HasDiverged())).Diverged.Should().Count.Exactly(2);
+                new[] { Tuple.Create(1, 0), Tuple.Create(1, 2), Tuple.Create(1, 4) },
+                (o, n) => Mock.Of<IDiversion<Tuple<int, int>>>(obj => obj.HasDiverged())).Diverged.Count.ShouldBe(2);
         }
 
         [Fact]
@@ -75,7 +80,7 @@ namespace Diversion.Test
         {
             new DiversionDiviner().DivineDiversions(new[] { Tuple.Create(1, 0), Tuple.Create(1, 1), Tuple.Create(1, 2) },
                 new[] {Tuple.Create(1, 0), Tuple.Create(1, 2), Tuple.Create(1, 4)},
-                (o, n) => Mock.Of<IDiversion<Tuple<int, int>>>(obj => !obj.HasDiverged())).Diverged.Should().Be.Empty();
+                (o, n) => Mock.Of<IDiversion<Tuple<int, int>>>(obj => !obj.HasDiverged())).Diverged.ShouldBeEmpty();
         }
     }
 }

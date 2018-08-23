@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net462</TargetFramework>
+    <IsPackable>false</IsPackable>
+    <OutputType>Exe</OutputType>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Diversion.Cecil\Diversion.Cecil.csproj" PrivateAssets="All" />
+    <ProjectReference Include="..\Diversion\Diversion.csproj" PrivateAssets="All" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Costura.Fody" Version="3.1.0" PrivateAssets="All" />
+    <PackageReference Include="Fody" Version="3.1.4" PrivateAssets="All" />
+    <PackageReference Include="Newtonsoft.Json" Version="9.0.1" PrivateAssets="All" />
+  </ItemGroup>
+
+</Project>

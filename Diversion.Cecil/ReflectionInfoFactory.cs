@@ -13,6 +13,11 @@ namespace Diversion.Cecil
             return type is GenericParameter ? new GenericParameterInfo(this, type as GenericParameter) : new TypeReference(this, type);
         }
 
+        public ITypeReference GetReference(InterfaceImplementation type)
+        {
+            return new TypeReference(this, type.InterfaceType);
+        }
+
         public ITypeReference GetReference(TypeDefinition type)
         {
             return new TypeReference(this, type);

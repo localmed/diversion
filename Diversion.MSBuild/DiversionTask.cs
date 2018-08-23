@@ -1,5 +1,4 @@
 ﻿using Microsoft.Build.Framework;
-using Microsoft.Build.Utilities;
 using System;
 using System.IO;
 using System.Reflection;
@@ -7,70 +6,48 @@ using System.Collections.Generic;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using Microsoft.Extensions.Configuration;
-using Diversion.Reflection;
+using NuGet.Versioning;
+using NuGet.Frameworks;
+using System.Runtime.Versioning;
+using System.Diagnostics;
 
 namespace Diversion.MSBuild
 {
-    public class DiversionTask : Task
+    public class DiversionTask : Nerdbank.MSBuildExtension.ContextIsolatedTask
     {
         [Output]
         public bool Verified { get; set; }
         [Output]
         public string Version { get; set; }
         [Output]
+        public string PackageVersion { get; set; }
+        [Output]
         public bool HasDiverged { get; set; }
         [Output]
         public bool RequiresCorrection { get; set; }
 
         public string PackageId { get; set; }
+        public string ExistingVersion { get; set; }
         public string TargetPath { get; set; }
-        public string TargetFramework { get; set; }
-        public string TargetFrameworkVersion { get; set; }
-        public string ReleasedOutputPath { get; set; }
+        public string ReleasePath { get; set; }
+        public string AnalyzePath { get; set; }
         public string ConfigFilePath { get; set; }
 
-        public override bool Execute()
+        private NextVersionAnalysis ExecuteAnalysis(string releasedAssemblyPath, string targetAssemblyPath, string diversionFilePath)
         {
-            Configuration = GetConfiguration();
-            if (string.IsNullOrWhiteSpace(TargetFramework))
-                TargetFramework = TargetFrameworkVersion.Replace("v", "net").Replace(".", "");
-            if (string.IsNullOrWhiteSpace(PackageId))
-                PackageId = Path.GetFileNameWithoutExtension(TargetPath);
-            var releasePath = GetLatestReleasePath();
-            if (string.IsNullOrWhiteSpace(releasePath) || !File.Exists(releasePath))
+            var psi = new ProcessStartInfo
             {
-                Log.LogMessage(MessageImportance.High, $"A release could not be located for {PackageId}; the assumption is that this will be the first published version for this framework.");
-                HasDiverged = true;
-                return true;
-            }
-            var diversion = new AssemblyDiversionDiviner(new NvAssemblyInfoFactory(), new DiversionDiviner()).Divine(releasePath, TargetPath);
-            if (Configuration.GenerateDiversionFile)
+                FileName = AnalyzePath,
+                Arguments = $"\"{releasedAssemblyPath}\" \"{targetAssemblyPath}\"{(string.IsNullOrWhiteSpace(diversionFilePath) ? string.Empty : $" \"{diversionFilePath}\"")}",
+                UseShellExecute = false,
+                RedirectStandardError = true,
+                RedirectStandardOutput = true
+            };
+            using (var process = Process.Start(psi))
             {
-                using (var writer = new StreamWriter(File.Create(Path.Combine(Path.GetDirectoryName(TargetPath), "diversion.output.json"))))
-                    JsonSerializer.CreateDefault(new JsonSerializerSettings { ContractResolver = new CustomContractResolver() }).Serialize(writer, diversion);
-                Log.LogMessage(MessageImportance.High, "Generated diversion.output.json.");
+                var output = process.StandardOutput.ReadToEnd();
+                return JsonConvert.DeserializeObject<NextVersionAnalysis>(output, new NuGetFrameworkConverter(), new NuGetVersionConverter());
             }
-            var nextVersion = new NextVersion().Determine(diversion);
-            var version = diversion.New.Version >= nextVersion ? diversion.New.Version : nextVersion;
-            HasDiverged = diversion.HasDiverged();
-            Version = version.ToString();
-            Verified = version == diversion.New.Version;
-            RequiresCorrection = !Verified && Configuration.IsCorrectionEnabled;
-            if (!HasDiverged)
-                Log.LogMessage(MessageImportance.High, $"{diversion.Identity} has not diverged from its latest release.");
-            if (!Verified && !Configuration.IsCorrectionEnabled)
-            {
-                var message = $"Based on diversion's semantic version rules, the version of {diversion.Identity} being built should be at least {nextVersion}, but is set at {diversion.New.Version}.";
-                if (Configuration.Warn)
-                    Log.LogWarning(message);
-                else
-                    Log.LogError(message);
-            }
-            if (Verified && HasDiverged)
-                Log.LogMessage(MessageImportance.High, $"Based on diversion's semantic version rules, the version of {diversion.Identity} being built has the correct version of {diversion.New.Version}.");
-            if (RequiresCorrection)
-                Log.LogMessage(MessageImportance.High, $"Based on diversion's semantic version rules, the version of {diversion.Identity} will be changed from {diversion.Old.Version} to {nextVersion}.");
-            return Configuration.IsCorrectionEnabled || Verified || Configuration.Warn;
         }
 
         private DiversionConfiguration GetConfiguration()
@@ -86,31 +63,90 @@ namespace Diversion.MSBuild
             return builder.Build().Get<DiversionConfiguration>();
         }
 
-        private string GetLatestReleasePath()
+        protected override bool ExecuteIsolated()
         {
-            var projectFile = new FileInfo(Path.Combine(ReleasedOutputPath, "latest", "project.csproj"));
-            if (!projectFile.Directory.Exists)
-                projectFile.Directory.Create();
-            using (var stream = projectFile.CreateText())
-                stream.WriteLine($"<Project Sdk=\"Microsoft.NET.Sdk\"><PropertyGroup><TargetFramework>{TargetFramework}</TargetFramework></PropertyGroup><ItemGroup><PackageReference Include=\"{PackageId}\" Version=\"*\" /></ItemGroup></Project>");
-            Log.LogMessage(MessageImportance.High, $"Attempting to acquire latest released version of {PackageId} for {TargetFramework}.");
-            if (BuildEngine.BuildProjectFile(projectFile.FullName, new[] { "Restore", "Build" }, new Dictionary<string, string> { { "Configuration", "Release" } } , null))
-                return Path.Combine(projectFile.DirectoryName, "bin", "Release", TargetFramework, Path.GetFileName(TargetPath));
-            return string.Empty;
+            Configuration = GetConfiguration();
+            if (string.IsNullOrWhiteSpace(ReleasePath) || !File.Exists(ReleasePath))
+            {
+                Log.LogMessage(MessageImportance.High, $"A release could not be located for {PackageId}; the assumption is that this will be the first published version for this framework.");
+                HasDiverged = true;
+                return true;
+            }
+            var analysis = ExecuteAnalysis(ReleasePath, TargetPath, Configuration.GenerateDiversionFile ? Path.Combine(Path.GetDirectoryName(TargetPath), "diversion.output.json") : null);
+            HasDiverged = analysis.HasDiverged;
+            Verified = analysis.IsNewVersionCorrect;
+            var correctNewVersion = analysis.IsNewVersionCorrect ?  analysis.NewVersion : analysis.CalculatedVersion; 
+            Version = correctNewVersion.ToFullString();
+            PackageVersion = string.IsNullOrEmpty(ExistingVersion) || correctNewVersion > new NuGetVersion(ExistingVersion) ? Version : ExistingVersion;
+            RequiresCorrection = !Verified && Configuration.IsCorrectionEnabled;
+            if (!HasDiverged)
+                Log.LogMessage(MessageImportance.High, $"{analysis.Identity} has not diverged from its latest release.");
+            if (!Verified && !Configuration.IsCorrectionEnabled)
+            {
+                var message = $"Based on diversion's semantic version rules, the version of {analysis.Identity} being built should be at least {analysis.CalculatedVersion}, but is set at {analysis.NewVersion}.";
+                if (Configuration.Warn)
+                    Log.LogWarning(message);
+                else
+                    Log.LogError(message);
+            }
+            if (Verified && HasDiverged)
+                Log.LogMessage(MessageImportance.High, $"Based on diversion's semantic version rules, the version of {analysis.Identity} being built has the correct version of {analysis.NewVersion}.");
+            if (RequiresCorrection)
+                Log.LogMessage(MessageImportance.High, $"Based on diversion's semantic version rules, the version of {analysis.Identity} will be changed from {analysis.OldVersion} to {correctNewVersion}.");
+            return Configuration.IsCorrectionEnabled || Verified || Configuration.Warn;
         }
 
-        public DiversionConfiguration Configuration { get; set; }
+        private DiversionConfiguration Configuration { get; set; }
 
-        private class CustomContractResolver : DefaultContractResolver
+    }
+
+    class CustomContractResolver : DefaultContractResolver
+    {
+        protected override List<MemberInfo> GetSerializableMembers(Type objectType)
         {
-            protected override List<MemberInfo> GetSerializableMembers(Type objectType)
-            {
-                var members = base.GetSerializableMembers(objectType);
-                return typeof(IAssemblyDiversion).IsAssignableFrom(objectType) ? members.FindAll(m => !m.Name.Equals("Old") && !m.Name.Equals("New")) : members;
-            }
+            var members = base.GetSerializableMembers(objectType);
+            return typeof(IAssemblyDiversion).IsAssignableFrom(objectType) ? members.FindAll(m => !m.Name.Equals("Old") && !m.Name.Equals("New")) : members;
+        }
+    }
+    class NuGetVersionConverter : JsonConverter
+    {
+        public override bool CanConvert(Type objectType)
+        {
+            return typeof(NuGetVersion).Equals(objectType);
+        }
+
+        public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
+        {
+            return new NuGetVersion((string)reader.Value);
+        }
+
+        public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
+        {
+            writer.WriteValue(((NuGetVersion)value).ToFullString());
         }
     }
 
+    class NuGetFrameworkConverter : JsonConverter
+    {
+        public override bool CanConvert(Type objectType)
+        {
+            return typeof(NuGetFramework).Equals(objectType);
+        }
+
+        public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
+        {
+            var frameworkName = new FrameworkName((string)reader.Value);
+            return new NuGetFramework(frameworkName.Identifier, frameworkName.Version, frameworkName.Profile);
+        }
+
+        public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
+        {
+            writer.WriteValue(((NuGetFramework)value).DotNetFrameworkName);
+        }
+    }
+
+
+    [Serializable]
     public class DiversionConfiguration
     {
         public bool IsCorrectionEnabled { get; set; }

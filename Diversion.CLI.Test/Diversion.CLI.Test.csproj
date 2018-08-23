@@ -3,7 +3,6 @@
   <PropertyGroup>
     <TargetFramework>net462</TargetFramework>
     <IsPackable>false</IsPackable>
-    <Deterministic>true</Deterministic>
   </PropertyGroup>
 
   <ItemGroup>
@@ -12,19 +11,18 @@
     <PackageReference Include="xunit.runner.visualstudio" Version="2.4.0" />
     <PackageReference Include="Moq" Version="4.9.0" />
     <PackageReference Include="Shouldly" Version="3.0.0" />
-    <PackageReference Include="ShouldFluent" Version="1.1.19" />
     <PackageReference Include="SpecFlow" Version="2.4.0" />
     <PackageReference Include="SpecFlow.Tools.MsBuild.Generation" Version="2.4.0" />
     <DotNetCliToolReference Include="dotnet-xunit" Version="2.3.1" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="../Diversion.Reflection/Diversion.Reflection.csproj" />
-    <ProjectReference Include="../Diversion/Diversion.csproj" />
+    <ProjectReference Include="..\Diversion.CLI\Diversion.CLI.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <Compile Update="**/*.feature.cs" AutoGen="True" Visible="False" DependentUpon="%(FileName)"/>
   </ItemGroup>
+
 
 </Project>

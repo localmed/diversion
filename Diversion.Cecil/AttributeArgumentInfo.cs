@@ -5,27 +5,17 @@ using System.Linq;
 
 namespace Diversion.Cecil
 {
-    [Serializable]
     public class AttributeArgumentInfo : IAttributeArgumentInfo
     {
-        private readonly string _name;
-        private readonly object _value;
-
         public AttributeArgumentInfo(string name, object value)
         {
-            _name = name;
-            _value = value;
+            Name = name;
+            Value = value;
         }
 
-        public string Name
-        {
-            get { return _name; }
-        }
+        public string Name { get; }
 
-        public object Value
-        {
-            get { return _value; }
-        }
+        public object Value { get; }
 
         public override bool Equals(object obj)
         {
@@ -36,14 +26,14 @@ namespace Diversion.Cecil
 
         private bool Equals(AttributeArgumentInfo other)
         {
-            return string.Equals(_name, other._name) && ((_value as Array)?.OfType<object>().SequenceEqual(other._value as IEnumerable<object>) ?? Equals(_value, other._value));
+            return string.Equals(Name, other.Name) && ((Value as Array)?.OfType<object>().SequenceEqual(other.Value as IEnumerable<object>) ?? Equals(Value, other.Value));
         }
 
         public override int GetHashCode()
         {
             unchecked
             {
-                return (_name.GetHashCode() * 397) ^ (_value != null ? ((_value as Array)?.OfType<object>().Take(16).Aggregate(19, (result, item) => result * 31 + item.GetHashCode()) ?? _value.GetHashCode()) : 0);
+                return (Name.GetHashCode() * 397) ^ (Value != null ? ((Value as Array)?.OfType<object>().Take(16).Aggregate(19, (result, item) => result * 31 + item.GetHashCode()) ?? Value.GetHashCode()) : 0);
             }
         }
 

@@ -12,7 +12,6 @@ namespace Diversion.Reflection
         private readonly bool _isOnApiSurface;
         private readonly bool _isPublic;
         private readonly bool _isStatic;
-        private readonly byte[] _implementation;
 
         public NvConstructorInfo(IReflectionInfoFactory reflectionInfoFactory, ConstructorInfo member)
             : base(reflectionInfoFactory, member)
@@ -21,7 +20,6 @@ namespace Diversion.Reflection
             _isStatic = member.IsStatic;
             _parameters = member.GetParameters().Select(reflectionInfoFactory.GetInfo).ToArray();
             _isOnApiSurface = member.IsPublicOrProtected();
-            _implementation = member.GetMethodBody()?.GetILAsByteArray() ?? new byte[0];
         }
 
         public override bool IsOnApiSurface => _isOnApiSurface;
@@ -36,7 +34,5 @@ namespace Diversion.Reflection
         {
             get { return string.Format("{0}.{1}({2})", BaseDeclaringType, BaseDeclaringType.Name, string.Join(",", Parameters.Select(p => p.Type))); }
         }
-
-        public override byte[] Implementation => _implementation;
     }
 }

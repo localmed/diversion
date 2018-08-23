@@ -17,7 +17,8 @@ namespace Diversion.Reflection
             Base = type.BaseType == null ? null : reflectionInfoFactory.GetReference(type.BaseType);
             Interfaces = type.GetInterfaces().Where(t => t.IsPublicOrProtected()).Select(reflectionInfoFactory.GetReference).OrderBy(i => i.Identity).ToArray();
             Members = type
-                .GetMembers(BindingFlags.Instance|BindingFlags.Static|BindingFlags.Public|BindingFlags.NonPublic)
+                .GetMembers(BindingFlags.Instance|BindingFlags.Static|BindingFlags.Public|BindingFlags.NonPublic|BindingFlags.DeclaredOnly)
+                .Where(m => m.IsPublicOrProtected())
                 .Select(reflectionInfoFactory.GetInfo).OrderBy(i => i.Identity).ToArray();
             GenericArguments = type.GetGenericArguments().Select(reflectionInfoFactory.GetReference).ToArray();
             _isPublic = type.IsPublic;

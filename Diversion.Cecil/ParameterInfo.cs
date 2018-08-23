@@ -6,34 +6,21 @@ using System.Reflection;
 
 namespace Diversion.Cecil
 {
-    [Serializable]
     public class ParameterInfo : IParameterInfo
     {
-        private readonly IReadOnlyList<IAttributeInfo> _attributes;
-        private readonly ITypeReference _type;
-
         public ParameterInfo(IReflectionInfoFactory reflectionInfoFactory, Mono.Cecil.ParameterDefinition parameter)
         {
             Name = parameter.Name;
-            _attributes = parameter.CustomAttributes
+            Attributes = parameter.CustomAttributes
                 .Select(reflectionInfoFactory.GetInfo).ToArray();
-            _type = reflectionInfoFactory.GetReference(parameter.ParameterType);
+            Type = reflectionInfoFactory.GetReference(parameter.ParameterType);
         }
 
-        public IReadOnlyList<IAttributeInfo> Attributes
-        {
-            get { return _attributes; }
-        }
+        public IReadOnlyList<IAttributeInfo> Attributes { get; }
 
-        public ITypeReference Type
-        {
-            get { return _type; }
-        }
+        public ITypeReference Type { get; }
 
-        public string Name
-        {
-            get; private set;
-        }
+        public string Name { get; }
 
         public string Identity
         {

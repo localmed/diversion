@@ -195,3 +195,4 @@ ModelManifest.xml
 .artifacts/
 .vs/
 
+*.feature.cs

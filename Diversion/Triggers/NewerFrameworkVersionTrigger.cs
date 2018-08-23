@@ -1,4 +1,6 @@
-﻿namespace Diversion.Triggers
+﻿using NuGet.Frameworks;
+
+namespace Diversion.Triggers
 {
     /// <summary>
     /// A version trigger that triggers when the target .net framework of the newly built assembly is a more recent version than the old assembly.
@@ -7,7 +9,7 @@
     {
         public bool IsTriggered(IAssemblyDiversion diversion)
         {
-            return diversion.Old.FrameworkVersion < diversion.New.FrameworkVersion;
+            return !NuGetFrameworkUtility.IsCompatibleWithFallbackCheck(diversion.Old.TargetFramework, diversion.New.TargetFramework);
         }
     }
 }

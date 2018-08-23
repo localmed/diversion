@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <Description>An implementation of diversion's simplified reflection interface using Mono.Cecil.</Description>
@@ -9,7 +9,7 @@
     <PackageProjectUrl>https://github.com/localmed/diversion</PackageProjectUrl>
     <PackageLicenseUrl>https://github.com/localmed/diversion/blob/master/LICENSE.md</PackageLicenseUrl>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <TargetFramework>net462</TargetFramework>
+    <TargetFramework>netstandard1.6</TargetFramework>
     <Deterministic>true</Deterministic>
     <Version>0.1.0</Version>
   </PropertyGroup>
@@ -19,8 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Mono.Cecil" Version="0.9.6.4" />
-    <PackageReference Include="Diversion.MSBuild" Version="0.4.1" PrivateAssets="All" />
+    <PackageReference Include="Mono.Cecil" Version="0.10.0" />
   </ItemGroup>
 
   </Project>

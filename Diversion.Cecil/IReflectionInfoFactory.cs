@@ -6,6 +6,7 @@ namespace Diversion.Cecil
     public interface IReflectionInfoFactory
     {
         ITypeReference GetReference(Mono.Cecil.TypeReference type);
+        ITypeReference GetReference(InterfaceImplementation type);
         ITypeReference GetReference(TypeDefinition type);
         IMemberInfo GetInfo(MethodDefinition member);
         IMemberInfo GetInfo(PropertyDefinition member);

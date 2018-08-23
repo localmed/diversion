@@ -1,11 +1,11 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <Description>An implementation of diversion's simplified reflection interface using .net framework reflection.</Description>
     <Title>Diversion.Reflection</Title>
     <Company>LocalMed, LLC</Company>
     <Copyright>Copyright © LocalMed 2015-2018</Copyright>
-    <PackageTags>SemVer, Semantic, Version, Build, Diversion, CI, Release, Deployment</PackageTags>
+    <PackageTags>SemVer Semantic Version Build Diversion CI Release Deployment</PackageTags>
     <PackageProjectUrl>https://github.com/localmed/diversion</PackageProjectUrl>
     <PackageLicenseUrl>https://github.com/localmed/diversion/blob/master/LICENSE.md</PackageLicenseUrl>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
@@ -15,11 +15,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="../Diversion/Diversion.csproj" />
+    <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
+      <_Parameter1>Diversion.Test</_Parameter1>
+    </AssemblyAttribute>
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Diversion.MSBuild" Version="0.4.1" PrivateAssets="All" />
+    <ProjectReference Include="../Diversion/Diversion.csproj" />
   </ItemGroup>
 
 </Project>

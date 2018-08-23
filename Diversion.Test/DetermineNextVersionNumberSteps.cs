@@ -1,7 +1,8 @@
 ﻿using System;
 using Diversion.Reflection;
 using Moq;
-using Should;
+using NuGet.Versioning;
+using Shouldly;
 using TechTalk.SpecFlow;
 
 namespace Diversion.Test
@@ -22,7 +23,7 @@ namespace Diversion.Test
         {
             ReleaseToBuild = Mock.Of<IAssemblyDiversion>(ac =>
                 ac.New == Mock.Of<IAssemblyInfo>() &&
-                ac.Old == Mock.Of<IAssemblyInfo>(obj => obj.Version == new Version(major, minor, patch)) &&
+                ac.Old == Mock.Of<IAssemblyInfo>(obj => obj.Version == new NuGetVersion(major, minor, patch)) &&
                 ac.HasDiverged());
         }
 
@@ -61,7 +62,7 @@ namespace Diversion.Test
         [Then(@"NextVersion should determine that the next version number should be (.*)\.(.*)\.(.*)")]
         public void ThenNextVersionShouldDetermineThatTheNextVersionNumberShouldBe_(int major, int minor, int patch)
         {
-            NextVersion.Determine(ReleaseToBuild).ShouldEqual(new Version(major, minor, patch));
+            NextVersion.Determine(ReleaseToBuild).ShouldBe(new NuGetVersion(major, minor, patch));
         }
     }
 }
