@@ -1,0 +1,10 @@
+<Project TreatAsLocalProperty="DiversionToolsFolder;DiversionTaskAssembly">
+  <PropertyGroup>
+    <DiversionToolsFolder>$(MSBuildThisFileDirectory)\..\tools\</DiversionToolsFolder>
+    <DiversionTaskAssembly Condition=" '$(MSBuildRuntimeType)' == 'Core' ">$(MSBuildThisFileDirectory)\netstandard1.6\Diversion.MSBuild.dll</DiversionTaskAssembly>
+    <DiversionTaskAssembly Condition=" '$(MSBuildRuntimeType)' != 'Core' ">$(MSBuildThisFileDirectory)\net462\Diversion.MSBuild.dll</DiversionTaskAssembly>
+    <Deterministic>True</Deterministic>
+  </PropertyGroup>
+
+  <UsingTask AssemblyFile="$(DiversionTaskAssembly)" TaskName="DiversionTask" />
+</Project>

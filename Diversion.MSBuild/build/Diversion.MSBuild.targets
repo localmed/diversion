@@ -1,0 +1,42 @@
+﻿<Project>
+  <PropertyGroup>
+    <PackageId Condition="'$(PackageId)' == ''">$(AssemblyName)</PackageId>
+  </PropertyGroup>
+  <Target Name="VerifySemanticVersion" AfterTargets="Build" Condition="'$(Corrected)' == ''">
+    <PropertyGroup>
+      <TargetFramework Condition="'$(TargetFramework)' == ''">$(TargetFrameworkVersion.Replace("v","net").Replace(".", ""))</TargetFramework>
+      <OriginalFileVersion>$(FileVersion)</OriginalFileVersion>
+      <OriginalAssemblyVersion>$(AssemblyVersion)</OriginalAssemblyVersion>
+      <OriginalInformationalVersion>$(InformationalVersion)</OriginalInformationalVersion>
+      <LatestReleaseProject>$(MSBuildProjectDirectory)\$(IntermediateOutputPath)latest\project.csproj</LatestReleaseProject>
+      <ReleasePath>$(MSBuildProjectDirectory)\$(IntermediateOutputPath)latest\bin\$(TargetFramework)\$(TargetFileName)</ReleasePath>
+    </PropertyGroup>
+    <ItemGroup>
+      <Line Include="Line1">
+        <Text>
+          <![CDATA[<Project Sdk="Microsoft.NET.Sdk"><PropertyGroup><TargetFramework>$(TargetFramework)</TargetFramework><Configuration>Release</Configuration><OutputPath>bin</OutputPath><CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies></PropertyGroup><ItemGroup><PackageReference Include="$(PackageId)" Version="*" /></ItemGroup></Project>]]>
+        </Text>
+      </Line>
+    </ItemGroup>
+    <MakeDir Directories="$(IntermediateOutputPath)latest" />
+    <WriteLinesToFile File="$(LatestReleaseProject)" Lines="@(Line->'%(Text)')" Overwrite="true" />
+    <Message Importance="High" Text="Aquiring latest release of $(PackageId) for $(TargetFramework)" />
+    <Exec Command="msbuild /nologo /restore /v:q /t:Build &quot;$(LatestReleaseProject)&quot;"
+          ContinueOnError="true" />
+    <DiversionTask ConfigFilePath="$(MSBuildProjectDirectory)\diversion.json"
+                   PackageId="$(PackageId)"
+                   TargetPath="$(TargetPath)"
+                   ReleasePath="$(ReleasePath)"
+                   ExistingVersion="$(PackageVersion)"
+                   AnalyzePath="$(DiversionToolsFolder)diver-analyze.exe">
+      <Output TaskParameter="Version" PropertyName="Version" />
+      <Output TaskParameter="PackageVersion" PropertyName="PackageVersion" />
+      <Output TaskParameter="Verified" PropertyName="Verified" />
+      <Output TaskParameter="HasDiverged" PropertyName="GeneratePackageOnBuild" />
+      <Output TaskParameter="RequiresCorrection" PropertyName="RequiresCorrection" />
+    </DiversionTask>
+    <!-- <RemoveDir Directories="$(IntermediateOutputPath)latest" /> -->
+    <MSBuild Projects="$(MSBuildProjectFile)" Targets="Rebuild" Condition="'$(RequiresCorrection)' == 'True'"
+             Properties="GeneratePackageOnBuild=False;Corrected=True;Version=$(Version);PackageVersion=$(PackageVersion);Configuration=$(Configuration)" />
+  </Target>
+</Project>
