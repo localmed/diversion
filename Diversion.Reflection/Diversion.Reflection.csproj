@@ -8,7 +8,6 @@
     <PackageTags>SemVer Semantic Version Build Diversion CI Release Deployment</PackageTags>
     <PackageProjectUrl>https://github.com/localmed/diversion</PackageProjectUrl>
     <PackageLicenseUrl>https://github.com/localmed/diversion/blob/master/LICENSE.md</PackageLicenseUrl>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <TargetFramework>net462</TargetFramework>
     <Deterministic>true</Deterministic>
     <Version>0.1.0</Version>
@@ -16,7 +15,7 @@
 
   <ItemGroup>
     <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
-      <_Parameter1>Diversion.Test</_Parameter1>
+      <_Parameter1>Diversion.Reflection.Test</_Parameter1>
     </AssemblyAttribute>
   </ItemGroup>
 

@@ -54,5 +54,7 @@ namespace Diversion.CLI
         internal string ProjectDirectory { get; set; }
 
         internal string WorkingDirectory { get; set; }
+
+        public string TargetFramework { get; set; }
     }
 }

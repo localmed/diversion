@@ -34,15 +34,23 @@ namespace Diversion
                 typeof(T).GetTypeInfo().GetProperties()
                     .Select(
                         p => (Expression)(
-                            p.PropertyType != typeof(string) && p.PropertyType.GetTypeInfo().GetInterfaces().Any(i => i.GetTypeInfo().IsGenericType && i.GetTypeInfo().GetGenericTypeDefinition() == typeof(IEnumerable<>)) ?
-                                Expression.Call(typeof(Enumerable), nameof(Enumerable.SequenceEqual),
-                                    p.PropertyType.GetTypeInfo().GetInterfaces().First(i => i.GetTypeInfo().IsGenericType && i.GetTypeInfo().GetGenericTypeDefinition() == typeof(IEnumerable<>)).GetTypeInfo().GenericTypeArguments,
-                                    Expression.Property(Expression.Property(diversion, nameof(IDiversion<T>.Old)), p),
-                                    Expression.Property(Expression.Property(diversion, nameof(IDiversion<T>.New)), p)) :
-                                Expression.Call(typeof(object), nameof(object.Equals), null,
-                                    Expression.Convert(Expression.Property(Expression.Property(diversion, nameof(IDiversion<T>.Old)), p), typeof(object)),
-                                    Expression.Convert(Expression.Property(Expression.Property(diversion, nameof(IDiversion<T>.New)), p), typeof(object)))))
-                    .Aggregate((Expression)null, (r, e) => r == null ? e : Expression.AndAlso(r, e)), diversion).Compile();
+                            p.PropertyType != typeof(string) && p.PropertyType.GetTypeInfo().GetInterfaces().Any(i => i.GetTypeInfo().IsGenericType && i.GetTypeInfo().GetGenericTypeDefinition() == typeof(IEnumerable<>))
+                            ? Expression.Call(typeof(Enumerable),
+                                nameof(Enumerable.SequenceEqual),
+                                p.PropertyType.GetTypeInfo().GetInterfaces()
+                                    .First(i => i.GetTypeInfo().IsGenericType && i.GetTypeInfo().GetGenericTypeDefinition() == typeof(IEnumerable<>))
+                                    .GetTypeInfo().GenericTypeArguments,
+                                Expression.Property(Expression.Property(diversion, nameof(IDiversion<T>.Old)), p),
+                                Expression.Property(Expression.Property(diversion, nameof(IDiversion<T>.New)), p))
+                            : Expression.Call(typeof(object),
+                                nameof(object.Equals),
+                                null,
+                                Expression.Convert(Expression.Property(Expression.Property(diversion, nameof(IDiversion<T>.Old)), p), typeof(object)),
+                                Expression.Convert(Expression.Property(Expression.Property(diversion, nameof(IDiversion<T>.New)), p), typeof(object)))))
+                    .Aggregate(
+                        (Expression)null,
+                        (r, e) => r == null ? e : Expression.AndAlso(r, e)),
+               diversion).Compile();
         }
     }
 }

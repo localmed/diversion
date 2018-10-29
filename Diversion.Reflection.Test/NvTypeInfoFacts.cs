@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
-using Diversion.Reflection;
 using Xunit;
 using Should.Fluent;
 
-namespace Diversion.Test.Reflection
+namespace Diversion.Reflection.Test
 {
-    
+
     public class NvTypeInfoFacts
     {
         private IReflectionInfoFactory _factory;
@@ -48,14 +47,14 @@ namespace Diversion.Test.Reflection
         public void IdentityShouldBeCorrectlySet()
         {
             _factory.GetInfo(typeof(NvTypeReferenceFacts))
-                .Identity.Should().Equal("Diversion.Test.Reflection.NvTypeReferenceFacts");
+                .Identity.Should().Equal("Diversion.Reflection.Test.NvTypeReferenceFacts");
         }
 
         [Fact]
         public void IdentityOfNestedTypeShouldBeCorrectlySet()
         {
             _factory.GetInfo(typeof(SampleNestedType))
-                .Identity.Should().Equal("Diversion.Test.Reflection.NvTypeInfoFacts+SampleNestedType");
+                .Identity.Should().Equal("Diversion.Reflection.Test.NvTypeInfoFacts+SampleNestedType");
         }
 
         [Fact]

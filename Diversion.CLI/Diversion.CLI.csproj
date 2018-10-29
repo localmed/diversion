@@ -12,12 +12,21 @@
     <PackageTags>SemVer, Semantic, Version, Build, Diversion, CI, Release, Deployment</PackageTags>
     <PackageProjectUrl>https://github.com/localmed/diversion</PackageProjectUrl>
     <PackageLicenseUrl>https://github.com/localmed/diversion/blob/master/LICENSE.md</PackageLicenseUrl>
-    <Version>0.24.0</Version>
+    <Version>0.25.0</Version>
     <IsTool>True</IsTool>
     <DevelopmentDependency>True</DevelopmentDependency>
-    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <Deterministic>True</Deterministic>
   </PropertyGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\acquire.csproj" />
+  </ItemGroup>
+
+  <ItemDefinitionGroup>
+    <PackageReference>
+      <PrivateAssets>All</PrivateAssets>
+    </PackageReference>
+  </ItemDefinitionGroup>
 
   <ItemGroup>
     <ProjectReference Include="../Diversion/Diversion.csproj" PrivateAssets="All" />
@@ -25,13 +34,18 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="CmdLine" Version="1.0.7.509" PrivateAssets="All" />
-    <PackageReference Include="Costura.Fody" Version="3.1.0" PrivateAssets="All" />
-    <PackageReference Include="Fody" Version="3.1.4" PrivateAssets="All" />
-    <PackageReference Include="Newtonsoft.Json" Version="9.0.1" PrivateAssets="All" />
-    <PackageReference Include="Microsoft.Build" Version="15.5.180" PrivateAssets="All" />
-    <PackageReference Include="Microsoft.Build.Framework" Version="15.5.180" PrivateAssets="All" />
-    <PackageReference Include="Microsoft.Build.Tasks.Core" Version="15.5.180" PrivateAssets="All" />
+    <PackageReference Include="CmdLine" Version="1.0.7.509"/>
+    <PackageReference Include="Costura.Fody" Version="3.1.0"/>
+    <PackageReference Include="Fody" Version="3.1.4"/>
+    <PackageReference Include="Newtonsoft.Json" Version="9.0.1"/>
+    <PackageReference Include="Microsoft.Build.Locator" Version="1.0.18" />
+    <PackageReference Include="Microsoft.Build" Version="15.1.548" ExcludeAssets="runtime" />
   </ItemGroup>
+
+  <Target Name="PackConfigFile" AfterTargets="Build">
+    <ItemGroup>
+      <None Include="$(OutputPath)diver.exe.config" Pack="true" PackagePath="tools/diver.exe.config" />
+    </ItemGroup>
+  </Target>
 
 </Project>

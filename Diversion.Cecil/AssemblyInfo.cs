@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.Versioning;
 using Diversion.Reflection;
+using Mono.Cecil;
 using NuGet.Frameworks;
 using NuGet.Versioning;
 
@@ -13,8 +15,11 @@ namespace Diversion.Cecil
     {
         public AssemblyInfo(string assemblyPath)
         {
-            var assembly = Mono.Cecil.AssemblyDefinition.ReadAssembly(assemblyPath);
+            var resolver = new DefaultAssemblyResolver();
+            var assembly = Mono.Cecil.AssemblyDefinition.ReadAssembly(assemblyPath, new ReaderParameters { AssemblyResolver = resolver } );
             var reflectionInfoFactory = new ReflectionInfoFactory();
+
+            resolver.AddSearchDirectory(Path.GetDirectoryName(assemblyPath));
 
             Identity = assembly.Name.Name;
             Name = assembly.FullName;

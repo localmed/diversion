@@ -7,7 +7,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.gitattributes = .gitattributes
 		.gitignore = .gitignore
 		appveyor.yml = appveyor.yml
-		nuget.config = nuget.config
 		README.md = README.md
 	EndProjectSection
 EndProject
@@ -28,6 +27,12 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Diversion.CLI.Test", "Diversion.CLI.Test\Diversion.CLI.Test.csproj", "{6A74DB39-27B4-486F-9472-069D1A146A25}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "diver-analyze", "diver-analyze\diver-analyze.csproj", "{7F4C61BC-54D6-4894-B4D8-BB1ED6E291D4}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "diver-acquire", "diver-acquire\diver-acquire.csproj", "{DD5854F0-0E1C-4CEC-90CC-4BA6E7398FC2}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "diver", "diver\diver.csproj", "{2EEE99F0-E51F-4277-8F10-7E0E37B823FF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Diversion.Reflection.Test", "Diversion.Reflection.Test\Diversion.Reflection.Test.csproj", "{2B59DA34-9DB4-4702-ADFF-771C8048E41D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -71,6 +76,18 @@ Global
 		{7F4C61BC-54D6-4894-B4D8-BB1ED6E291D4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7F4C61BC-54D6-4894-B4D8-BB1ED6E291D4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7F4C61BC-54D6-4894-B4D8-BB1ED6E291D4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DD5854F0-0E1C-4CEC-90CC-4BA6E7398FC2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DD5854F0-0E1C-4CEC-90CC-4BA6E7398FC2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DD5854F0-0E1C-4CEC-90CC-4BA6E7398FC2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DD5854F0-0E1C-4CEC-90CC-4BA6E7398FC2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2EEE99F0-E51F-4277-8F10-7E0E37B823FF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2EEE99F0-E51F-4277-8F10-7E0E37B823FF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2EEE99F0-E51F-4277-8F10-7E0E37B823FF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2EEE99F0-E51F-4277-8F10-7E0E37B823FF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2B59DA34-9DB4-4702-ADFF-771C8048E41D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2B59DA34-9DB4-4702-ADFF-771C8048E41D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2B59DA34-9DB4-4702-ADFF-771C8048E41D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2B59DA34-9DB4-4702-ADFF-771C8048E41D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

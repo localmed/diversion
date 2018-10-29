@@ -27,7 +27,7 @@ namespace Diversion.Reflection
             Mvid = assembly.ManifestModule.ModuleVersionId;
             _version = assembly.GetNuGetVersion().ToFullString();
             _targetFramework = new FrameworkName(assembly.GetNuGetFramework().DotNetFrameworkName);
-            _attributes = new Lazy<IReadOnlyList<IAttributeInfo>>(() => assembly.GetCustomAttributesData().Select(reflectionInfoFactory.GetInfo).ToArray());
+            _attributes = new Lazy<IReadOnlyList<IAttributeInfo>>(() => assembly.GetCustomAttributesData().Select(reflectionInfoFactory.GetInfo).OrderBy(i => i.Identity).ToArray());
             _types = new Lazy<IReadOnlyList<ITypeInfo>>(() => assembly.GetLoadableTypes().Where(t => t.IsPublicOrProtected()).Select(reflectionInfoFactory.GetInfo).OrderBy(i => i.Identity).ToArray());
         }
 

@@ -1,11 +1,9 @@
-﻿using Diversion.Reflection;
-
-using Should.Fluent;
+﻿using Should.Fluent;
 using Xunit;
 
-namespace Diversion.Test.Reflection
+namespace Diversion.Reflection.Test
 {
-    
+
     public class NvAttributeArgumentInfoFacts
     {
 

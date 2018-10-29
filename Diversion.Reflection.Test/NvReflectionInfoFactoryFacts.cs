@@ -1,10 +1,9 @@
 ﻿using System;
 using System.ComponentModel;
-using Diversion.Reflection;
 using Xunit;
 using Should.Fluent;
 
-namespace Diversion.Test.Reflection
+namespace Diversion.Reflection.Test
 {
 
     public class NvReflectionInfoFactoryFacts

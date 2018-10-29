@@ -5,7 +5,7 @@ using Shouldly;
 namespace Diversion.Test
 {
 
-    public class VersionExtensionsFacts
+    public class VersionExtensionsFixture
     {
         [Fact]
         public void IncrementMajorTest()

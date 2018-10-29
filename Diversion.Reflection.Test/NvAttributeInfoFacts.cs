@@ -1,9 +1,8 @@
 ﻿using System;
-using Diversion.Reflection;
 using Xunit;
 using Should.Fluent;
 
-namespace Diversion.Test.Reflection
+namespace Diversion.Reflection.Test
 {
 
     public class NvAttributeInfoFacts

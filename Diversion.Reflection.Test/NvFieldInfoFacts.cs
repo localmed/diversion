@@ -1,14 +1,11 @@
-﻿using Diversion.Reflection;
-
-
-namespace Diversion.Test.Reflection
+﻿namespace Diversion.Reflection.Test
 {
 
-    public class NvMethodInfoFacts
+    public class NvFieldInfoFacts
     {
         private IReflectionInfoFactory _factory;
 
-        public NvMethodInfoFacts()
+        public NvFieldInfoFacts()
         {
             _factory = new NvReflectionInfoFactory();
         }

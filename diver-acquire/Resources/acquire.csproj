@@ -1,0 +1,41 @@
+<Project>
+    <PropertyGroup>
+        <BaseIntermediateOutputPath>obj\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
+        <IntermediateOutputPath>obj\$(MSBuildProjectName)\</IntermediateOutputPath>
+    </PropertyGroup>
+
+    <Import Project="Sdk.props" Sdk="Microsoft.NET.Sdk"/>
+
+    <PropertyGroup>
+        <AssemblyName>___</AssemblyName>
+        <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+        <DebugType>none</DebugType>
+        <OutputPath Condition="'$(OutputPath)' == ''">$(MSBuildProjectName)\</OutputPath>
+        <TargetFramework Condition="'$(TargetFramework)' == ''">net47</TargetFramework>
+        <TargetVersion Condition="'$(TargetVersion)' == ''">*</TargetVersion>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="$(MSBuildProjectName)" Version="$(TargetVersion)" />
+    </ItemGroup>
+
+    <Import Project="Sdk.targets" Sdk="Microsoft.NET.Sdk"/>
+
+    <ItemGroup>
+        <IntermediateAssembly Remove="@(IntermediateAssembly)" />
+        <IntermediateRefAssembly Remove="@(IntermediateRefAssembly)" />
+    </ItemGroup>
+
+    <PropertyGroup>
+        <CoreBuildDependsOn>
+            BuildOnlySettings;
+            PrepareForBuild;
+            PreBuildEvent;
+            ResolveProjectReferences;
+            GetTargetPath;
+            PrepareForRun;
+            IncrementalClean;
+            PostBuildEvent
+        </CoreBuildDependsOn>
+    </PropertyGroup>
+</Project>

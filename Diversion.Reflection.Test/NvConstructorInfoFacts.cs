@@ -1,7 +1,4 @@
-﻿using Diversion.Reflection;
-
-
-namespace Diversion.Test.Reflection
+﻿namespace Diversion.Reflection.Test
 {
 
     public class NvConstructorInfoFacts

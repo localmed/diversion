@@ -2,6 +2,7 @@
 
 using Microsoft.Build.Evaluation;
 using Microsoft.Build.Framework;
+using Microsoft.Build.Locator;
 using Microsoft.Build.Logging;
 
 using Newtonsoft.Json;
@@ -20,6 +21,7 @@ using System.Reflection;
 using System.Runtime.Versioning;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 
 namespace Diversion.CLI
 {
@@ -28,6 +30,7 @@ namespace Diversion.CLI
         private static readonly string[] SupportedProjectTypes = new[] { ".csproj", ".vbproj", ".proj" };
         static int Main(string[] args)
         {
+            Console.WriteLine(MSBuildLocator.RegisterDefaults().MSBuildPath);
             int exitCode = -1;
             try
             {
@@ -148,9 +151,10 @@ namespace Diversion.CLI
         private static string BuildProject(Options options, string projectFile)
         {
             var properties = ToDictionary(options.BuildProperties);
+            properties.Add("Deterministic", "True");
+
             var collection = new ProjectCollection(properties);
             var project = collection.LoadProject(projectFile);
-            properties.Add("Deterministic", "True");
             switch (options.Verbosity)
             {
                 case Verbosity.Detailed:
@@ -163,6 +167,13 @@ namespace Diversion.CLI
                     project.Build();
                     break;
             }
+            options.TargetFramework = project.GetPropertyValue("TargetFramework");
+            if (string.IsNullOrEmpty(options.TargetFramework))
+                options.TargetFramework = project.GetPropertyValue("TargetFrameworkVersion").Replace("v", "net").Replace(".", "");
+            if (string.IsNullOrEmpty(options.TargetFramework))
+                options.TargetFramework = project.GetPropertyValue("TargetFrameworks").Split(';').FirstOrDefault();
+            if (string.IsNullOrEmpty(project.GetPropertyValue("TargetFileName")))
+                return Path.Combine(project.DirectoryPath, project.GetPropertyValue("OutputPath"), options.TargetFramework, $"{project.GetPropertyValue("AssemblyName")}.dll");
             return Path.Combine(project.DirectoryPath, project.GetPropertyValue("OutputPath"), project.GetPropertyValue("TargetFileName"));
         }
 
@@ -236,35 +247,11 @@ namespace Diversion.CLI
             options.NuGetPackageId = options.NuGetPackageId ?? Path.GetFileNameWithoutExtension(options.Target);
             WriteLine(options, Verbosity.Normal, ConsoleColor.White, "Attempting to download the latest release from nuget...");
             string nugetWorking = Path.Combine(options.WorkingDirectory, Path.GetFileNameWithoutExtension(options.Target));
-            string packages = Path.Combine(nugetWorking, "packages");
-            string references = Path.Combine(nugetWorking, "references");
             if (!Directory.Exists(nugetWorking))
                 Directory.CreateDirectory(nugetWorking);
-            if (!Directory.Exists(packages))
-                Directory.CreateDirectory(packages);
-            if (!Directory.Exists(references))
-                Directory.CreateDirectory(references);
-            var argBuilder = new StringBuilder();
-            argBuilder.AppendFormat($"install -OutputDirectory \"{packages}\" ");
-            if (!string.IsNullOrWhiteSpace(options.NuGetPackageSource))
-                argBuilder.AppendFormat($"-Source {options.NuGetPackageSource} ");
-            argBuilder.AppendFormat($"{options.NuGetPackageId} {options.NuGetPackageVersion}");
-
-            ExecuteCommand("nuget", argBuilder.ToString());
-
-            foreach (string assembly in AssembliesInPackages(packages))
-                File.Copy(assembly, Path.Combine(references, Path.GetFileName(assembly)), true);
-            if (File.Exists(Path.Combine(references, Path.GetFileName(options.Target))))
-                options.ReleasedPath = Path.Combine(references, Path.GetFileName(options.Target));
+            if (new NuGetReleaseFetcher().Fetch(options.NuGetPackageId, options.TargetFramework, options.NuGetPackageVersion ?? "*", nugetWorking).Result)
+                options.ReleasedPath = Path.Combine(nugetWorking, $"{options.NuGetPackageId}.dll");
             return options.ReleasedPath != null;
-        }
-
-        private static IEnumerable<string> AssembliesInPackages(string packages)
-        {
-            return Directory.EnumerateDirectories(packages).Select(path => Path.Combine(path, "lib"))
-                .Where(Directory.Exists).SelectMany(
-                    path => Directory.EnumerateFiles(path, "*.dll", SearchOption.AllDirectories)
-                        .Concat(Directory.EnumerateFiles(path, "*.exe", SearchOption.AllDirectories)));
         }
 
         private static bool IsCommandAvailable(string cmd)
@@ -411,5 +398,32 @@ namespace Diversion.CLI
             }
         }
 
+    }
+
+    public class NuGetReleaseFetcher
+    {
+        public async Task<bool> Fetch(string packageId, string targetFramework, string targetVersion, string targetPath)
+        {
+            return await Task.Run(() =>
+            {
+                var diversionPath = Path.GetDirectoryName(targetPath);
+                var projectPath = Path.Combine(diversionPath, $"{packageId}.csproj");
+                Directory.CreateDirectory(diversionPath);
+                using (var output = new FileStream(projectPath, FileMode.Create))
+                using (var source = Assembly.GetExecutingAssembly().GetManifestResourceStream(typeof(NuGetReleaseFetcher), "Resources.acquire.csproj"))
+                    source.CopyTo(output);
+
+                var properties = new Dictionary<string, string>
+                {
+                    {"TargetFramework", targetFramework },
+                    {"TargetVersion", targetVersion },
+                    {"OutputPath", targetPath },
+                    {"Deterministic", "True" },
+                };
+                var collection = new ProjectCollection(properties);
+                var project = collection.LoadProject(projectPath);
+                return project.Build(new[] { "Restore", "Build" });
+            });
+        }
     }
 }

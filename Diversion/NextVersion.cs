@@ -1,6 +1,4 @@
-﻿using System;
-using System.Linq;
-using Diversion.Reflection;
+﻿using System.Linq;
 using Diversion.Triggers;
 using NuGet.Frameworks;
 using NuGet.Versioning;
@@ -54,13 +52,13 @@ namespace Diversion
         public NuGetVersion Determine(IAssemblyDiversion diversion)
         {
             return
-                diversion.HasDiverged() ?
-                    !ShouldIncrementMajor(diversion) ?
-                        !ShouldIncrementMinor(diversion) ?
-                            diversion.Old.Version.IncrementPatch() :
-                        diversion.Old.Version.IncrementMinor() :
-                    diversion.Old.Version.IncrementMajor() :
-                diversion.Old.Version;
+                diversion.HasDiverged()
+                    ? ShouldIncrementMajor(diversion)
+                        ? diversion.Old.Version.IncrementMajor()
+                        : ShouldIncrementMinor(diversion)
+                            ? diversion.Old.Version.IncrementMinor()
+                            : diversion.Old.Version.IncrementPatch()
+                    : diversion.Old.Version;
         }
 
         public NextVersionAnalysis Analyze(IAssemblyDiversion diversion)
@@ -80,26 +78,5 @@ namespace Diversion
             return diversion.Old.Version.Major == 0 && _majorTriggers.Any(trigger => trigger.IsTriggered(diversion)) ||
                 _minorTriggers.Any(trigger => trigger.IsTriggered(diversion));
         }
-    }
-
-    public class NextVersionAnalysis
-    {
-        public NextVersionAnalysis(string identity, NuGetFramework targetFramework,
-            NuGetVersion oldVersion, NuGetVersion newVersion, NuGetVersion calculatedVersion)
-        {
-            Identity = identity;
-            TargetFramework = targetFramework;
-            OldVersion = oldVersion;
-            NewVersion = newVersion;
-            CalculatedVersion = calculatedVersion;
-        }
-
-        public string Identity { get; }
-        public NuGetFramework TargetFramework { get; }
-        public NuGetVersion OldVersion { get; }
-        public NuGetVersion NewVersion { get; }
-        public NuGetVersion CalculatedVersion { get; }
-        public bool HasDiverged => !Equals(OldVersion, CalculatedVersion);
-        public bool IsNewVersionCorrect => NewVersion >= CalculatedVersion;
     }
 }

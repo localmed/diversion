@@ -9,7 +9,6 @@
     <PackageTags>SemVer Semantic Version Build Diversion CI Release Deployment</PackageTags>
     <PackageProjectUrl>https://github.com/localmed/diversion</PackageProjectUrl>
     <PackageLicenseUrl>https://github.com/localmed/diversion/blob/master/LICENSE.md</PackageLicenseUrl>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <TargetFrameworks>net462;netstandard1.6</TargetFrameworks>
     <Deterministic>true</Deterministic>
   </PropertyGroup>
@@ -17,7 +16,6 @@
   <ItemGroup>
     <PackageReference Include="NuGet.Frameworks" Version="4.5.0" />
     <PackageReference Include="NuGet.Versioning" Version="4.5.0" />
-    <!--<PackageReference Include="Diversion.MSBuild" Version="0.4.8" PrivateAssets="All" />-->
   </ItemGroup>
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard1.6'">
      <PackageReference Include="System.Linq.Parallel" Version="4.3.0" />

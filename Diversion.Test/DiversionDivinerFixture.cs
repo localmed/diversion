@@ -6,7 +6,7 @@ using Shouldly;
 namespace Diversion.Test
 {
 
-    public class DiversionDivinerFacts
+    public class DiversionDivinerFixture
     {
         [Fact]
         public void DivineCollectionDiversionsShouldCreateAnICollectionDiversionsInstance()

@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "Diversion.CLI": {
+      "commandName": "Executable",
+      "executablePath": "C:\\Users\\Michael\\Repos\\diversion\\Diversion.CLI\\bin\\Debug\\net462\\diver.exe",
+      "commandLineArgs": "LocalMed.Fhir.Adapters.OpenDental.v17",
+      "workingDirectory": "C:\\Users\\Michael\\Repos\\localmed-fhir-adapters-opendental"
+    }
+  }
+}
