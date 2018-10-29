@@ -20,8 +20,10 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="1.1.1" PrivateAssets="All" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="1.1.1" PrivateAssets="All" />
-    <PackageReference Include="Costura.Fody" Version="1.6.2" PrivateAssets="All" />
-    <PackageReference Include="Fody" Version="2.3.23" PrivateAssets="All" />
+    <PackageReference Include="Costura.Fody" Version="3.1.6" PrivateAssets="All" />
+    <PackageReference Include="Fody" Version="3.2.13" PrivateAssets="all">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="Newtonsoft.Json" Version="9.0.1" PrivateAssets="All" />
     <PackageReference Include="Microsoft.Build" Version="15.5.180" PrivateAssets="All" />
     <PackageReference Include="Microsoft.Build.Framework" Version="15.5.180" PrivateAssets="All" />

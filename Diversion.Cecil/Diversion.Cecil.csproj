@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <Description>An implementation of diversion's simplified reflection interface using Mono.Cecil.</Description>
@@ -20,7 +20,6 @@
 
   <ItemGroup>
     <PackageReference Include="Mono.Cecil" Version="0.9.6.4" />
-    <PackageReference Include="Diversion.MSBuild" Version="0.4.0" PrivateAssets="All" />
   </ItemGroup>
 
   </Project>
