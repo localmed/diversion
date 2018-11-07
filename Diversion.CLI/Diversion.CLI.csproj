@@ -30,7 +30,7 @@
 
   <ItemGroup>
     <ProjectReference Include="../Diversion/Diversion.csproj" PrivateAssets="All" />
-    <ProjectReference Include="../Diversion.Reflection/Diversion.Reflection.csproj" PrivateAssets="All" />
+    <ProjectReference Include="../Diversion.Cecil/Diversion.Cecil.csproj" PrivateAssets="All" />
   </ItemGroup>
 
   <ItemGroup>

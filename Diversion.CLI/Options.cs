@@ -55,6 +55,7 @@ namespace Diversion.CLI
 
         internal string WorkingDirectory { get; set; }
 
+        [CmdLine.CommandLineParameter(Command = "TargetFramework", Name = "TargetFramework", Description = "The tfm to use when aquiring released version.")]
         public string TargetFramework { get; set; }
     }
 }

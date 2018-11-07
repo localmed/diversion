@@ -1,4 +1,5 @@
-﻿using Diversion.Reflection;
+﻿using Diversion.Cecil;
+using Diversion.Reflection;
 
 using Microsoft.Build.Evaluation;
 using Microsoft.Build.Framework;
@@ -22,6 +23,7 @@ using System.Runtime.Versioning;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using MemberInfo = System.Reflection.MemberInfo;
 
 namespace Diversion.CLI
 {
@@ -93,7 +95,7 @@ namespace Diversion.CLI
             try
             {
                 WriteLine(options, Verbosity.Normal, ConsoleColor.White, "Divining the semantic version based on the diversion from the latest release...");
-                var diversion = new AssemblyDiversionDiviner(new NvAssemblyInfoFactory(), new DiversionDiviner()).Divine(options.ReleasedPath, options.Target);
+                var diversion = new AssemblyDiversionDiviner(new AssemblyInfoFactory(), new DiversionDiviner()).Divine(options.ReleasedPath, options.Target);
                 if (options.GenerateFile)
                     using (var writer = new StreamWriter(File.Create(Path.Combine(options.WorkingDirectory, Path.GetFileNameWithoutExtension(options.Target), "diversion.json"))))
                         JsonSerializer.CreateDefault(new JsonSerializerSettings { ContractResolver = new CustomContractResolver() }).Serialize(writer, diversion);
@@ -245,11 +247,11 @@ namespace Diversion.CLI
                 return false;
 
             options.NuGetPackageId = options.NuGetPackageId ?? Path.GetFileNameWithoutExtension(options.Target);
-            WriteLine(options, Verbosity.Normal, ConsoleColor.White, "Attempting to download the latest release from nuget...");
-            string nugetWorking = Path.Combine(options.WorkingDirectory, Path.GetFileNameWithoutExtension(options.Target));
+            string nugetWorking = Path.Combine(options.WorkingDirectory, options.NuGetPackageId);
             if (!Directory.Exists(nugetWorking))
                 Directory.CreateDirectory(nugetWorking);
-            if (new NuGetReleaseFetcher().Fetch(options.NuGetPackageId, options.TargetFramework, options.NuGetPackageVersion ?? "*", nugetWorking).Result)
+            WriteLine(options, Verbosity.Normal, ConsoleColor.White, "Attempting to download the latest release from nuget...");
+            if (new NuGetReleaseFetcher().Fetch(options.NuGetPackageId, options.TargetFramework ?? "net47", options.NuGetPackageVersion ?? "*", nugetWorking).Result)
                 options.ReleasedPath = Path.Combine(nugetWorking, $"{options.NuGetPackageId}.dll");
             return options.ReleasedPath != null;
         }
@@ -404,15 +406,22 @@ namespace Diversion.CLI
     {
         public async Task<bool> Fetch(string packageId, string targetFramework, string targetVersion, string targetPath)
         {
+            targetFramework = targetFramework ?? "net47";
+            targetVersion = targetVersion ?? "*";
             return await Task.Run(() =>
             {
                 var diversionPath = Path.GetDirectoryName(targetPath);
+                Console.WriteLine($"diversionPath: {diversionPath}");
                 var projectPath = Path.Combine(diversionPath, $"{packageId}.csproj");
+                Console.WriteLine($"projectPath: {projectPath}");
                 Directory.CreateDirectory(diversionPath);
                 using (var output = new FileStream(projectPath, FileMode.Create))
                 using (var source = Assembly.GetExecutingAssembly().GetManifestResourceStream(typeof(NuGetReleaseFetcher), "Resources.acquire.csproj"))
                     source.CopyTo(output);
 
+                Console.WriteLine($"targetFramework: {targetFramework}");
+                Console.WriteLine($"targetVersion: {targetVersion}");
+                Console.WriteLine($"targetPath: {targetPath}");
                 var properties = new Dictionary<string, string>
                 {
                     {"TargetFramework", targetFramework },
